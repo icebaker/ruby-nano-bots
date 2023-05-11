@@ -34,7 +34,9 @@ For credentials and configurations, relevant environment variables can be set in
 OPENAI_API_ADDRESS=https://api.openai.com
 OPENAI_API_ACCESS_TOKEN=your-token
 OPENAI_API_USER_IDENTIFIER=your-user
-NANO_BOTS_STATE_DIRECTORY=/home/your-user/.local/share/.nano-bots
+
+NANO_BOTS_STATE_DIRECTORY=/home/your-user/.local/state/nano-bots
+NANO_BOTS_CARTRIDGES_DIRECTORY=/home/your-user/.local/share/nano-bots/cartridges
 ```
 
 Alternatively, if your current directory has a `.env` file with the environment variables, they will be automatically loaded.

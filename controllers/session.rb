@@ -5,6 +5,7 @@ require 'babosa'
 require 'fileutils'
 
 require_relative '../logic/helpers/hash'
+require_relative '../components/storage'
 
 module NanoBot
   module Controllers
@@ -22,7 +23,9 @@ module NanoBot
         if @stateless
           @state = { history: [] }
         else
-          build_path_and_ensure_state_file!(state.strip)
+          @state_path = Components::Storage.build_path_and_ensure_state_file!(
+            state.strip, @cartridge
+          )
           @state = load_state
         end
       end
@@ -42,28 +45,6 @@ module NanoBot
 
       def store_state!
         File.write(@state_path, JSON.generate(@state))
-      end
-
-      def build_path_and_ensure_state_file!(key)
-        path = Logic::Helpers::Hash.fetch(@cartridge, %i[state directory])
-
-        path = "#{user_home!.sub(%r{/$}, '')}/.local/share/.nano-bots" if path.nil? || path.empty?
-
-        path = "#{path.sub(%r{/$}, '')}/nano-bots-rb/#{@cartridge[:name].to_slug.normalize}"
-        path = "#{path}/#{@cartridge[:version].to_slug.normalize}/#{key.to_slug.normalize}"
-        path = "#{path}/state.json"
-
-        @state_path = path
-
-        FileUtils.mkdir_p(File.dirname(@state_path))
-
-        File.write(@state_path, JSON.generate({ key:, history: [] })) unless File.exist?(@state_path)
-      end
-
-      def user_home!
-        [Dir.home, `echo ~`.strip, '~'].find do |candidate|
-          !candidate.nil? && !candidate.empty?
-        end
       end
 
       def boot(mode:)

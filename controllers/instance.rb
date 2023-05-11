@@ -4,6 +4,7 @@ require 'yaml'
 
 require_relative '../logic/helpers/hash'
 require_relative '../components/provider'
+require_relative '../components/storage'
 require_relative './interfaces/repl'
 require_relative './session'
 
@@ -34,7 +35,10 @@ module NanoBot
 
       def load_cartridge!(path)
         @cartridge = Logic::Helpers::Hash.symbolize_keys(
-          YAML.safe_load(File.read(path), permitted_classes: [Symbol])
+          YAML.safe_load(
+            File.read(Components::Storage.cartridge_path(path)),
+            permitted_classes: [Symbol]
+          )
         )
 
         inject_environment_variables!(@cartridge)
