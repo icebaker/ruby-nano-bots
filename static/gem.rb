@@ -5,9 +5,9 @@ module NanoBot
     name: 'nano-bots',
     version: '0.0.1',
     author: 'icebaker',
-    summary: 'Iris REPL',
-    description: 'Intelligent Ruby Interface System Read–eval–print loop',
-    github: 'https://github.com/icebaker/nano-bot',
+    summary: 'Ruby Implementation of Nano Bots: small, AI-powered bots',
+    description: 'Ruby Implementation of Nano Bots: small, AI-powered bots easily shared as a single file, designed to support multiple providers such as Vicuna, OpenAI ChatGPT, Google PaLM, Alpaca, and LLaMA.',
+    github: 'https://github.com/icebaker/ruby-nano-bots',
     gem_server: 'https://rubygems.org',
     license: 'MIT',
     ruby: '3.1.4'
