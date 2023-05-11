@@ -31,12 +31,12 @@ bundle install
 For credentials and configurations, relevant environment variables can be set in your `.bashrc`, `.zshrc`, or equivalent files, as well as in your Docker Container or System Environment. Example:
 
 ```sh
-OPENAI_API_ADDRESS=https://api.openai.com
-OPENAI_API_ACCESS_TOKEN=your-token
-OPENAI_API_USER_IDENTIFIER=your-user
+export OPENAI_API_ADDRESS=https://api.openai.com
+export OPENAI_API_ACCESS_TOKEN=your-token
+export OPENAI_API_USER_IDENTIFIER=your-user
 
-NANO_BOTS_STATE_DIRECTORY=/home/your-user/.local/state/nano-bots
-NANO_BOTS_CARTRIDGES_DIRECTORY=/home/your-user/.local/share/nano-bots/cartridges
+export NANO_BOTS_STATE_DIRECTORY=/home/user/.local/state/nano-bots
+export NANO_BOTS_CARTRIDGES_DIRECTORY=/home/user/.local/share/nano-bots/cartridges
 ```
 
 Alternatively, if your current directory has a `.env` file with the environment variables, they will be automatically loaded.
