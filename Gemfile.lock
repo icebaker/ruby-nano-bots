@@ -1,0 +1,88 @@
+PATH
+  remote: .
+  specs:
+    nano-bots (0.0.1)
+      babosa (~> 2.0)
+      dotenv (~> 2.8, >= 2.8.1)
+      faraday (~> 2.7, >= 2.7.4)
+      pry (~> 0.14.2)
+      rainbow (~> 3.1, >= 3.1.1)
+      ruby-openai (~> 4.0)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    ast (2.4.2)
+    babosa (2.0.0)
+    coderay (1.1.3)
+    diff-lcs (1.5.0)
+    dotenv (2.8.1)
+    faraday (2.7.4)
+      faraday-net_http (>= 2.0, < 3.1)
+      ruby2_keywords (>= 0.0.4)
+    faraday-multipart (1.0.4)
+      multipart-post (~> 2)
+    faraday-net_http (3.0.2)
+    json (2.6.3)
+    method_source (1.0.0)
+    multipart-post (2.3.0)
+    parallel (1.23.0)
+    parser (3.2.2.1)
+      ast (~> 2.4.1)
+    pry (0.14.2)
+      coderay (~> 1.1)
+      method_source (~> 1.0)
+    rainbow (3.1.1)
+    regexp_parser (2.8.0)
+    rexml (3.2.5)
+    rspec (3.12.0)
+      rspec-core (~> 3.12.0)
+      rspec-expectations (~> 3.12.0)
+      rspec-mocks (~> 3.12.0)
+    rspec-core (3.12.2)
+      rspec-support (~> 3.12.0)
+    rspec-expectations (3.12.3)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.12.0)
+    rspec-mocks (3.12.5)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.12.0)
+    rspec-support (3.12.0)
+    rubocop (1.50.2)
+      json (~> 2.3)
+      parallel (~> 1.10)
+      parser (>= 3.2.0.0)
+      rainbow (>= 2.2.2, < 4.0)
+      regexp_parser (>= 1.8, < 3.0)
+      rexml (>= 3.2.5, < 4.0)
+      rubocop-ast (>= 1.28.0, < 2.0)
+      ruby-progressbar (~> 1.7)
+      unicode-display_width (>= 2.4.0, < 3.0)
+    rubocop-ast (1.28.1)
+      parser (>= 3.2.1.0)
+    rubocop-capybara (2.18.0)
+      rubocop (~> 1.41)
+    rubocop-factory_bot (2.22.0)
+      rubocop (~> 1.33)
+    rubocop-rspec (2.22.0)
+      rubocop (~> 1.33)
+      rubocop-capybara (~> 2.17)
+      rubocop-factory_bot (~> 2.22)
+    ruby-openai (4.0.0)
+      faraday (>= 1)
+      faraday-multipart (>= 1)
+    ruby-progressbar (1.13.0)
+    ruby2_keywords (0.0.5)
+    unicode-display_width (2.4.2)
+
+PLATFORMS
+  x86_64-linux
+
+DEPENDENCIES
+  nano-bots!
+  rspec (~> 3.12)
+  rubocop (~> 1.47)
+  rubocop-rspec (~> 2.22)
+
+BUNDLED WITH
+   2.4.13
