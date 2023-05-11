@@ -55,7 +55,7 @@ module NanoBot
             node[index] = inject_environment_variables!(value)
           end
         when String
-          node.start_with?('ENV') ? ENV.fetch(node.sub(/^ENV./, '')) : node
+          node.start_with?('ENV') ? ENV.fetch(node.sub(/^ENV./, ''), nil) : node
         else
           node
         end
