@@ -40,14 +40,16 @@ module NanoBot
         end
 
         def self.build_prefix(cartridge)
-          repl =  Logic::Helpers::Hash.fetch(cartridge, %i[interfaces repl])
+          repl = Logic::Helpers::Hash.fetch(cartridge, %i[interfaces repl])
           return "\n" if repl.nil? || !repl.key?(:prefix) # default
+
           repl[:prefix]
         end
 
         def self.build_postfix(cartridge)
-          repl =  Logic::Helpers::Hash.fetch(cartridge, %i[interfaces repl])
+          repl = Logic::Helpers::Hash.fetch(cartridge, %i[interfaces repl])
           return "\n" if repl.nil? || !repl.key?(:postfix) # default
+
           repl[:postfix]
         end
 
@@ -63,9 +65,9 @@ module NanoBot
                         end
             end
           elsif prompt.is_a?(String)
-             result = prompt
+            result = prompt
           else
-            result = '🤖' + Rainbow('> ').blue
+            result = "🤖#{Rainbow('> ').blue}"
           end
 
           result

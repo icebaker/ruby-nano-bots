@@ -21,14 +21,16 @@ module NanoBot
         end
 
         def self.build_prefix(cartridge)
-          eval_interface =  Logic::Helpers::Hash.fetch(cartridge, %i[interfaces eval])
+          eval_interface = Logic::Helpers::Hash.fetch(cartridge, %i[interfaces eval])
           return nil if eval_interface.nil?
+
           eval_interface[:prefix]
         end
 
         def self.build_postfix(cartridge)
-          eval_interface =  Logic::Helpers::Hash.fetch(cartridge, %i[interfaces eval])
+          eval_interface = Logic::Helpers::Hash.fetch(cartridge, %i[interfaces eval])
           return "\n" if eval_interface.nil? || !eval_interface.key?(:postfix) # default
+
           eval_interface[:postfix]
         end
       end
