@@ -14,10 +14,10 @@ module NanoBot
             exit
           when 'help', '', nil
             puts "Ruby Nano Bots #{NanoBot::GEM[:version]}"
-            puts '  rnb cartridge.yml - eval "Hello!"'
+            puts '  rnb cartridge.yml - eval "Hello"'
             puts '  rnb cartridge.yml - repl'
             puts '  rnb cartridge.yml - debug'
-            puts '  rnb cartridge.yml STATE-KEY eval "Hello!"'
+            puts '  rnb cartridge.yml STATE-KEY eval "Hello"'
             puts '  rnb cartridge.yml STATE-KEY repl'
             puts '  rnb cartridge.yml STATE-KEY debug'
             puts '  rnb version'
