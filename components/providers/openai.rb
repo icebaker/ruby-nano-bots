@@ -24,6 +24,13 @@ module NanoBot
           )
         end
 
+        def stream(input)
+          provider = @settings.key?(:stream) ? @settings[:stream] : true
+          interface = input[:interface].key?(:stream) ? input[:interface][:stream] : true
+
+          provider && interface
+        end
+
         def evaluate(input, &block)
           messages = input[:history].map do |event|
             { role: event[:who] == 'user' ? 'user' : 'assistant',
@@ -51,7 +58,7 @@ module NanoBot
 
           payload.delete(:logit_bias) if payload.key?(:logit_bias) && payload[:logit_bias].nil?
 
-          if @settings[:stream] && input[:interface][:stream]
+          if stream(input)
             content = ''
 
             payload[:stream] = proc do |chunk, _bytesize|

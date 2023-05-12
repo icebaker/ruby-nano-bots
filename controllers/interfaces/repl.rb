@@ -10,20 +10,17 @@ module NanoBot
     module Interfaces
       module REPL
         def self.start(cartridge, session)
-          if Logic::Helpers::Hash.fetch(
-            cartridge, %i[interfaces repl prefix]
-          )
-            session.print(Logic::Helpers::Hash.fetch(cartridge,
-                                                     %i[interfaces repl prefix]))
+          prefix = build_prefix(cartridge)
+          postfix = build_postfix(cartridge)
+
+          if Logic::Helpers::Hash.fetch(cartridge, %i[behaviors boot instruction])
+            session.print(prefix) unless prefix.nil?
+            session.boot(mode: 'repl')
+            session.print(postfix) unless postfix.nil?
+            session.print("\n")
           end
 
-          session.boot(mode: 'repl')
-
-          session.print(Logic::Helpers::Hash.fetch(cartridge, %i[interfaces repl postfix]) || "\n")
-
-          session.flush
-
-          prompt = build_prompt(cartridge[:interfaces][:repl][:prompt])
+          prompt = build_prompt(Logic::Helpers::Hash.fetch(cartridge, %i[interfaces repl prompt]))
 
           Pry.config.prompt = Pry::Prompt.new(
             'REPL',
@@ -32,31 +29,43 @@ module NanoBot
           )
 
           Pry.commands.block_command(/(.*)/, 'handler') do |line|
-            if Logic::Helpers::Hash.fetch(
-              cartridge, %i[interfaces repl prefix]
-            )
-              session.print(Logic::Helpers::Hash.fetch(
-                              cartridge, %i[interfaces repl prefix]
-                            ))
-            end
-
+            session.print(postfix) unless postfix.nil?
             session.evaluate_and_print(line, mode: 'repl')
-            session.print(Logic::Helpers::Hash.fetch(cartridge, %i[interfaces repl postfix]) || "\n")
+            session.print(postfix) unless postfix.nil?
+            session.print("\n")
             session.flush
           end
 
           Pry.start
         end
 
+        def self.build_prefix(cartridge)
+          repl =  Logic::Helpers::Hash.fetch(cartridge, %i[interfaces repl])
+          return "\n" if repl.nil? || !repl.key?(:prefix) # default
+          repl[:prefix]
+        end
+
+        def self.build_postfix(cartridge)
+          repl =  Logic::Helpers::Hash.fetch(cartridge, %i[interfaces repl])
+          return "\n" if repl.nil? || !repl.key?(:postfix) # default
+          repl[:postfix]
+        end
+
         def self.build_prompt(prompt)
           result = ''
 
-          prompt.each do |partial|
-            result += if partial[:color]
-                        Rainbow(partial[:text]).send(partial[:color])
-                      else
-                        partial[:text]
-                      end
+          if prompt.is_a?(Array)
+            prompt.each do |partial|
+              result += if partial[:color]
+                          Rainbow(partial[:text]).send(partial[:color])
+                        else
+                          partial[:text]
+                        end
+            end
+          elsif prompt.is_a?(String)
+             result = prompt
+          else
+            result = '🤖' + Rainbow('> ').blue
           end
 
           result

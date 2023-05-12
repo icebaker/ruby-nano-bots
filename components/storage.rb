@@ -17,8 +17,9 @@ module NanoBot
 
         path = "#{user_home!.sub(%r{/$}, '')}/.local/state/nano-bots" if path.nil?
 
-        path = "#{path.sub(%r{/$}, '')}/nano-bots-rb/#{cartridge[:name].to_slug.normalize}"
-        path = "#{path}/#{cartridge[:version].to_slug.normalize}/#{key.to_slug.normalize}"
+        path = "#{path.sub(%r{/$}, '')}/ruby-nano-bots/#{cartridge[:meta][:author].to_slug.normalize}"
+        path = "#{path}/#{cartridge[:meta][:name].to_slug.normalize}"
+        path = "#{path}/#{cartridge[:meta][:version].to_s.gsub('.', '-').to_slug.normalize}/#{key.to_slug.normalize}"
         path = "#{path}/state.json"
 
         FileUtils.mkdir_p(File.dirname(path))

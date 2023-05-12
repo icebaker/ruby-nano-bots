@@ -29,7 +29,7 @@ Gem::Specification.new do |spec|
 
   spec.require_paths = ['ports/dsl']
 
-  spec.executables = ['rnb']
+  spec.executables = ['nb']
 
   spec.add_dependency 'babosa', '~> 2.0'
   spec.add_dependency 'dotenv', '~> 2.8', '>= 2.8.1'

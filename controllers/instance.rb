@@ -6,6 +6,7 @@ require_relative '../logic/helpers/hash'
 require_relative '../components/provider'
 require_relative '../components/storage'
 require_relative './interfaces/repl'
+require_relative './interfaces/eval'
 require_relative './session'
 
 module NanoBot
@@ -24,7 +25,7 @@ module NanoBot
       end
 
       def eval(input)
-        @session.evaluate_and_print(input, mode: 'eval')
+        Interfaces::Eval.evaluate(input, @cartridge, @session)
       end
 
       def repl

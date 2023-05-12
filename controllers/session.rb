@@ -67,12 +67,17 @@ module NanoBot
         process(input, mode:)
       end
 
-      def process(input, mode:)
-        streaming = @provider.settings[:stream] && Logic::Helpers::Hash.fetch(
-          @cartridge, [:interfaces, mode.to_sym, :stream]
-        )
+      def stream(interface)
+        provider = @provider.settings.key?(:stream) ? @provider.settings[:stream] : true
+        interface = interface.key?(:stream) ? interface[:stream] : true
 
+        provider && interface
+      end
+
+      def process(input, mode:)
         interface = Logic::Helpers::Hash.fetch(@cartridge, [:interfaces, mode.to_sym]) || {}
+
+        streaming = stream(interface)
 
         input[:interface] = interface
 
@@ -84,9 +89,6 @@ module NanoBot
           if finished
             @state[:history] << output
             self.print(output[:message]) unless streaming
-            unless Logic::Helpers::Hash.fetch(@cartridge, [:interfaces, mode.to_sym, :postfix]).nil?
-              self.print(Logic::Helpers::Hash.fetch(@cartridge, [:interfaces, mode.to_sym, :postfix]))
-            end
             ready = true
             flush
           elsif streaming

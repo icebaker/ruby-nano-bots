@@ -81,32 +81,32 @@ docker compose run nano-bots
 
 Start playing:
 ```sh
-rnb cartridges/assistant.yml - repl
+nb cartridges/assistant.yml - repl
 ```
 
 ## Usage
 
 ### Command Line
 
-After installing the gem, the `rnb` binary command will be available for your project or system.
+After installing the gem, the `nb` binary command will be available for your project or system.
 
 Examples of usage:
 
 ```bash
-rnb to-en-us-translator.yml - eval "Salut, comment ça va?"
+nb to-en-us-translator.yml - eval "Salut, comment ça va?"
 # => Hello, how are you doing?
 
-rnb midjourney.yml - eval "happy and friendly cyberpunk robot"
-# => The robot exploring a bustling city, surrounded by neon lights
-#    and high-rise buildings. The prompt should include colorful
-#    lighting and a sense of excitement in the facial expression.
+nb midjourney.yml - eval "happy cyberpunk robot"
+# => A cheerful and fun-loving robot is dancing wildly amidst a
+#    futuristic and lively cityscape. Holographic advertisements
+#    and vibrant neon colors can be seen in the background.
 
-rnb lisp.yml - eval "(+ 1 2)"
+nb lisp.yml - eval "(+ 1 2)"
 # => 3
 
 cat article.txt |
-  rnb to-en-us-translator.yml - eval |
-  rnb summarizer.yml - eval
+  nb to-en-us-translator.yml - eval |
+  nb summarizer.yml - eval
 # -> LLM stands for Large Language Model, which refers to an
 #    artificial intelligence algorithm capable of processing
 #    and understanding vast amounts of natural language data,
@@ -115,10 +115,29 @@ cat article.txt |
 ```
 
 ```bash
-rnb assistant.yml - repl
+nb assistant.yml - repl
 ```
 
-All of the commands above are stateless. If you want to preserve the history of your interactions, replace the `-` with a state key. You can use a simple key, such as your username, or a randomly generated one:
+```text
+🤖> Hi, how are you doing?
+
+As an AI language model, I do not experience emotions but I am functioning
+well. How can I assist you?
+
+🤖> |
+```
+
+All of the commands above are stateless. If you want to preserve the history of your interactions, replace the `-` with a state key:
+
+```bash
+nb assistant.yml your-user eval "Salut, comment ça va?"
+nb assistant.yml your-user repl
+
+nb assistant.yml 6ea6c43c42a1c076b1e3c36fa349ac2c eval "Salut, comment ça va?"
+nb assistant.yml 6ea6c43c42a1c076b1e3c36fa349ac2c repl
+```
+
+You can use a simple key, such as your username, or a randomly generated one:
 
 ```ruby
 require 'securerandom'
@@ -126,26 +145,18 @@ require 'securerandom'
 SecureRandom.hex # => 6ea6c43c42a1c076b1e3c36fa349ac2c
 ```
 
-```bash
-rnb assistant.yml your-user eval "Salut, comment ça va?"
-rnb assistant.yml your-user repl
-
-rnb assistant.yml 6ea6c43c42a1c076b1e3c36fa349ac2c eval "Salut, comment ça va?"
-rnb assistant.yml 6ea6c43c42a1c076b1e3c36fa349ac2c repl
-```
-
 ### Library
 
 To use it as a library:
 
 ```ruby
-require 'nano-bots/cli' # Equivalent to the `rnb` command.
+require 'nano-bots/cli' # Equivalent to the `nb` command.
 ```
 
 ```ruby
 require 'nano-bots'
 
-NanoBot.cli # Equivalent to the `rnb` command.
+NanoBot.cli # Equivalent to the `nb` command.
 
 NanoBot.repl(cartridge: 'cartridge.yml') # Starts a new REPL.
 
@@ -166,19 +177,14 @@ Here's what a Nano Bot Cartridge looks like:
 
 ```yaml
 ---
-name: Assistant
-version: 0.0.1
+meta:
+  name: Nano Bot Name
+  author: Your Name
+  version: 0.0.1
 
 behaviors:
   interaction:
     directive: You are a helpful assistant.
-
-interfaces:
-  repl:
-    prompt:
-      - text: '🤖'
-      - text: '> '
-        color: blue
 
 provider:
   name: openai
