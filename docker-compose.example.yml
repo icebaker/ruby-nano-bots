@@ -1,0 +1,12 @@
+version: '3.7'
+
+services:
+  nano-bots:
+    image: ruby:3.2.2-slim-bullseye
+    command: sh -c "gem install nano-bots -v 0.0.1 && bash"
+    environment:
+      OPENAI_API_ADDRESS: https://api.openai.com
+      OPENAI_API_ACCESS_TOKEN: your-token
+      OPENAI_API_USER_IDENTIFIER: your-user
+    volumes:
+      - ./your-cartridges:/cartridges
