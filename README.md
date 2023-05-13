@@ -169,9 +169,11 @@ SecureRandom.hex # => 6ea6c43c42a1c076b1e3c36fa349ac2c
 ### Debugging
 
 ```sh
+nb - - cartridge
+nb cartridge.yml - cartridge
+
 nb - STATE-KEY state
 nb cartridge.yml STATE-KEY state
-nb cartridge.yml - cartridge
 ```
 
 ### Library
