@@ -13,6 +13,8 @@ https://user-images.githubusercontent.com/113217272/237840989-1e29a5cc-6644-48d0
   - [Command Line](#command-line)
   - [Library](#library)
 - [Cartridges](#cartridges)
+- [Providers](#providers)
+- [Debugging](#debugging)
 - [Development](#development)
   - [Publish to RubyGems](#publish-to-rubygems)
 
@@ -94,8 +96,8 @@ Start playing:
 nb - - eval "hello"
 nb - - repl
 
-nb cartridges/assistant.yml - repl
 nb cartridges/assistant.yml - eval "hello"
+nb cartridges/assistant.yml - repl
 ```
 
 ## Usage
@@ -164,6 +166,14 @@ require 'securerandom'
 SecureRandom.hex # => 6ea6c43c42a1c076b1e3c36fa349ac2c
 ```
 
+### Debugging
+
+```sh
+nb - STATE-KEY state
+nb cartridge.yml STATE-KEY state
+nb cartridge.yml - cartridge
+```
+
 ### Library
 
 To use it as a library:
@@ -216,6 +226,16 @@ provider:
 ```
 
 Check the Nano Bots specification to learn more about [how to build cartridges](https://icebaker.github.io/nano-bots/#/README?id=cartridges).
+
+## Providers
+
+Currently supported providers:
+
+- [ ] [Vicuna](https://github.com/lm-sys/FastChat)
+- [x] [Open AI](https://platform.openai.com/docs/api-reference)
+- [ ] [Google PaLM](https://developers.generativeai.google/)
+- [ ] [Alpaca](https://github.com/tatsu-lab/stanford_alpaca)
+- [ ] [LLaMA](https://github.com/facebookresearch/llama)
 
 ## Development
 

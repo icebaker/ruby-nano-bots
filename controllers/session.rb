@@ -31,7 +31,7 @@ module NanoBot
         end
       end
 
-      def debug
+      def state
         pp({
              state: {
                path: @state_path,

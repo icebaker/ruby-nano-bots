@@ -22,8 +22,12 @@ module NanoBot
         @session = Session.new(provider:, cartridge: @cartridge, state:, stream: @stream)
       end
 
-      def debug
-        @session.debug
+      def cartridge
+        puts YAML.dump(@safe_cartridge)
+      end
+
+      def state
+        @session.state
       end
 
       def eval(input)
@@ -61,12 +65,11 @@ module NanoBot
           raise StandardError, "Cartridge file not found: \"#{path}\""
         end
 
-        @cartridge = Logic::Helpers::Hash.symbolize_keys(
-          YAML.safe_load(
-            File.read(elected_path),
-            permitted_classes: [Symbol]
-          )
-        )
+        @cartridge = YAML.safe_load(File.read(elected_path), permitted_classes: [Symbol])
+
+        @safe_cartridge = Marshal.load(Marshal.dump(@cartridge))
+
+        @cartridge = Logic::Helpers::Hash.symbolize_keys(@cartridge)
 
         inject_environment_variables!(@cartridge)
       end
