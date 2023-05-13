@@ -23,13 +23,13 @@ https://user-images.githubusercontent.com/113217272/238141567-c58a240c-7b67-4b3b
 For a system usage:
 
 ```sh
-gem install nano-bots -v 0.0.3
+gem install nano-bots -v 0.0.4
 ```
 
 To use it in a project, add it to your `Gemfile`:
 
 ```ruby
-gem 'nano-bots', '~> 0.0.3'
+gem 'nano-bots', '~> 0.0.4'
 ```
 
 ```sh
@@ -76,7 +76,7 @@ version: '3.7'
 services:
   nano-bots:
     image: ruby:3.2.2-slim-bullseye
-    command: sh -c "gem install nano-bots -v 0.0.3 && bash"
+    command: sh -c "gem install nano-bots -v 0.0.4 && bash"
     environment:
       OPENAI_API_ADDRESS: https://api.openai.com
       OPENAI_API_ACCESS_TOKEN: your-token
@@ -254,5 +254,5 @@ gem build nano-bots.gemspec
 
 gem signin
 
-gem push nano-bots-0.0.3.gem
+gem push nano-bots-0.0.4.gem
 ```

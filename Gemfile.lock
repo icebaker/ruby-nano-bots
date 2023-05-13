@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    nano-bots (0.0.3)
+    nano-bots (0.0.4)
       babosa (~> 2.0)
       dotenv (~> 2.8, >= 2.8.1)
       faraday (~> 2.7, >= 2.7.4)
