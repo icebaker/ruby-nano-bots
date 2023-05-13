@@ -8,7 +8,7 @@ require_relative '../../controllers/interfaces/cli'
 
 module NanoBot
   def self.new(cartridge:, state: '-')
-    Controllers::Instance.new(cartridge_path: cartridge, state:)
+    Controllers::Instance.new(cartridge_path: cartridge, state:, stream: StringIO.new)
   end
 
   def self.cli

@@ -12,12 +12,14 @@ require_relative './session'
 module NanoBot
   module Controllers
     class Instance
-      def initialize(cartridge_path:, state: nil)
+      def initialize(cartridge_path:, stream:, state: nil)
+        @stream = stream
+
         load_cartridge!(cartridge_path)
 
         provider = Components::Provider.new(@cartridge[:provider])
 
-        @session = Session.new(provider:, cartridge: @cartridge, state:)
+        @session = Session.new(provider:, cartridge: @cartridge, state:, stream: @stream)
       end
 
       def debug
@@ -26,18 +28,42 @@ module NanoBot
 
       def eval(input)
         Interfaces::Eval.evaluate(input, @cartridge, @session)
+
+        return unless @stream.is_a?(StringIO)
+
+        @stream.flush
+        result = @stream.string.clone
+        @stream.truncate(0)
+        @stream.rewind
+        result
       end
 
       def repl
+        if @stream.is_a?(StringIO)
+          @stream.flush
+          @stream = $stdout
+          @session.stream = @stream
+        end
         Interfaces::REPL.start(@cartridge, @session)
       end
 
       private
 
       def load_cartridge!(path)
+        elected_path = if path.strip == '-'
+                         File.expand_path('../static/cartridges/default.yml', __dir__)
+                       else
+                         Components::Storage.cartridge_path(path)
+                       end
+
+        if elected_path.nil?
+          @stream.write("Cartridge file not found: \"#{path}\"\n")
+          raise StandardError, "Cartridge file not found: \"#{path}\""
+        end
+
         @cartridge = Logic::Helpers::Hash.symbolize_keys(
           YAML.safe_load(
-            File.read(Components::Storage.cartridge_path(path)),
+            File.read(elected_path),
             permitted_classes: [Symbol]
           )
         )

@@ -72,6 +72,7 @@ services:
       OPENAI_API_USER_IDENTIFIER: your-user
     volumes:
       - ./your-cartridges:/cartridges
+      # - /home/user/data:/data
 ```
 
 Enter the container:

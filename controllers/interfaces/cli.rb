@@ -26,7 +26,9 @@ module NanoBot
 
           params = { cartridge_path: ARGV[0], state: ARGV[1], command: ARGV[2] }
 
-          bot = Instance.new(cartridge_path: params[:cartridge_path], state: params[:state])
+          bot = Instance.new(
+            cartridge_path: params[:cartridge_path], state: params[:state], stream: $stdout
+          )
 
           case params[:command]
           when 'eval'
