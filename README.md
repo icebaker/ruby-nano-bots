@@ -13,6 +13,8 @@ https://user-images.githubusercontent.com/113217272/237840989-1e29a5cc-6644-48d0
   - [Command Line](#command-line)
   - [Library](#library)
 - [Cartridges](#cartridges)
+- [Providers](#providers)
+- [Debugging](#debugging)
 - [Development](#development)
   - [Publish to RubyGems](#publish-to-rubygems)
 
@@ -41,11 +43,20 @@ export OPENAI_API_ADDRESS=https://api.openai.com
 export OPENAI_API_ACCESS_TOKEN=your-token
 export OPENAI_API_USER_IDENTIFIER=your-user
 
-export NANO_BOTS_STATE_DIRECTORY=/home/user/.local/state/nano-bots
-export NANO_BOTS_CARTRIDGES_DIRECTORY=/home/user/.local/share/nano-bots/cartridges
+# export NANO_BOTS_STATE_DIRECTORY=/home/user/.local/state/nano-bots
+# export NANO_BOTS_CARTRIDGES_DIRECTORY=/home/user/.local/share/nano-bots/cartridges
 ```
 
-Alternatively, if your current directory has a `.env` file with the environment variables, they will be automatically loaded.
+Alternatively, if your current directory has a `.env` file with the environment variables, they will be automatically loaded:
+
+```sh
+OPENAI_API_ADDRESS=https://api.openai.com
+OPENAI_API_ACCESS_TOKEN=your-token
+OPENAI_API_USER_IDENTIFIER=your-user
+
+# NANO_BOTS_STATE_DIRECTORY=/home/user/.local/state/nano-bots
+# NANO_BOTS_CARTRIDGES_DIRECTORY=/home/user/.local/share/nano-bots/cartridges
+```
 
 ## Docker
 
@@ -72,6 +83,7 @@ services:
       OPENAI_API_USER_IDENTIFIER: your-user
     volumes:
       - ./your-cartridges:/cartridges
+      # - ./your-data:/data
 ```
 
 Enter the container:
@@ -81,6 +93,10 @@ docker compose run nano-bots
 
 Start playing:
 ```sh
+nb - - eval "hello"
+nb - - repl
+
+nb cartridges/assistant.yml - eval "hello"
 nb cartridges/assistant.yml - repl
 ```
 
@@ -93,6 +109,9 @@ After installing the gem, the `nb` binary command will be available for your pro
 Examples of usage:
 
 ```bash
+nb - - eval "hello"
+# => Hello! How may I assist you today?
+
 nb to-en-us-translator.yml - eval "Salut, comment ça va?"
 # => Hello, how are you doing?
 
@@ -115,6 +134,8 @@ cat article.txt |
 ```
 
 ```bash
+nb - - repl
+
 nb assistant.yml - repl
 ```
 
@@ -143,6 +164,16 @@ You can use a simple key, such as your username, or a randomly generated one:
 require 'securerandom'
 
 SecureRandom.hex # => 6ea6c43c42a1c076b1e3c36fa349ac2c
+```
+
+### Debugging
+
+```sh
+nb - - cartridge
+nb cartridge.yml - cartridge
+
+nb - STATE-KEY state
+nb cartridge.yml STATE-KEY state
 ```
 
 ### Library
@@ -197,6 +228,16 @@ provider:
 ```
 
 Check the Nano Bots specification to learn more about [how to build cartridges](https://icebaker.github.io/nano-bots/#/README?id=cartridges).
+
+## Providers
+
+Currently supported providers:
+
+- [ ] [Vicuna](https://github.com/lm-sys/FastChat)
+- [x] [Open AI](https://platform.openai.com/docs/api-reference)
+- [ ] [Google PaLM](https://developers.generativeai.google/)
+- [ ] [Alpaca](https://github.com/tatsu-lab/stanford_alpaca)
+- [ ] [LLaMA](https://github.com/facebookresearch/llama)
 
 ## Development
 

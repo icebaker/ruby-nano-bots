@@ -12,11 +12,12 @@ module NanoBot
     STREAM_TIMEOUT_IN_SECONDS = 5
 
     class Session
-      def initialize(provider:, cartridge:, state: nil)
+      attr_accessor :stream
+
+      def initialize(provider:, cartridge:, state: nil, stream: $stdout)
+        @stream = stream
         @provider = provider
         @cartridge = cartridge
-
-        @output = $stdout
 
         @stateless = state.nil? || state.strip == '-' || state.strip.empty?
 
@@ -30,7 +31,7 @@ module NanoBot
         end
       end
 
-      def debug
+      def state
         pp({
              state: {
                path: @state_path,
@@ -67,7 +68,7 @@ module NanoBot
         process(input, mode:)
       end
 
-      def stream(interface)
+      def streaming(interface)
         provider = @provider.settings.key?(:stream) ? @provider.settings[:stream] : true
         interface = interface.key?(:stream) ? interface[:stream] : true
 
@@ -77,7 +78,7 @@ module NanoBot
       def process(input, mode:)
         interface = Logic::Helpers::Hash.fetch(@cartridge, [:interfaces, mode.to_sym]) || {}
 
-        streaming = stream(interface)
+        streaming = streaming(interface)
 
         input[:interface] = interface
 
@@ -105,11 +106,11 @@ module NanoBot
       end
 
       def flush
-        @output.flush
+        @stream.flush
       end
 
       def print(content)
-        @output.write(content)
+        @stream.write(content)
       end
     end
   end

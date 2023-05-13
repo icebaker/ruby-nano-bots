@@ -13,20 +13,38 @@ module NanoBot
             puts NanoBot::GEM[:version]
             exit
           when 'help', '', nil
+            puts ''
             puts "Nano Bots #{NanoBot::GEM[:version]}"
-            puts '  nb cartridge.yml - eval "Hello"'
+            puts ''
+            puts '  nb - - eval "hello"'
+            puts '  nb - - repl'
+            puts ''
+            puts '  nb cartridge.yml - eval "hello"'
             puts '  nb cartridge.yml - repl'
-            puts '  nb cartridge.yml - debug'
-            puts '  nb cartridge.yml STATE-KEY eval "Hello"'
+            puts ''
+            puts '  nb - STATE-KEY eval "hello"'
+            puts '  nb - STATE-KEY repl'
+            puts ''
+            puts '  nb cartridge.yml STATE-KEY eval "hello"'
             puts '  nb cartridge.yml STATE-KEY repl'
-            puts '  nb cartridge.yml STATE-KEY debug'
+            puts ''
+            puts '  nb - - cartridge'
+            puts '  nb cartridge.yml - cartridge'
+            puts ''
+            puts '  nb - STATE-KEY state'
+            puts '  nb cartridge.yml STATE-KEY state'
+            puts ''
             puts '  nb version'
+            puts '  nb help'
+            puts ''
             exit
           end
 
           params = { cartridge_path: ARGV[0], state: ARGV[1], command: ARGV[2] }
 
-          bot = Instance.new(cartridge_path: params[:cartridge_path], state: params[:state])
+          bot = Instance.new(
+            cartridge_path: params[:cartridge_path], state: params[:state], stream: $stdout
+          )
 
           case params[:command]
           when 'eval'
@@ -35,8 +53,10 @@ module NanoBot
             bot.eval(params[:input])
           when 'repl'
             bot.repl
-          when 'debug'
-            bot.debug
+          when 'state'
+            bot.state
+          when 'cartridge'
+            bot.cartridge
           else
             raise "TODO: [#{params[:command]}]"
           end

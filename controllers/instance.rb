@@ -12,35 +12,64 @@ require_relative './session'
 module NanoBot
   module Controllers
     class Instance
-      def initialize(cartridge_path:, state: nil)
+      def initialize(cartridge_path:, stream:, state: nil)
+        @stream = stream
+
         load_cartridge!(cartridge_path)
 
         provider = Components::Provider.new(@cartridge[:provider])
 
-        @session = Session.new(provider:, cartridge: @cartridge, state:)
+        @session = Session.new(provider:, cartridge: @cartridge, state:, stream: @stream)
       end
 
-      def debug
-        @session.debug
+      def cartridge
+        puts YAML.dump(@safe_cartridge)
+      end
+
+      def state
+        @session.state
       end
 
       def eval(input)
         Interfaces::Eval.evaluate(input, @cartridge, @session)
+
+        return unless @stream.is_a?(StringIO)
+
+        @stream.flush
+        result = @stream.string.clone
+        @stream.truncate(0)
+        @stream.rewind
+        result
       end
 
       def repl
+        if @stream.is_a?(StringIO)
+          @stream.flush
+          @stream = $stdout
+          @session.stream = @stream
+        end
         Interfaces::REPL.start(@cartridge, @session)
       end
 
       private
 
       def load_cartridge!(path)
-        @cartridge = Logic::Helpers::Hash.symbolize_keys(
-          YAML.safe_load(
-            File.read(Components::Storage.cartridge_path(path)),
-            permitted_classes: [Symbol]
-          )
-        )
+        elected_path = if path.strip == '-'
+                         File.expand_path('../static/cartridges/default.yml', __dir__)
+                       else
+                         Components::Storage.cartridge_path(path)
+                       end
+
+        if elected_path.nil?
+          @stream.write("Cartridge file not found: \"#{path}\"\n")
+          raise StandardError, "Cartridge file not found: \"#{path}\""
+        end
+
+        @cartridge = YAML.safe_load(File.read(elected_path), permitted_classes: [Symbol])
+
+        @safe_cartridge = Marshal.load(Marshal.dump(@cartridge))
+
+        @cartridge = Logic::Helpers::Hash.symbolize_keys(@cartridge)
 
         inject_environment_variables!(@cartridge)
       end
