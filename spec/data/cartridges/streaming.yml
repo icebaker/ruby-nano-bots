@@ -1,0 +1,14 @@
+---
+interfaces:
+  output:
+    stream: true
+  repl:
+    output:
+      stream: true
+  eval:
+    output:
+      stream: true
+
+provider:
+  settings:
+    stream: true
