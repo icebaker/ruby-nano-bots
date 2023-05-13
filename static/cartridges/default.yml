@@ -2,9 +2,9 @@
 interfaces:
   repl:
     output:
+      stream: true
       suffix: "\n"
       prefix: "\n"
-      stream: true
     prompt:
       - text: '🤖'
       - text: '> '

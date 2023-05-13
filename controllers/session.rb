@@ -82,17 +82,19 @@ module NanoBot
 
         ready = false
         @provider.evaluate(input) do |output, finished|
-          output = Logic::Cartridge::Interaction.output(
-            @cartridge, mode.to_sym, output, streaming, finished
-          )
-
-          output[:message] = Components::Adapter.apply(:output, output[:message])
-
           updated_at = Time.now
 
           if finished
-            @state[:history] << output
+            @state[:history] << Marshal.load(Marshal.dump(output))
+
+            output = Logic::Cartridge::Interaction.output(
+              @cartridge, mode.to_sym, output, streaming, finished
+            )
+
+            output[:message] = Components::Adapter.apply(:output, output[:message])
+
             self.print(output[:message]) unless streaming
+
             ready = true
             flush
           elsif streaming

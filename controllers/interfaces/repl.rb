@@ -4,19 +4,20 @@ require 'pry'
 require 'rainbow'
 
 require_relative '../../logic/helpers/hash'
+require_relative '../../logic/cartridge/affixes'
 
 module NanoBot
   module Controllers
     module Interfaces
       module REPL
         def self.start(cartridge, session)
-          prefix = build_prefix(cartridge)
-          postfix = build_postfix(cartridge)
+          prefix = Logic::Cartridge::Affixes.get(cartridge, :repl, :output, :prefix)
+          suffix = Logic::Cartridge::Affixes.get(cartridge, :repl, :output, :suffix)
 
           if Logic::Helpers::Hash.fetch(cartridge, %i[behaviors boot instruction])
             session.print(prefix) unless prefix.nil?
             session.boot(mode: 'repl')
-            session.print(postfix) unless postfix.nil?
+            session.print(suffix) unless suffix.nil?
             session.print("\n")
           end
 
@@ -29,28 +30,14 @@ module NanoBot
           )
 
           Pry.commands.block_command(/(.*)/, 'handler') do |line|
-            session.print(postfix) unless postfix.nil?
+            session.print(prefix) unless prefix.nil?
             session.evaluate_and_print(line, mode: 'repl')
-            session.print(postfix) unless postfix.nil?
+            session.print(suffix) unless suffix.nil?
             session.print("\n")
             session.flush
           end
 
           Pry.start
-        end
-
-        def self.build_prefix(cartridge)
-          repl = Logic::Helpers::Hash.fetch(cartridge, %i[interfaces repl])
-          return "\n" if repl.nil? || !repl.key?(:prefix) # default
-
-          repl[:prefix]
-        end
-
-        def self.build_postfix(cartridge)
-          repl = Logic::Helpers::Hash.fetch(cartridge, %i[interfaces repl])
-          return "\n" if repl.nil? || !repl.key?(:postfix) # default
-
-          repl[:postfix]
         end
 
         def self.build_prompt(prompt)
