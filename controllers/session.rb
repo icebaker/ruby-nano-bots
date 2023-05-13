@@ -5,7 +5,10 @@ require 'babosa'
 require 'fileutils'
 
 require_relative '../logic/helpers/hash'
+require_relative '../logic/cartridge/streaming'
+require_relative '../logic/cartridge/interaction'
 require_relative '../components/storage'
+require_relative '../components/adapter'
 
 module NanoBot
   module Controllers
@@ -56,24 +59,22 @@ module NanoBot
       def evaluate_and_print(message, mode:)
         behavior = Logic::Helpers::Hash.fetch(@cartridge, %i[behaviors interaction]) || {}
 
-        @state[:history] << ({ who: 'user', message: })
+        @state[:history] << {
+          who: 'user',
+          message: Components::Adapter.apply(
+            :input, Logic::Cartridge::Interaction.input(@cartridge, mode.to_sym, message)
+          )
+        }
 
         input = { behavior:, history: @state[:history] }
 
         process(input, mode:)
       end
 
-      def streaming(interface)
-        provider = @provider.settings.key?(:stream) ? @provider.settings[:stream] : true
-        interface = interface.key?(:stream) ? interface[:stream] : true
-
-        provider && interface
-      end
-
       def process(input, mode:)
         interface = Logic::Helpers::Hash.fetch(@cartridge, [:interfaces, mode.to_sym]) || {}
 
-        streaming = streaming(interface)
+        streaming = Logic::Cartridge::Streaming.enabled?(@cartridge, mode.to_sym)
 
         input[:interface] = interface
 
@@ -81,7 +82,14 @@ module NanoBot
 
         ready = false
         @provider.evaluate(input) do |output, finished|
+          output = Logic::Cartridge::Interaction.output(
+            @cartridge, mode.to_sym, output, streaming, finished
+          )
+
+          output[:message] = Components::Adapter.apply(:output, output[:message])
+
           updated_at = Time.now
+
           if finished
             @state[:history] << output
             self.print(output[:message]) unless streaming

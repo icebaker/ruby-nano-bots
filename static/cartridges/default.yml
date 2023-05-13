@@ -1,14 +1,19 @@
 ---
-meta:
-  name: Unknown
-  author: Nobody
-  version: 0.0.0
+interfaces:
+  repl:
+    output:
+      suffix: "\n"
+      prefix: "\n"
+      stream: true
+    prompt:
+      - text: '🤖'
+      - text: '> '
+        color: blue
+  eval:
+    output:
+      stream: true
+      suffix: "\n"
 
 provider:
-  name: openai
   settings:
-    model: gpt-3.5-turbo
-    credentials:
-      address: ENV/OPENAI_API_ADDRESS
-      access-token: ENV/OPENAI_API_ACCESS_TOKEN
-      user-identifier: ENV/OPENAI_API_USER_IDENTIFIER
+    stream: true

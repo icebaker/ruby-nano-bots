@@ -37,6 +37,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'pry', '~> 0.14.2'
   spec.add_dependency 'rainbow', '~> 3.1', '>= 3.1.1'
   spec.add_dependency 'ruby-openai', '~> 4.0'
+  spec.add_dependency 'sweet-moon', '~> 0.0.7'
 
   spec.metadata['rubygems_mfa_required'] = 'true'
 end

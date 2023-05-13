@@ -55,7 +55,7 @@ module NanoBot
 
       def load_cartridge!(path)
         elected_path = if path.strip == '-'
-                         File.expand_path('../static/cartridges/default.yml', __dir__)
+                         File.expand_path('../static/cartridges/baseline.yml', __dir__)
                        else
                          Components::Storage.cartridge_path(path)
                        end

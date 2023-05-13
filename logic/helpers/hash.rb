@@ -23,6 +23,10 @@ module NanoBot
           return nil unless node
 
           path.each do |key|
+            unless node.is_a?(::Hash)
+              node = nil
+              break
+            end
             node = node[key]
             break if node.nil?
           end

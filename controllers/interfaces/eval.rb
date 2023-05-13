@@ -4,34 +4,21 @@ require 'pry'
 require 'rainbow'
 
 require_relative '../../logic/helpers/hash'
+require_relative '../../logic/cartridge/affixes'
 
 module NanoBot
   module Controllers
     module Interfaces
       module Eval
         def self.evaluate(input, cartridge, session)
-          prefix = build_prefix(cartridge)
-          postfix = build_postfix(cartridge)
+          prefix = Logic::Cartridge::Affixes.get(cartridge, :eval, :output, :prefix)
+          suffix = Logic::Cartridge::Affixes.get(cartridge, :eval, :output, :suffix)
 
           session.print(prefix) unless prefix.nil?
 
           session.evaluate_and_print(input, mode: 'eval')
 
-          session.print(postfix) unless postfix.nil?
-        end
-
-        def self.build_prefix(cartridge)
-          eval_interface = Logic::Helpers::Hash.fetch(cartridge, %i[interfaces eval])
-          return nil if eval_interface.nil?
-
-          eval_interface[:prefix]
-        end
-
-        def self.build_postfix(cartridge)
-          eval_interface = Logic::Helpers::Hash.fetch(cartridge, %i[interfaces eval])
-          return "\n" if eval_interface.nil? || !eval_interface.key?(:postfix) # default
-
-          eval_interface[:postfix]
+          session.print(suffix) unless suffix.nil?
         end
       end
     end
