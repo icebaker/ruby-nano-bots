@@ -1,0 +1,22 @@
+---
+interfaces:
+  input:
+    prefix: A
+    suffix: B
+  output:
+    prefix: C
+    suffix: D
+  repl:
+    input:
+      prefix: E
+      suffix: F
+    output:
+      prefix: G
+      suffix: H
+  eval:
+    input:
+      prefix: I
+      suffix: J
+    output:
+      prefix: K
+      suffix: L

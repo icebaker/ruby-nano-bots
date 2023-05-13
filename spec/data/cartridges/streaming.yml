@@ -1,18 +1,13 @@
 ---
 interfaces:
+  output:
+    stream: true
   repl:
     output:
-      suffix: "\n"
-      prefix: "\n"
       stream: true
-    prompt:
-      - text: '🤖'
-      - text: '> '
-        color: blue
   eval:
     output:
       stream: true
-      suffix: "\n"
 
 provider:
   settings:

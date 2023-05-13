@@ -43,7 +43,7 @@ module NanoBot
 
           partial = File.join(File.dirname(partial), File.basename(partial, File.extname(partial)))
 
-          partial = path.sub(%r{^\.?/}, '')
+          partial = partial.sub(%r{^\.?/}, '')
 
           candidates << "#{directory}/#{partial}"
           candidates << "#{directory}/#{partial}.yml"
@@ -54,7 +54,7 @@ module NanoBot
 
         partial = File.join(File.dirname(partial), File.basename(partial, File.extname(partial)))
 
-        partial = path.sub(%r{^\.?/}, '')
+        partial = partial.sub(%r{^\.?/}, '')
 
         candidates << "#{directory}/#{partial}"
         candidates << "#{directory}/#{partial}.yml"
