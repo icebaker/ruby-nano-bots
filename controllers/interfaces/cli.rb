@@ -54,9 +54,9 @@ module NanoBot
           when 'repl'
             bot.repl
           when 'state'
-            bot.state
+            pp bot.state
           when 'cartridge'
-            bot.cartridge
+            puts YAML.dump(bot.cartridge)
           else
             raise "TODO: [#{params[:command]}]"
           end

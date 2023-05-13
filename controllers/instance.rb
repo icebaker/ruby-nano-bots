@@ -23,7 +23,7 @@ module NanoBot
       end
 
       def cartridge
-        puts YAML.dump(@safe_cartridge)
+        @safe_cartridge
       end
 
       def state

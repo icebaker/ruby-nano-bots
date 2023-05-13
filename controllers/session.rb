@@ -32,12 +32,7 @@ module NanoBot
       end
 
       def state
-        pp({
-             state: {
-               path: @state_path,
-               content: @state
-             }
-           })
+        { state: { path: @state_path, content: @state } }
       end
 
       def load_state
