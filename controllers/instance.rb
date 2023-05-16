@@ -5,6 +5,7 @@ require 'yaml'
 require_relative '../logic/helpers/hash'
 require_relative '../components/provider'
 require_relative '../components/storage'
+require_relative '../components/stream'
 require_relative './interfaces/repl'
 require_relative './interfaces/eval'
 require_relative './session'
@@ -30,16 +31,14 @@ module NanoBot
         @session.state
       end
 
-      def eval(input)
+      def eval(input, &block)
+        @stream.callback = block if block && @stream.is_a?(Components::Stream)
+
         Interfaces::Eval.evaluate(input, @cartridge, @session)
 
-        return unless @stream.is_a?(StringIO)
+        return unless @stream.is_a?(Components::Stream)
 
-        @stream.flush
-        result = @stream.string.clone
-        @stream.truncate(0)
-        @stream.rewind
-        result
+        @stream.finish
       end
 
       def repl
