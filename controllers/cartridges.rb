@@ -36,7 +36,7 @@ module NanoBot
           next if cartridge[:meta][:name].nil?
 
           cartridges << cartridge
-          # rescue StandardError => _e
+        rescue StandardError => _e
         end
 
         cartridges.sort_by { |cartridge| cartridge[:meta][:name] }
