@@ -3,7 +3,7 @@ version: '3.7'
 services:
   nano-bots:
     image: ruby:3.2.2-slim-bullseye
-    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev lua5.4-dev && gem install nano-bots -v 0.0.6 && bash"
+    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev lua5.4-dev && gem install nano-bots -v 0.0.7 && bash"
     environment:
       OPENAI_API_ADDRESS: https://api.openai.com
       OPENAI_API_ACCESS_TOKEN: your-token
