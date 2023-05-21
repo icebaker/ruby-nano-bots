@@ -53,18 +53,22 @@ module NanoBot
       private
 
       def load_cartridge!(path)
-        elected_path = if path.strip == '-'
-                         File.expand_path('../static/cartridges/baseline.yml', __dir__)
-                       else
-                         Components::Storage.cartridge_path(path)
-                       end
+        if !path.is_a?(String) && !path.is_a?(Symbol)
+          @cartridge = path
+        else
+          elected_path = if path.strip == '-'
+                           File.expand_path('../static/cartridges/baseline.yml', __dir__)
+                         else
+                           Components::Storage.cartridge_path(path)
+                         end
 
-        if elected_path.nil?
-          @stream.write("Cartridge file not found: \"#{path}\"\n")
-          raise StandardError, "Cartridge file not found: \"#{path}\""
+          if elected_path.nil?
+            @stream.write("Cartridge file not found: \"#{path}\"\n")
+            raise StandardError, "Cartridge file not found: \"#{path}\""
+          end
+
+          @cartridge = YAML.safe_load(File.read(elected_path), permitted_classes: [Symbol])
         end
-
-        @cartridge = YAML.safe_load(File.read(elected_path), permitted_classes: [Symbol])
 
         @safe_cartridge = Marshal.load(Marshal.dump(@cartridge))
 
