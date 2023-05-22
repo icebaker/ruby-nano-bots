@@ -193,7 +193,20 @@ NanoBot.repl(cartridge: 'cartridge.yml') # Starts a new REPL.
 
 bot = NanoBot.new(cartridge: 'cartridge.yml')
 
+bot = NanoBot.new(
+  cartridge: YAML.safe_load(File.read('cartridge.yml'), permitted_classes: [Symbol])
+)
+
+bot = NanoBot.new(
+  cartridge: { ... } # Parsed Cartridge Hash
+)
+
 bot.eval('Hello')
+
+# When stream is enabled and available:
+bot.eval('Hi!') do |content, fragment, finished|
+  print fragment unless fragment.nil?
+end
 
 bot.repl # Starts a new REPL.
 
