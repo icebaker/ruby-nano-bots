@@ -10,18 +10,26 @@ module NanoBot
   module Controllers
     module Interfaces
       module REPL
+        def self.boot(cartridge, session, prefix = nil, suffix = nil, as: 'repl')
+          return unless Logic::Helpers::Hash.fetch(cartridge, %i[behaviors boot instruction])
+
+          prefix ||= Logic::Cartridge::Affixes.get(cartridge, as.to_sym, :output, :prefix)
+          suffix ||= Logic::Cartridge::Affixes.get(cartridge, as.to_sym, :output, :suffix)
+
+          session.print(prefix) unless prefix.nil?
+          session.boot(mode: as)
+          session.print(suffix) unless suffix.nil?
+        end
+
         def self.start(cartridge, session)
           prefix = Logic::Cartridge::Affixes.get(cartridge, :repl, :output, :prefix)
           suffix = Logic::Cartridge::Affixes.get(cartridge, :repl, :output, :suffix)
 
-          if Logic::Helpers::Hash.fetch(cartridge, %i[behaviors boot instruction])
-            session.print(prefix) unless prefix.nil?
-            session.boot(mode: 'repl')
-            session.print(suffix) unless suffix.nil?
-            session.print("\n")
-          end
+          boot(cartridge, session, prefix, suffix)
 
-          prompt = build_prompt(Logic::Helpers::Hash.fetch(cartridge, %i[interfaces repl prompt]))
+          session.print("\n") if Logic::Helpers::Hash.fetch(cartridge, %i[behaviors boot instruction])
+
+          prompt = self.prompt(cartridge)
 
           Pry.config.prompt = Pry::Prompt.new(
             'REPL',
@@ -40,7 +48,8 @@ module NanoBot
           Pry.start
         end
 
-        def self.build_prompt(prompt)
+        def self.prompt(cartridge)
+          prompt = Logic::Helpers::Hash.fetch(cartridge, %i[interfaces repl prompt])
           result = ''
 
           if prompt.is_a?(Array)

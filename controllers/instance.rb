@@ -31,10 +31,24 @@ module NanoBot
         @session.state
       end
 
-      def eval(input, &block)
+      def boot(as: 'eval', &block)
         @stream.callback = block if block && @stream.is_a?(Components::Stream)
 
-        Interfaces::Eval.evaluate(input, @cartridge, @session)
+        Interfaces::REPL.boot(@cartridge, @session, as:)
+
+        return unless @stream.is_a?(Components::Stream)
+
+        @stream.finish
+      end
+
+      def prompt
+        Interfaces::REPL.prompt(@cartridge)
+      end
+
+      def eval(input, as: 'eval', &block)
+        @stream.callback = block if block && @stream.is_a?(Components::Stream)
+
+        Interfaces::Eval.evaluate(input, @cartridge, @session, as)
 
         return unless @stream.is_a?(Components::Stream)
 

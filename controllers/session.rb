@@ -61,6 +61,8 @@ module NanoBot
 
         @state[:history] << {
           who: 'user',
+          mode: mode.to_s,
+          input: message,
           message: Components::Adapter.apply(
             :input, Logic::Cartridge::Interaction.input(@cartridge, mode.to_sym, message)
           )
@@ -72,6 +74,9 @@ module NanoBot
       end
 
       def process(input, mode:)
+        prefix = Logic::Cartridge::Affixes.get(@cartridge, mode.to_sym, :output, :prefix)
+        suffix = Logic::Cartridge::Affixes.get(@cartridge, mode.to_sym, :output, :suffix)
+
         interface = Logic::Helpers::Hash.fetch(@cartridge, [:interfaces, mode.to_sym]) || {}
 
         streaming = Logic::Cartridge::Streaming.enabled?(@cartridge, mode.to_sym)
@@ -85,13 +90,18 @@ module NanoBot
           updated_at = Time.now
 
           if finished
-            @state[:history] << Marshal.load(Marshal.dump(output))
+            event = Marshal.load(Marshal.dump(output))
 
             output = Logic::Cartridge::Interaction.output(
               @cartridge, mode.to_sym, output, streaming, finished
             )
 
             output[:message] = Components::Adapter.apply(:output, output[:message])
+
+            event[:mode] = mode.to_s
+            event[:output] = "#{prefix}#{output[:message]}#{suffix}"
+
+            @state[:history] << event
 
             self.print(output[:message]) unless streaming
 
