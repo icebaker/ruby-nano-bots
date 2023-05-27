@@ -203,6 +203,9 @@ bot = NanoBot.new(
 
 bot.eval('Hello')
 
+bot.eval('Hello', as: 'eval')
+bot.eval('Hello', as: 'repl')
+
 # When stream is enabled and available:
 bot.eval('Hi!') do |content, fragment, finished|
   print fragment unless fragment.nil?
@@ -213,6 +216,17 @@ bot.repl # Starts a new REPL.
 NanoBot.repl(cartridge: 'cartridge.yml', state: '6ea6c43c42a1c076b1e3c36fa349ac2c')
 
 bot = NanoBot.new(cartridge: 'cartridge.yml', state: '6ea6c43c42a1c076b1e3c36fa349ac2c')
+
+bot.prompt # => "🤖\u001b[34m> \u001b[0m"
+
+bot.boot
+
+bot.boot(as: 'eval')
+bot.boot(as: 'repl')
+
+bot.boot do |content, fragment, finished|
+  print fragment unless fragment.nil?
+end
 ```
 
 ## Cartridges
@@ -222,9 +236,12 @@ Here's what a Nano Bot Cartridge looks like:
 ```yaml
 ---
 meta:
+  symbol: 🤖
   name: Nano Bot Name
   author: Your Name
-  version: 0.0.1
+  version: 1.0.0
+  license: CC0-1.0
+  description: A helpful assistant.
 
 behaviors:
   interaction:
@@ -240,7 +257,9 @@ provider:
       user-identifier: ENV/OPENAI_API_USER_IDENTIFIER
 ```
 
-Check the Nano Bots specification to learn more about [how to build cartridges](https://icebaker.github.io/nano-bots/#/README?id=cartridges).
+Check the Nano Bots specification to learn more about [how to build cartridges](https://spec.nbots.io/#/README?id=cartridges).
+
+Try the [Nano Bots Clinic (Live Editor)](https://clinic.nbots.io) to learn about creating Cartridges.
 
 ## Providers
 
@@ -251,6 +270,8 @@ Currently supported providers:
 - [ ] [Google PaLM](https://developers.generativeai.google/)
 - [ ] [Alpaca](https://github.com/tatsu-lab/stanford_alpaca)
 - [ ] [LLaMA](https://github.com/facebookresearch/llama)
+
+Although only OpenAI has been officially tested, some of the open-source providers offer APIs that are compatible with OpenAI's, such as [FastChat](https://github.com/lm-sys/FastChat#openai-compatible-restful-apis--sdk). Therefore, it is highly probable that they will work just fine.
 
 ## Development
 
