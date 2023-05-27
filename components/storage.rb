@@ -33,7 +33,7 @@ module NanoBot
         [
           ENV.fetch('NANO_BOTS_CARTRIDGES_DIRECTORY', nil),
           "#{user_home!.sub(%r{/$}, '')}/.local/share/nano-bots/cartridges"
-        ].uniq.filter { |path| File.directory?(path) }.compact.first
+        ].compact.uniq.filter { |path| File.directory?(path) }.compact.first
       end
 
       def self.cartridge_path(path)
