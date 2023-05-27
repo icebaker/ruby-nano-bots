@@ -265,7 +265,7 @@ Try the [Nano Bots Clinic (Live Editor)](https://clinic.nbots.io) to learn about
 
 Currently supported providers:
 
-- [ ] [Vicuna](https://github.com/lm-sys/FastChat)
+- [x] [FastChat (Vicuna)](https://github.com/lm-sys/FastChat)
 - [x] [Open AI](https://platform.openai.com/docs/api-reference)
 - [ ] [Google PaLM](https://developers.generativeai.google/)
 - [ ] [Alpaca](https://github.com/tatsu-lab/stanford_alpaca)
