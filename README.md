@@ -271,7 +271,7 @@ Currently supported providers:
 - [ ] [Alpaca](https://github.com/tatsu-lab/stanford_alpaca)
 - [ ] [LLaMA](https://github.com/facebookresearch/llama)
 
-Although only OpenAI has been officially tested, some of the open-source providers offer APIs that are compatible with OpenAI, such as FastChat (https://github.com/lm-sys/FastChat#openai-compatible-restful-apis--sdk). Therefore, it is highly probable that they will work just fine.
+Although only OpenAI has been officially tested, some of the open-source providers offer APIs that are compatible with OpenAI, such as [FastChat](https://github.com/lm-sys/FastChat#openai-compatible-restful-apis--sdk). Therefore, it is highly probable that they will work just fine.
 
 ## Development
 
