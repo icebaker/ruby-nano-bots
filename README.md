@@ -13,6 +13,7 @@ https://user-images.githubusercontent.com/113217272/238141567-c58a240c-7b67-4b3b
   - [Command Line](#command-line)
   - [Library](#library)
 - [Cartridges](#cartridges)
+  - [Marketplace](#marketplace)
 - [Providers](#providers)
 - [Debugging](#debugging)
 - [Development](#development)
@@ -260,6 +261,10 @@ provider:
 Check the Nano Bots specification to learn more about [how to build cartridges](https://spec.nbots.io/#/README?id=cartridges).
 
 Try the [Nano Bots Clinic (Live Editor)](https://clinic.nbots.io) to learn about creating Cartridges.
+
+### Marketplace
+
+You can explore the Nano Bots [Marketplace](https://nbots.io) to discover new Cartridges that can help you.
 
 ## Providers
 
