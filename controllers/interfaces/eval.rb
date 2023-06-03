@@ -1,9 +1,5 @@
 # frozen_string_literal: true
 
-require 'pry'
-require 'rainbow'
-
-require_relative '../../logic/helpers/hash'
 require_relative '../../logic/cartridge/affixes'
 
 module NanoBot

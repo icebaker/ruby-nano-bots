@@ -13,11 +13,11 @@ module NanoBot
             puts NanoBot::GEM[:version]
             exit
           when 'security'
-            result = NanoBot.security
+            result = NanoBot.security.check
 
             if result[:encryption]
               puts "\n✅ Encryption is enabled and properly working."
-              puts '     It means that your data is cyrptographed stored in your disk.'
+              puts '     This means that your data is stored in an encrypted format on your disk.'
             else
               puts "\n❌ Encryption is not being utilized to store your content."
               puts '     This means that your data can be easily read because it is stored in plaintext.'
@@ -27,7 +27,7 @@ module NanoBot
               puts "\n✅ A password is being used for the encrypted content."
               puts '     This means that only those who possess the password can decrypt your data.'
             else
-              puts "\n❌ No password is being used for the encrypted content."
+              puts "\n❌ No custom password is being used for the encrypted content."
               puts '     This means that anyone can easily decrypt your data.'
             end
 

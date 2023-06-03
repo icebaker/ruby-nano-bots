@@ -20,7 +20,7 @@ module NanoBot
   end
 
   def self.security
-    Controllers::Security.check
+    Controllers::Security
   end
 
   def self.cartridges

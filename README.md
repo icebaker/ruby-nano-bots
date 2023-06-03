@@ -14,6 +14,10 @@ https://user-images.githubusercontent.com/113217272/238141567-c58a240c-7b67-4b3b
   - [Library](#library)
 - [Cartridges](#cartridges)
   - [Marketplace](#marketplace)
+- [Security and Privacy](#security-and-privacy)
+  - [Cryptography](#cryptography)
+  - [End-user IDs](#end-user-ids)
+  - [Decrypting](#decrypting)
 - [Providers](#providers)
 - [Debugging](#debugging)
 - [Development](#development)
@@ -40,6 +44,7 @@ bundle install
 For credentials and configurations, relevant environment variables can be set in your `.bashrc`, `.zshrc`, or equivalent files, as well as in your Docker Container or System Environment. Example:
 
 ```sh
+export NANO_BOTS_ENCRYPTION_PASSWORD="UNSAFE"
 export OPENAI_API_ADDRESS=https://api.openai.com
 export OPENAI_API_ACCESS_TOKEN=your-token
 export OPENAI_API_USER_IDENTIFIER=your-user
@@ -51,6 +56,7 @@ export OPENAI_API_USER_IDENTIFIER=your-user
 Alternatively, if your current directory has a `.env` file with the environment variables, they will be automatically loaded:
 
 ```sh
+NANO_BOTS_ENCRYPTION_PASSWORD="UNSAFE"
 OPENAI_API_ADDRESS=https://api.openai.com
 OPENAI_API_ACCESS_TOKEN=your-token
 OPENAI_API_USER_IDENTIFIER=your-user
@@ -79,6 +85,7 @@ services:
     image: ruby:3.2.2-slim-bullseye
     command: sh -c "gem install nano-bots -v 0.0.9 && bash"
     environment:
+      NANO_BOTS_ENCRYPTION_PASSWORD: UNSAFE
       OPENAI_API_ADDRESS: https://api.openai.com
       OPENAI_API_ACCESS_TOKEN: your-token
       OPENAI_API_USER_IDENTIFIER: your-user
@@ -265,6 +272,94 @@ Try the [Nano Bots Clinic (Live Editor)](https://clinic.nbots.io) to learn about
 ### Marketplace
 
 You can explore the Nano Bots [Marketplace](https://nbots.io) to discover new Cartridges that can help you.
+
+## Security and Privacy
+
+Each provider will have its own security and privacy policies (e.g. [OpenAI Policy](https://openai.com/policies/api-data-usage-policies)), so you must consult them to understand their implications.
+
+### Cryptography
+
+By default, all states stored in your local disk are encrypted.
+
+To ensure that the encryption is secure, you need to define a password through the `NANO_BOTS_ENCRYPTION_PASSWORD` environment variable. Otherwise, although the content will be encrypted, anyone would be able to decrypt it without a password.
+
+It's important to note that the content shared with providers, despite being transmitted over secure connections (e.g., [HTTPS](https://en.wikipedia.org/wiki/HTTPS)), will be readable by the provider. This is because providers need to operate on the data, which would not be possible if the content was encrypted beyond HTTPS. So, the data stored locally on your system is encrypted, which does not mean that what you share with providers will not be readable by them.
+
+To ensure that your encryption and password are configured properly, you can run the following command:
+```sh
+nb security
+```
+
+Which should return:
+```text
+✅ Encryption is enabled and properly working.
+     This means that your data is stored in an encrypted format on your disk.
+
+✅ A password is being used for the encrypted content.
+     This means that only those who possess the password can decrypt your data.
+```
+
+Alternatively, you can check it at runtime with:
+```ruby
+require 'nano-bots'
+
+NanoBot.security.check
+# => { encryption: true, password: true }
+```
+
+#### End-user IDs
+
+A common strategy for deploying Nano Bots to multiple users through APIs or automations is to assign a unique [end-user ID](https://platform.openai.com/docs/guides/safety-best-practices/end-user-ids) for each user. This can be useful if any of your users violate the provider's policy due to abusive behavior. By providing the end-user ID, you can unravel that even though the activity originated from your API Key, the actions taken were not your own.
+
+You can define custom end-user identifiers in the following way:
+
+```ruby
+NanoBot.new(environment: { NANO_BOTS_USER_IDENTIFIER: 'user-a' })
+NanoBot.new(environment: { NANO_BOTS_USER_IDENTIFIER: 'user-b' })
+```
+
+Consider that you have have the following OpenAI user identifier:
+```sh
+OPENAI_API_USER_IDENTIFIER=your-name
+```
+
+The requests will be performed as follows:
+
+```ruby
+NanoBot.new(environment: {NANO_BOTS_USER_IDENTIFIER: 'user-a'})
+# { user: 'your-name/user-a' }
+
+NanoBot.new(environment: {NANO_BOTS_USER_IDENTIFIER: 'user-b'})
+# { user: 'your-name/user-b' }
+```
+
+Actually, to enhance privacy, neither your user nor your users' identifiers will be shared in this way. Instead, they will be encrypted before being shared with the provider:
+
+```ruby
+'your-name/user-a'
+# -onBK9GWafYz-JM8-cydhn4jd4Bkfkec5FtJ1ReCrtHCDPjkhCqUjRobG1zLnAz3BLo1kFhRW3w=
+
+'your-name/user-a'
+# RldW4_xxktCksEAR9G8aORuq3skPAc9ivWj3eye2ICCHQy8gG_R5qLMS3Fg-0lY6LwxKGQur5Ww=
+```
+
+In this manner, you possess identifiers if required, however, their actual content can only be decrypted by you via your secure password (`NANO_BOTS_ENCRYPTION_PASSWORD`).
+
+## Decrypting
+
+To decrypt your encrypted data, once you have properly configured your password, you can simply run:
+
+```ruby
+require 'nano-bots'
+
+NanoBot.security.decrypt('-onBK9GWafYz-JM8-cydhn4jd4Bkfkec5FtJ1ReCrtHCDPjkhCqUjRobG1zLnAz3BLo1kFhRW3w=')
+# your-name/user-b
+
+NanoBot.security.decrypt('RldW4_xxktCksEAR9G8aORuq3skPAc9ivWj3eye2ICCHQy8gG_R5qLMS3Fg-0lY6LwxKGQur5Ww=')
+# your-name/user-b
+```
+
+If you lose your password, you lose your data. It is not possible to recover it at all. For real.
 
 ## Providers
 
