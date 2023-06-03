@@ -9,8 +9,13 @@ require_relative '../../controllers/interfaces/cli'
 require_relative '../../components/stream'
 
 module NanoBot
-  def self.new(cartridge: '-', state: '-')
-    Controllers::Instance.new(cartridge_path: cartridge, state:, stream: Components::Stream.new)
+  def self.new(cartridge: '-', state: '-', environment: {})
+    Controllers::Instance.new(
+      cartridge_path: cartridge,
+      state:,
+      stream: Components::Stream.new,
+      environment:
+    )
   end
 
   def self.cartridges
@@ -21,8 +26,10 @@ module NanoBot
     Controllers::Interfaces::CLI.handle!
   end
 
-  def self.repl(cartridge: '-', state: '-')
-    Controllers::Instance.new(cartridge_path: cartridge, state:, stream: $stdout).repl
+  def self.repl(cartridge: '-', state: '-', environment: {})
+    Controllers::Instance.new(
+      cartridge_path: cartridge, state:, stream: $stdout, environment:
+    ).repl
   end
 
   def self.version

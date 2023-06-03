@@ -3,6 +3,7 @@
 require 'openai'
 
 require_relative './base'
+require_relative '../crypto'
 
 module NanoBot
   module Components
@@ -15,8 +16,9 @@ module NanoBot
 
         attr_reader :settings
 
-        def initialize(settings)
+        def initialize(settings, environment: {})
           @settings = settings
+          @environment = environment
 
           @client = ::OpenAI::Client.new(
             uri_base: "#{@settings[:credentials][:address].sub(%r{/$}, '')}/",
@@ -46,11 +48,16 @@ module NanoBot
             )
           end
 
-          payload = {
-            model: @settings[:model],
-            user: @settings[:credentials][:'user-identifier'],
-            messages:
-          }
+          user = @settings[:credentials][:'user-identifier']
+
+          user_suffix = @environment && (
+            @environment['NANO_BOTS_USER_IDENTIFIER'] ||
+            @environment[:NANO_BOTS_USER_IDENTIFIER]
+          )
+
+          user = "#{user}/#{user_suffix}" if user_suffix && user_suffix != ''
+
+          payload = { model: @settings[:model], user: Crypto.encrypt(user, soft: true), messages: }
 
           CHAT_SETTINGS.each do |key|
             payload[key] = @settings[key] if @settings.key?(key)
