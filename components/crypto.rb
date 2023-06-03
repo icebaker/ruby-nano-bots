@@ -19,15 +19,11 @@ module NanoBot
       end
 
       def encrypt(content, soft: false)
-        return content unless @box
-
         nonce = soft ? @fixed_nonce : RbNaCl::Random.random_bytes(@box.nonce_bytes)
         Base64.urlsafe_encode64(nonce + @box.encrypt(nonce, content))
       end
 
       def decrypt(content)
-        return content unless @box
-
         decoded_content = Base64.urlsafe_decode64(content)
         nonce = decoded_content[0...@box.nonce_bytes]
         cipher_text = decoded_content[@box.nonce_bytes..]
