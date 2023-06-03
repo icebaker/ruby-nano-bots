@@ -5,6 +5,7 @@ require 'dotenv/load'
 require_relative '../../static/gem'
 require_relative '../../controllers/cartridges'
 require_relative '../../controllers/instance'
+require_relative '../../controllers/security'
 require_relative '../../controllers/interfaces/cli'
 require_relative '../../components/stream'
 
@@ -16,6 +17,10 @@ module NanoBot
       stream: Components::Stream.new,
       environment:
     )
+  end
+
+  def self.security
+    Controllers::Security.check
   end
 
   def self.cartridges
