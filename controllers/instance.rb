@@ -13,14 +13,16 @@ require_relative './session'
 module NanoBot
   module Controllers
     class Instance
-      def initialize(cartridge_path:, stream:, state: nil)
+      def initialize(cartridge_path:, stream:, state: nil, environment: {})
         @stream = stream
 
         load_cartridge!(cartridge_path)
 
-        provider = Components::Provider.new(@cartridge[:provider])
+        provider = Components::Provider.new(@cartridge[:provider], environment:)
 
-        @session = Session.new(provider:, cartridge: @cartridge, state:, stream: @stream)
+        @session = Session.new(
+          provider:, cartridge: @cartridge, state:, stream: @stream, environment:
+        )
       end
 
       def cartridge

@@ -3,11 +3,12 @@
 require 'babosa'
 
 require_relative '../logic/helpers/hash'
+require_relative './crypto'
 
 module NanoBot
   module Components
     class Storage
-      def self.build_path_and_ensure_state_file!(key, cartridge)
+      def self.build_path_and_ensure_state_file!(key, cartridge, environment: {})
         path = [
           Logic::Helpers::Hash.fetch(cartridge, %i[state directory]),
           ENV.fetch('NANO_BOTS_STATE_DIRECTORY', nil)
@@ -17,14 +18,38 @@ module NanoBot
 
         path = "#{user_home!.sub(%r{/$}, '')}/.local/state/nano-bots" if path.nil?
 
-        path = "#{path.sub(%r{/$}, '')}/ruby-nano-bots/#{cartridge[:meta][:author].to_slug.normalize}"
+        prefix = environment && (
+          environment['NANO_BOTS_USER_IDENTIFIER'] ||
+          environment[:NANO_BOTS_USER_IDENTIFIER]
+        )
+
+        path = "#{path.sub(%r{/$}, '')}/ruby-nano-bots/vault"
+
+        if prefix
+          normalized = prefix.split('/').map do |part|
+            Crypto.encrypt(
+              part.to_s.gsub('.', '-').force_encoding('UTF-8').to_slug.normalize,
+              soft: true
+            )
+          end.join('/')
+
+          path = "#{path}/#{normalized}"
+        end
+
+        path = "#{path}/#{cartridge[:meta][:author].to_slug.normalize}"
         path = "#{path}/#{cartridge[:meta][:name].to_slug.normalize}"
-        path = "#{path}/#{cartridge[:meta][:version].to_s.gsub('.', '-').to_slug.normalize}/#{key}"
+        path = "#{path}/#{cartridge[:meta][:version].to_s.gsub('.', '-').to_slug.normalize}"
+        path = "#{path}/#{Crypto.encrypt(key, soft: true)}"
         path = "#{path}/state.json"
 
         FileUtils.mkdir_p(File.dirname(path))
 
-        File.write(path, JSON.generate({ key:, history: [] })) unless File.exist?(path)
+        unless File.exist?(path)
+          File.write(
+            path,
+            Crypto.encrypt(JSON.generate({ key:, history: [] }))
+          )
+        end
 
         path
       end

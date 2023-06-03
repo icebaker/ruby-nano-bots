@@ -12,6 +12,28 @@ module NanoBot
           when 'version'
             puts NanoBot::GEM[:version]
             exit
+          when 'security'
+            result = NanoBot.security.check
+
+            if result[:encryption]
+              puts "\n✅ Encryption is enabled and properly working."
+              puts '     This means that your data is stored in an encrypted format on your disk.'
+            else
+              puts "\n❌ Encryption is not being utilized to store your content."
+              puts '     This means that your data can be easily read because it is stored in plaintext.'
+            end
+
+            if result[:password]
+              puts "\n✅ A password is being used for the encrypted content."
+              puts '     This means that only those who possess the password can decrypt your data.'
+            else
+              puts "\n❌ No custom password is being used for the encrypted content."
+              puts '     This means that anyone can easily decrypt your data.'
+            end
+
+            puts ''
+
+            exit
           when 'help', '', nil
             puts ''
             puts "Nano Bots #{NanoBot::GEM[:version]}"
@@ -34,6 +56,7 @@ module NanoBot
             puts '  nb - STATE-KEY state'
             puts '  nb cartridge.yml STATE-KEY state'
             puts ''
+            puts '  nb security'
             puts '  nb version'
             puts '  nb help'
             puts ''

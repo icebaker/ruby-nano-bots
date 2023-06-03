@@ -9,6 +9,7 @@ require_relative '../logic/cartridge/streaming'
 require_relative '../logic/cartridge/interaction'
 require_relative '../components/storage'
 require_relative '../components/adapter'
+require_relative '../components/crypto'
 
 module NanoBot
   module Controllers
@@ -17,7 +18,7 @@ module NanoBot
     class Session
       attr_accessor :stream
 
-      def initialize(provider:, cartridge:, state: nil, stream: $stdout)
+      def initialize(provider:, cartridge:, state: nil, stream: $stdout, environment: {})
         @stream = stream
         @provider = provider
         @cartridge = cartridge
@@ -28,8 +29,9 @@ module NanoBot
           @state = { history: [] }
         else
           @state_path = Components::Storage.build_path_and_ensure_state_file!(
-            state.strip, @cartridge
+            state.strip, @cartridge, environment:
           )
+
           @state = load_state
         end
       end
@@ -39,11 +41,13 @@ module NanoBot
       end
 
       def load_state
-        @state = Logic::Helpers::Hash.symbolize_keys(JSON.parse(File.read(@state_path)))
+        @state = Logic::Helpers::Hash.symbolize_keys(JSON.parse(
+                                                       Components::Crypto.decrypt(File.read(@state_path))
+                                                     ))
       end
 
       def store_state!
-        File.write(@state_path, JSON.generate(@state))
+        File.write(@state_path, Components::Crypto.encrypt(JSON.generate(@state)))
       end
 
       def boot(mode:)

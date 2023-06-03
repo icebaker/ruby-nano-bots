@@ -39,7 +39,7 @@ module NanoBot
         rescue StandardError => _e
         end
 
-        cartridges.sort_by { |cartridge| cartridge[:meta][:name] }
+        cartridges = cartridges.sort_by { |cartridge| cartridge[:meta][:name] }
 
         cartridges.prepend(
           { system: { id: '-' }, meta: { name: 'Default', symbol: '🤖' } }
