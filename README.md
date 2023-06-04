@@ -92,8 +92,8 @@ services:
       NANO_BOTS_ENCRYPTION_PASSWORD: UNSAFE
       NANO_BOTS_END_USER: your-user
     volumes:
-      - ./your-cartridges:/.local/share/nano-bots/cartridges
-      - ./your-state:/.local/state/nano-bots
+      - ./your-cartridges:/root/.local/share/nano-bots/cartridges
+      - ./your-state-path:/root/.local/state/nano-bots
 ```
 
 Enter the container:
