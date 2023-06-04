@@ -8,7 +8,6 @@ interfaces:
     prompt:
       - text: '🤖'
       - text: '> '
-        color: blue
   eval:
     output:
       stream: true

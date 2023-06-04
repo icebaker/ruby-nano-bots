@@ -5,10 +5,10 @@ services:
     image: ruby:3.2.2-slim-bullseye
     command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev && gem install nano-bots -v 0.0.10 && bash"
     environment:
-      NANO_BOTS_ENCRYPTION_PASSWORD: UNSAFE
       OPENAI_API_ADDRESS: https://api.openai.com
-      OPENAI_API_ACCESS_TOKEN: your-token
-      OPENAI_API_USER_IDENTIFIER: your-user
+      OPENAI_API_KEY: your-access-token
+      NANO_BOTS_ENCRYPTION_PASSWORD: UNSAFE
+      NANO_BOTS_END_USER: your-user
     volumes:
-      - ./your-cartridges:/cartridges
-      # - ./your-data:/data
+      - ./your-cartridges:/.local/share/nano-bots/cartridges
+      - ./your-state:/.local/state/nano-bots

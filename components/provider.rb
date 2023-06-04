@@ -8,11 +8,11 @@ module NanoBot
   module Components
     class Provider
       def self.new(provider, environment: {})
-        case provider[:name]
+        case provider[:id]
         when 'openai'
-          Providers::OpenAI.new(provider[:settings], environment:)
+          Providers::OpenAI.new(provider[:settings], provider[:credentials], environment:)
         else
-          raise "Unsupported provider #{provider[:name]}"
+          raise "Unsupported provider \"#{provider[:id]}\""
         end
       end
     end

@@ -8,6 +8,31 @@ require_relative './crypto'
 module NanoBot
   module Components
     class Storage
+      def self.end_user(cartridge, environment)
+        user = ENV.fetch('NANO_BOTS_END_USER', nil)
+
+        if cartridge[:provider][:id] == 'openai' &&
+           !cartridge[:provider][:settings][:user].nil? &&
+           !cartridge[:provider][:settings][:user].to_s.strip.empty?
+          user = cartridge[:provider][:settings][:user]
+        end
+
+        candidate = environment && (
+          environment['NANO_BOTS_END_USER'] ||
+          environment[:NANO_BOTS_END_USER]
+        )
+
+        user = candidate if !candidate.nil? && !candidate.to_s.strip.empty?
+
+        user = if user.nil? || user.to_s.strip.empty?
+                 'unknown'
+               else
+                 user.to_s.strip
+               end
+
+        Crypto.encrypt(user, soft: true)
+      end
+
       def self.build_path_and_ensure_state_file!(key, cartridge, environment: {})
         path = [
           Logic::Helpers::Hash.fetch(cartridge, %i[state directory]),
@@ -18,27 +43,12 @@ module NanoBot
 
         path = "#{user_home!.sub(%r{/$}, '')}/.local/state/nano-bots" if path.nil?
 
-        prefix = environment && (
-          environment['NANO_BOTS_USER_IDENTIFIER'] ||
-          environment[:NANO_BOTS_USER_IDENTIFIER]
-        )
-
-        path = "#{path.sub(%r{/$}, '')}/ruby-nano-bots/vault"
-
-        if prefix
-          normalized = prefix.split('/').map do |part|
-            Crypto.encrypt(
-              part.to_s.gsub('.', '-').force_encoding('UTF-8').to_slug.normalize,
-              soft: true
-            )
-          end.join('/')
-
-          path = "#{path}/#{normalized}"
-        end
+        path = "#{path.sub(%r{/$}, '')}/ruby-nano-bots"
 
         path = "#{path}/#{cartridge[:meta][:author].to_slug.normalize}"
         path = "#{path}/#{cartridge[:meta][:name].to_slug.normalize}"
         path = "#{path}/#{cartridge[:meta][:version].to_s.gsub('.', '-').to_slug.normalize}"
+        path = "#{path}/#{end_user(cartridge, environment)}"
         path = "#{path}/#{Crypto.encrypt(key, soft: true)}"
         path = "#{path}/state.json"
 
