@@ -44,10 +44,11 @@ bundle install
 For credentials and configurations, relevant environment variables can be set in your `.bashrc`, `.zshrc`, or equivalent files, as well as in your Docker Container or System Environment. Example:
 
 ```sh
-export NANO_BOTS_ENCRYPTION_PASSWORD='UNSAFE'
 export OPENAI_API_ADDRESS=https://api.openai.com
-export OPENAI_API_ACCESS_TOKEN=your-token
-export OPENAI_API_USER_IDENTIFIER=your-user
+export OPENAI_API_KEY=your-access-token
+
+export NANO_BOTS_ENCRYPTION_PASSWORD=UNSAFE
+export NANO_BOTS_END_USER=your-user
 
 # export NANO_BOTS_STATE_DIRECTORY=/home/user/.local/state/nano-bots
 # export NANO_BOTS_CARTRIDGES_DIRECTORY=/home/user/.local/share/nano-bots/cartridges
@@ -56,10 +57,11 @@ export OPENAI_API_USER_IDENTIFIER=your-user
 Alternatively, if your current directory has a `.env` file with the environment variables, they will be automatically loaded:
 
 ```sh
-NANO_BOTS_ENCRYPTION_PASSWORD='UNSAFE'
 OPENAI_API_ADDRESS=https://api.openai.com
-OPENAI_API_ACCESS_TOKEN=your-token
-OPENAI_API_USER_IDENTIFIER=your-user
+OPENAI_API_KEY=your-access-token
+
+NANO_BOTS_ENCRYPTION_PASSWORD=UNSAFE
+NANO_BOTS_END_USER=your-user
 
 # NANO_BOTS_STATE_DIRECTORY=/home/user/.local/state/nano-bots
 # NANO_BOTS_CARTRIDGES_DIRECTORY=/home/user/.local/share/nano-bots/cartridges
@@ -85,13 +87,13 @@ services:
     image: ruby:3.2.2-slim-bullseye
     command: sh -c "gem install nano-bots -v 0.0.10 && bash"
     environment:
-      NANO_BOTS_ENCRYPTION_PASSWORD: UNSAFE
       OPENAI_API_ADDRESS: https://api.openai.com
-      OPENAI_API_ACCESS_TOKEN: your-token
-      OPENAI_API_USER_IDENTIFIER: your-user
+      OPENAI_API_KEY: your-access-token
+      NANO_BOTS_ENCRYPTION_PASSWORD: UNSAFE
+      NANO_BOTS_END_USER: your-user
     volumes:
-      - ./your-cartridges:/cartridges
-      # - ./your-data:/data
+      - ./your-cartridges:/.local/share/nano-bots/cartridges
+      - ./your-state:/.local/state/nano-bots
 ```
 
 Enter the container:
@@ -104,8 +106,8 @@ Start playing:
 nb - - eval "hello"
 nb - - repl
 
-nb cartridges/assistant.yml - eval "hello"
-nb cartridges/assistant.yml - repl
+nb assistant.yml - eval "hello"
+nb assistant.yml - repl
 ```
 
 ## Usage
@@ -256,13 +258,13 @@ behaviors:
     directive: You are a helpful assistant.
 
 provider:
-  name: openai
+  id: openai
+  credentials:
+    address: ENV/OPENAI_API_ADDRESS
+    access-token: ENV/OPENAI_API_KEY
   settings:
+    user: ENV/NANO_BOTS_END_USER
     model: gpt-3.5-turbo
-    credentials:
-      address: ENV/OPENAI_API_ADDRESS
-      access-token: ENV/OPENAI_API_ACCESS_TOKEN
-      user-identifier: ENV/OPENAI_API_USER_IDENTIFIER
 ```
 
 Check the Nano Bots specification to learn more about [how to build cartridges](https://spec.nbots.io/#/README?id=cartridges).
@@ -314,33 +316,48 @@ A common strategy for deploying Nano Bots to multiple users through APIs or auto
 You can define custom end-user identifiers in the following way:
 
 ```ruby
-NanoBot.new(environment: { NANO_BOTS_USER_IDENTIFIER: 'user-a' })
-NanoBot.new(environment: { NANO_BOTS_USER_IDENTIFIER: 'user-b' })
+NanoBot.new(environment: { NANO_BOTS_END_USER: 'custom-user-a' })
+NanoBot.new(environment: { NANO_BOTS_END_USER: 'custom-user-b' })
 ```
 
-Consider that you have have the following OpenAI user identifier:
+Consider that you have the following end-user identifier in your environment:
 ```sh
-OPENAI_API_USER_IDENTIFIER=your-name
+NANO_BOTS_END_USER=your-name
+```
+
+Or a configuration in your Cartridge:
+```yml
+---
+provider:
+  id: openai
+  settings:
+    user: your-name
 ```
 
 The requests will be performed as follows:
 
 ```ruby
-NanoBot.new(environment: {NANO_BOTS_USER_IDENTIFIER: 'user-a'})
-# { user: 'your-name/user-a' }
+NanoBot.new(cartridge: '-')
+# { user: 'your-name' }
 
-NanoBot.new(environment: {NANO_BOTS_USER_IDENTIFIER: 'user-b'})
-# { user: 'your-name/user-b' }
+NanoBot.new(cartridge: '-', environment: { NANO_BOTS_END_USER: 'custom-user-a' })
+# { user: 'custom-user-a' }
+
+NanoBot.new(cartridge: '-', environment: { NANO_BOTS_END_USER: 'custom-user-b' })
+# { user: 'custom-user-b' }
 ```
 
 Actually, to enhance privacy, neither your user nor your users' identifiers will be shared in this way. Instead, they will be encrypted before being shared with the provider:
 
 ```ruby
-'your-name/user-a'
-# -onBK9GWafYz-JM8-cydhn4jd4Bkfkec5FtJ1ReCrtHCDPjkhCqUjRobG1zLnAz3BLo1kFhRW3w=
+'your-name'
+# _O7OjYUESagb46YSeUeSfSMzoO1Yg0BZqpsAkPg4j62SeNYlgwq3kn51Ob2wmIehoA==
 
-'your-name/user-a'
-# RldW4_xxktCksEAR9G8aORuq3skPAc9ivWj3eye2ICCHQy8gG_R5qLMS3Fg-0lY6LwxKGQur5Ww=
+'custom-user-a'
+# _O7OjYUESagb46YSeUeSfSMzoO1Yg0BZJgIXHCBHyADW-rn4IQr-s2RvP7vym8u5tnzYMIs=
+
+'custom-user-b'
+# _O7OjYUESagb46YSeUeSfSMzoO1Yg0BZkjUwCcsh9sVppKvYMhd2qGRvP7vym8u5tnzYMIg=
 ```
 
 In this manner, you possess identifiers if required, however, their actual content can only be decrypted by you via your secure password (`NANO_BOTS_ENCRYPTION_PASSWORD`).
@@ -352,11 +369,14 @@ To decrypt your encrypted data, once you have properly configured your password,
 ```ruby
 require 'nano-bots'
 
-NanoBot.security.decrypt('-onBK9GWafYz-JM8-cydhn4jd4Bkfkec5FtJ1ReCrtHCDPjkhCqUjRobG1zLnAz3BLo1kFhRW3w=')
-# your-name/user-b
+NanoBot.security.decrypt('_O7OjYUESagb46YSeUeSfSMzoO1Yg0BZqpsAkPg4j62SeNYlgwq3kn51Ob2wmIehoA==')
+# your-name
 
-NanoBot.security.decrypt('RldW4_xxktCksEAR9G8aORuq3skPAc9ivWj3eye2ICCHQy8gG_R5qLMS3Fg-0lY6LwxKGQur5Ww=')
-# your-name/user-b
+NanoBot.security.decrypt('_O7OjYUESagb46YSeUeSfSMzoO1Yg0BZJgIXHCBHyADW-rn4IQr-s2RvP7vym8u5tnzYMIs=')
+# custom-user-a
+
+NanoBot.security.decrypt('_O7OjYUESagb46YSeUeSfSMzoO1Yg0BZkjUwCcsh9sVppKvYMhd2qGRvP7vym8u5tnzYMIg=')
+# custom-user-b
 ```
 
 If you lose your password, you lose your data. It is not possible to recover it at all. For real.

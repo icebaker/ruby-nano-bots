@@ -9,6 +9,8 @@ module NanoBot
   module Components
     module Providers
       class OpenAI < Base
+        DEFAULT_ADDRESS = 'https://api.openai.com'
+
         CHAT_SETTINGS = %i[
           model stream temperature top_p n stop max_tokens
           presence_penalty frequency_penalty logit_bias
@@ -16,14 +18,18 @@ module NanoBot
 
         attr_reader :settings
 
-        def initialize(settings, environment: {})
+        def initialize(settings, credentials, environment: {})
           @settings = settings
+          @credentials = credentials
           @environment = environment
 
-          @client = ::OpenAI::Client.new(
-            uri_base: "#{@settings[:credentials][:address].sub(%r{/$}, '')}/",
-            access_token: @settings[:credentials][:'access-token']
-          )
+          uri_base = if @credentials[:address].nil? || @credentials[:address].to_s.strip.empty?
+                       "#{DEFAULT_ADDRESS}/"
+                     else
+                       "#{@credentials[:address].to_s.sub(%r{/$}, '')}/"
+                     end
+
+          @client = ::OpenAI::Client.new(uri_base:, access_token: @credentials[:'access-token'])
         end
 
         def stream(input)
@@ -48,16 +54,7 @@ module NanoBot
             )
           end
 
-          user = @settings[:credentials][:'user-identifier']
-
-          user_suffix = @environment && (
-            @environment['NANO_BOTS_USER_IDENTIFIER'] ||
-            @environment[:NANO_BOTS_USER_IDENTIFIER]
-          )
-
-          user = "#{user}/#{user_suffix}" if user_suffix && user_suffix != ''
-
-          payload = { model: @settings[:model], user: Crypto.encrypt(user, soft: true), messages: }
+          payload = { user: OpenAI.end_user(@settings, @environment), messages: }
 
           CHAT_SETTINGS.each do |key|
             payload[key] = @settings[key] if @settings.key?(key)
@@ -86,6 +83,27 @@ module NanoBot
 
             block.call({ who: 'AI', message: result.dig('choices', 0, 'message', 'content') }, true)
           end
+        end
+
+        def self.end_user(settings, environment)
+          user = ENV.fetch('NANO_BOTS_END_USER', nil)
+
+          user = settings[:user] if !settings[:user].nil? && !settings[:user].to_s.strip.empty?
+
+          candidate = environment && (
+            environment['NANO_BOTS_END_USER'] ||
+            environment[:NANO_BOTS_END_USER]
+          )
+
+          user = candidate if !candidate.nil? && !candidate.to_s.strip.empty?
+
+          user = if user.nil? || user.to_s.strip.empty?
+                   'unknown'
+                 else
+                   user.to_s.strip
+                 end
+
+          Crypto.encrypt(user, soft: true)
         end
       end
     end

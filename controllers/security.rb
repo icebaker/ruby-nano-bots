@@ -9,6 +9,10 @@ module NanoBot
         Components::Crypto.decrypt(content)
       end
 
+      def self.encrypt(content, soft: false)
+        Components::Crypto.encrypt(content, soft:)
+      end
+
       def self.check
         password = ENV.fetch('NANO_BOTS_ENCRYPTION_PASSWORD', nil)
         password = 'UNSAFE' unless password && password != ''
