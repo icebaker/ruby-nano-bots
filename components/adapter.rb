@@ -24,14 +24,22 @@ module NanoBot
       def self.fennel(content, expression)
         path = "#{File.expand_path('../static/fennel', __dir__)}/?.lua"
         state = SweetMoon::State.new(package_path: path).fennel
-        state.fennel.eval("(set _G.adapter (fn [content] #{expression}))")
+        # TODO: global is deprecated...
+        state.fennel.eval(
+          "(global adapter (fn [content] #{expression}))", 1,
+          { allowedGlobals: %w[math string table] }
+        )
         adapter = state.get(:adapter)
         adapter.call([content])
       end
 
       def self.lua(content, expression)
         state = SweetMoon::State.new
-        state.eval("adapter = function(content) return #{expression}; end")
+        code = "_, adapter = pcall(load('return function(content) return #{
+          expression.gsub("'", "\\\\'")
+        }; end', nil, 't', {math=math,string=string,table=table}))"
+
+        state.eval(code)
         adapter = state.get(:adapter)
         adapter.call([content])
       end
