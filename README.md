@@ -309,7 +309,7 @@ NanoBot.security.check
 # => { encryption: true, password: true }
 ```
 
-#### End-user IDs
+### End-user IDs
 
 A common strategy for deploying Nano Bots to multiple users through APIs or automations is to assign a unique [end-user ID](https://platform.openai.com/docs/guides/safety-best-practices/end-user-ids) for each user. This can be useful if any of your users violate the provider's policy due to abusive behavior. By providing the end-user ID, you can unravel that even though the activity originated from your API Key, the actions taken were not your own.
 
@@ -362,7 +362,7 @@ Actually, to enhance privacy, neither your user nor your users' identifiers will
 
 In this manner, you possess identifiers if required, however, their actual content can only be decrypted by you via your secure password (`NANO_BOTS_ENCRYPTION_PASSWORD`).
 
-## Decrypting
+### Decrypting
 
 To decrypt your encrypted data, once you have properly configured your password, you can simply run:
 
