@@ -3,7 +3,7 @@
 module NanoBot
   GEM = {
     name: 'nano-bots',
-    version: '0.1.0',
+    version: '0.1.1',
     author: 'icebaker',
     summary: 'Ruby Implementation of Nano Bots: small, AI-powered bots',
     description: 'Ruby Implementation of Nano Bots: small, AI-powered bots easily shared as a single file, designed to support multiple providers such as Vicuna, OpenAI ChatGPT, Google PaLM, Alpaca, and LLaMA.',
