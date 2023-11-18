@@ -23,7 +23,7 @@ module NanoBot
 
         files.values.uniq.map do |file|
           cartridge = Logic::Helpers::Hash.symbolize_keys(
-            YAML.safe_load(File.read(file[:path]), permitted_classes: [Symbol])
+            YAML.safe_load_file(file[:path], permitted_classes: [Symbol])
           ).merge({
                     system: {
                       id: file[:path].to_s.sub(/^#{Regexp.escape(file[:base])}/, '').sub(%r{^/}, '').sub(/\.[^.]+\z/,

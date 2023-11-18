@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require_relative '../helpers/hash'
-require_relative './default'
+require_relative 'default'
 
 module NanoBot
   module Logic

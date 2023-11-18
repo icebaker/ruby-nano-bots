@@ -37,6 +37,8 @@ module NanoBot
             [proc { prompt }, proc { 'MISSING INPUT' }]
           )
 
+          Logic::Cartridge::Streaming.enabled?(cartridge, :repl)
+
           Pry.commands.block_command(/(.*)/, 'handler') do |line|
             session.print(prefix) unless prefix.nil?
             session.evaluate_and_print(line, mode: 'repl')

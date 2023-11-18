@@ -6,9 +6,9 @@ require_relative '../logic/helpers/hash'
 require_relative '../components/provider'
 require_relative '../components/storage'
 require_relative '../components/stream'
-require_relative './interfaces/repl'
-require_relative './interfaces/eval'
-require_relative './session'
+require_relative 'interfaces/repl'
+require_relative 'interfaces/eval'
+require_relative 'session'
 
 module NanoBot
   module Controllers
@@ -83,7 +83,7 @@ module NanoBot
             raise StandardError, "Cartridge file not found: \"#{path}\""
           end
 
-          @cartridge = YAML.safe_load(File.read(elected_path), permitted_classes: [Symbol])
+          @cartridge = YAML.safe_load_file(elected_path, permitted_classes: [Symbol])
         end
 
         @safe_cartridge = Marshal.load(Marshal.dump(@cartridge))

@@ -3,10 +3,13 @@
 require 'babosa'
 
 require 'fileutils'
+require 'rainbow'
 
 require_relative '../logic/helpers/hash'
 require_relative '../logic/cartridge/streaming'
 require_relative '../logic/cartridge/interaction'
+require_relative '../logic/cartridge/fetch'
+require_relative 'interfaces/tools'
 require_relative '../components/storage'
 require_relative '../components/adapter'
 require_relative '../components/crypto'
@@ -41,9 +44,9 @@ module NanoBot
       end
 
       def load_state
-        @state = Logic::Helpers::Hash.symbolize_keys(JSON.parse(
-                                                       Components::Crypto.decrypt(File.read(@state_path))
-                                                     ))
+        @state = Logic::Helpers::Hash.symbolize_keys(
+          JSON.parse(Components::Crypto.decrypt(File.read(@state_path)))
+        )
       end
 
       def store_state!
@@ -78,42 +81,78 @@ module NanoBot
       end
 
       def process(input, mode:)
+        interface = Logic::Helpers::Hash.fetch(@cartridge, [:interfaces, mode.to_sym]) || {}
+
+        input[:interface] = interface
+        input[:tools] = @cartridge[:tools]
+
+        needs_another_round = true
+
+        # TODO: Improve infinite loop prevention.
+        needs_another_round = process_interaction(input, mode:) while needs_another_round
+      end
+
+      def process_interaction(input, mode:)
         prefix = Logic::Cartridge::Affixes.get(@cartridge, mode.to_sym, :output, :prefix)
         suffix = Logic::Cartridge::Affixes.get(@cartridge, mode.to_sym, :output, :suffix)
 
-        interface = Logic::Helpers::Hash.fetch(@cartridge, [:interfaces, mode.to_sym]) || {}
+        color = Logic::Cartridge::Fetch.cascate(@cartridge, [
+                                                  [:interfaces, mode.to_sym, :output, :color],
+                                                  %i[interfaces output color]
+                                                ])
+
+        color = color.to_sym if color
 
         streaming = Logic::Cartridge::Streaming.enabled?(@cartridge, mode.to_sym)
-
-        input[:interface] = interface
 
         updated_at = Time.now
 
         ready = false
-        @provider.evaluate(input) do |output, finished|
+
+        needs_another_round = false
+
+        @provider.evaluate(input) do |feedback|
           updated_at = Time.now
 
-          if finished
-            event = Marshal.load(Marshal.dump(output))
+          needs_another_round = true if feedback[:needs_another_round]
 
-            output = Logic::Cartridge::Interaction.output(
-              @cartridge, mode.to_sym, output, streaming, finished
-            )
-
-            output[:message] = Components::Adapter.apply(:output, output[:message])
-
-            event[:mode] = mode.to_s
-            event[:output] = "#{prefix}#{output[:message]}#{suffix}"
-
-            @state[:history] << event
-
-            self.print(output[:message]) unless streaming
-
-            ready = true
-            flush
-          elsif streaming
-            self.print(output[:message])
+          if feedback[:interaction] && feedback.dig(:interaction, :meta, :tool, :action)
+            Interfaces::Tool.dispatch_feedback(self, @cartridge, mode, feedback[:interaction][:meta][:tool])
           end
+
+          if feedback[:interaction]
+            event = Marshal.load(Marshal.dump(feedback[:interaction]))
+            event[:mode] = mode.to_s
+            event[:output] = nil
+
+            if feedback[:interaction][:who] == 'AI' && feedback[:interaction][:message]
+              event[:output] = feedback[:interaction][:message]
+              unless streaming
+                output = Logic::Cartridge::Interaction.output(
+                  @cartridge, mode.to_sym, feedback[:interaction], streaming, feedback[:finished]
+                )
+                output[:message] = Components::Adapter.apply(:output, output[:message])
+                event[:output] = (output[:message]).to_s
+              end
+            end
+
+            @state[:history] << event if feedback[:should_be_stored]
+            if event[:output] && ((!feedback[:finished] && streaming) || (!streaming && feedback[:finished]))
+              # TODO: Color?
+              if color
+                self.print(Rainbow(event[:output]).send(color))
+              else
+                self.print(event[:output])
+              end
+
+              flush if feedback[:finished]
+            end
+
+            # `.print` already adds a prefix and suffix, so we add them after printing to avoid duplications.
+            event[:output] = "#{prefix}#{event[:output]}#{suffix}"
+          end
+
+          ready = true if feedback[:finished]
         end
 
         until ready
@@ -122,6 +161,8 @@ module NanoBot
         end
 
         store_state! unless @stateless
+
+        needs_another_round
       end
 
       def flush

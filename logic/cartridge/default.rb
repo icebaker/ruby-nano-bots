@@ -15,7 +15,7 @@ module NanoBot
           return @values if @values
 
           path = File.expand_path('../../static/cartridges/default.yml', __dir__)
-          cartridge = YAML.safe_load(File.read(path), permitted_classes: [Symbol])
+          cartridge = YAML.safe_load_file(path, permitted_classes: [Symbol])
           @values = Logic::Helpers::Hash.symbolize_keys(cartridge)
           @values
         end
@@ -24,7 +24,7 @@ module NanoBot
           return @baseline if @baseline
 
           path = File.expand_path('../../static/cartridges/baseline.yml', __dir__)
-          cartridge = YAML.safe_load(File.read(path), permitted_classes: [Symbol])
+          cartridge = YAML.safe_load_file(path, permitted_classes: [Symbol])
           @baseline = Logic::Helpers::Hash.symbolize_keys(cartridge)
           @baseline
         end

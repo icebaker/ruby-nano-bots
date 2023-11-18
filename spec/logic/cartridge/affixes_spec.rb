@@ -6,7 +6,7 @@ require_relative '../../../logic/cartridge/affixes'
 
 RSpec.describe NanoBot::Logic::Cartridge::Affixes do
   context 'interfaces' do
-    let(:cartridge) { load_cartridge('affixes.yml') }
+    let(:cartridge) { load_symbolized('cartridges/affixes.yml') }
 
     it 'gets the expected affixes' do
       expect(described_class.get(cartridge, :repl, :input, :prefix)).to eq('E')
@@ -22,7 +22,7 @@ RSpec.describe NanoBot::Logic::Cartridge::Affixes do
   end
 
   context 'interfaces fallback' do
-    let(:cartridge) { load_cartridge('affixes.yml') }
+    let(:cartridge) { load_symbolized('cartridges/affixes.yml') }
 
     it 'gets the expected affixes' do
       cartridge[:interfaces][:repl][:input].delete(:prefix)
@@ -48,7 +48,7 @@ RSpec.describe NanoBot::Logic::Cartridge::Affixes do
   end
 
   context 'interfaces nil' do
-    let(:cartridge) { load_cartridge('affixes.yml') }
+    let(:cartridge) { load_symbolized('cartridges/affixes.yml') }
 
     it 'gets the expected affixes' do
       cartridge[:interfaces][:repl][:input][:prefix] = nil

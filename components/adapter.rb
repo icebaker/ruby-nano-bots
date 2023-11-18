@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'sweet-moon'
+require_relative 'embedding'
 
 module NanoBot
   module Components
@@ -8,40 +8,22 @@ module NanoBot
       def self.apply(_direction, params)
         content = params[:content]
 
-        if params[:fennel] && params[:lua]
-          raise StandardError, 'Adapter conflict: You can only use either Lua or Fennel, not both.'
-        end
+        raise StandardError, 'conflicting adapters' if %i[fennel lua clojure].count { |key| !params[key].nil? } > 1
+
+        call = { parameters: %w[content], values: [content], safety: false }
 
         if params[:fennel]
-          content = fennel(content, params[:fennel])
+          call[:source] = params[:fennel]
+          content = Components::Embedding.fennel(**call)
+        elsif params[:clojure]
+          call[:source] = params[:clojure]
+          content = Components::Embedding.clojure(**call)
         elsif params[:lua]
-          content = lua(content, params[:lua])
+          call[:source] = params[:lua]
+          content = Components::Embedding.lua(**call)
         end
 
         "#{params[:prefix]}#{content}#{params[:suffix]}"
-      end
-
-      def self.fennel(content, expression)
-        path = "#{File.expand_path('../static/fennel', __dir__)}/?.lua"
-        state = SweetMoon::State.new(package_path: path).fennel
-        # TODO: global is deprecated...
-        state.fennel.eval(
-          "(global adapter (fn [content] #{expression}))", 1,
-          { allowedGlobals: %w[math string table] }
-        )
-        adapter = state.get(:adapter)
-        adapter.call([content])
-      end
-
-      def self.lua(content, expression)
-        state = SweetMoon::State.new
-        code = "_, adapter = pcall(load('return function(content) return #{
-          expression.gsub("'", "\\\\'")
-        }; end', nil, 't', {math=math,string=string,table=table}))"
-
-        state.eval(code)
-        adapter = state.get(:adapter)
-        adapter.call([content])
       end
     end
   end

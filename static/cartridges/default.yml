@@ -12,6 +12,11 @@ interfaces:
     output:
       stream: true
       suffix: "\n"
+  tools:
+    call:
+      feedback: true
+    response:
+      feedback: false
 
 provider:
   settings:

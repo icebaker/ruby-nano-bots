@@ -5,8 +5,28 @@ require 'yaml'
 require_relative '../../../logic/cartridge/streaming'
 
 RSpec.describe NanoBot::Logic::Cartridge::Streaming do
+  context 'interfaces override' do
+    context 'defaults' do
+      let(:cartridge) { {} }
+
+      it 'uses default values when appropriate' do
+        expect(described_class.enabled?(cartridge, :repl)).to be(true)
+        expect(described_class.enabled?(cartridge, :eval)).to be(true)
+      end
+    end
+
+    context 'top-level overrides' do
+      let(:cartridge) { { interfaces: { output: { stream: false } } } }
+
+      it 'overrides default values when appropriate' do
+        expect(described_class.enabled?(cartridge, :repl)).to be(false)
+        expect(described_class.enabled?(cartridge, :eval)).to be(false)
+      end
+    end
+  end
+
   context 'provider' do
-    let(:cartridge) { load_cartridge('streaming.yml') }
+    let(:cartridge) { load_symbolized('cartridges/streaming.yml') }
 
     it 'checks if stream is enabled' do
       cartridge[:provider][:settings][:stream] = false
@@ -15,7 +35,7 @@ RSpec.describe NanoBot::Logic::Cartridge::Streaming do
   end
 
   context 'repl' do
-    let(:cartridge) { load_cartridge('streaming.yml') }
+    let(:cartridge) { load_symbolized('cartridges/streaming.yml') }
 
     it 'checks if stream is enabled' do
       cartridge[:interfaces][:repl][:output][:stream] = false
@@ -24,7 +44,7 @@ RSpec.describe NanoBot::Logic::Cartridge::Streaming do
   end
 
   context 'interface + repl' do
-    let(:cartridge) { load_cartridge('streaming.yml') }
+    let(:cartridge) { load_symbolized('cartridges/streaming.yml') }
 
     it 'checks if stream is enabled' do
       cartridge[:interfaces][:output][:stream] = false
@@ -34,7 +54,7 @@ RSpec.describe NanoBot::Logic::Cartridge::Streaming do
   end
 
   context 'interface' do
-    let(:cartridge) { load_cartridge('streaming.yml') }
+    let(:cartridge) { load_symbolized('cartridges/streaming.yml') }
 
     it 'checks if stream is enabled' do
       cartridge[:interfaces][:output][:stream] = false
@@ -44,7 +64,7 @@ RSpec.describe NanoBot::Logic::Cartridge::Streaming do
   end
 
   context '- repl' do
-    let(:cartridge) { load_cartridge('streaming.yml') }
+    let(:cartridge) { load_symbolized('cartridges/streaming.yml') }
 
     it 'checks if stream is enabled' do
       cartridge[:interfaces][:repl][:output].delete(:stream)
@@ -53,7 +73,7 @@ RSpec.describe NanoBot::Logic::Cartridge::Streaming do
   end
 
   context '- interface' do
-    let(:cartridge) { load_cartridge('streaming.yml') }
+    let(:cartridge) { load_symbolized('cartridges/streaming.yml') }
 
     it 'checks if stream is enabled' do
       cartridge[:interfaces][:output].delete(:stream)
@@ -63,7 +83,7 @@ RSpec.describe NanoBot::Logic::Cartridge::Streaming do
   end
 
   context '- provider' do
-    let(:cartridge) { load_cartridge('streaming.yml') }
+    let(:cartridge) { load_symbolized('cartridges/streaming.yml') }
 
     it 'checks if stream is enabled' do
       cartridge[:provider][:settings].delete(:stream)
