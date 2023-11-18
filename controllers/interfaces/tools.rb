@@ -3,13 +3,14 @@
 require 'rainbow'
 
 require_relative '../../logic/cartridge/tools'
+require_relative '../../logic/cartridge/safety'
 require_relative '../../components/embedding'
 
 module NanoBot
   module Controllers
     module Interfaces
       module Tool
-        def self.adapt(feedback, adapter)
+        def self.adapt(feedback, adapter, cartridge)
           call = {
             parameters: %w[id name parameters parameters-as-json output],
             values: [
@@ -17,7 +18,7 @@ module NanoBot
               feedback[:parameters].to_json,
               feedback[:output]
             ],
-            safety: false
+            safety: { sandboxed: Logic::Cartridge::Safety.sandboxed?(cartridge) }
           }
 
           raise StandardError, 'conflicting adapters' if %i[fennel lua clojure].count { |key| !adapter[key].nil? } > 1
@@ -49,7 +50,7 @@ module NanoBot
           adapter = Tool.adapter(cartridge, mode, feedback)
 
           if %i[fennel lua clojure].any? { |key| !adapter[key].nil? }
-            message = adapt(feedback, adapter)
+            message = adapt(feedback, adapter, cartridge)
           else
             message = "(#{feedback[:name]} #{feedback[:parameters].to_json})"
 

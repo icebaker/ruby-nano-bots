@@ -9,10 +9,18 @@ require 'tempfile'
 module NanoBot
   module Components
     class Embedding
+      def self.ensure_safety!(safety)
+        raise 'missing safety definitions' unless safety.key?(:sandboxed)
+      end
+
       def self.lua(source:, parameters:, values:, safety:)
+        ensure_safety!(safety)
+
+        allowed = ''
+        allowed = ', {math=math,string=string,table=table}' if safety[:sandboxed]
+
         state = SweetMoon::State.new
-        # code = "_, embedded = pcall(load([[\nreturn function(#{parameters.join(', ')})\nreturn #{source}\nend\n]], nil, 't', {math=math,string=string,table=table}))"
-        code = "_, embedded = pcall(load([[\nreturn function(#{parameters.join(', ')})\n#{source}\nend\n]], nil, 't'))"
+        code = "_, embedded = pcall(load([[\nreturn function(#{parameters.join(', ')})\n#{source}\nend\n]], nil, 't'#{allowed}))"
 
         state.eval(code)
         embedded = state.get(:embedded)
@@ -20,19 +28,25 @@ module NanoBot
       end
 
       def self.fennel(source:, parameters:, values:, safety:)
+        ensure_safety!(safety)
+
         path = "#{File.expand_path('../static/fennel', __dir__)}/?.lua"
         state = SweetMoon::State.new(package_path: path).fennel
 
         # TODO: global is deprecated...
         state.fennel.eval(
           "(global embedded (fn [#{parameters.join(' ')}] #{source}))", 1,
-          safety ? { allowedGlobals: %w[math string table] } : nil
+          safety[:sandboxed] ? { allowedGlobals: %w[math string table] } : nil
         )
         embedded = state.get(:embedded)
         embedded.call(values)
       end
 
       def self.clojure(source:, parameters:, values:, safety:)
+        ensure_safety!(safety)
+
+        raise 'TODO: sandboxed Clojure through Babashka not implemented' if safety[:sandboxed]
+
         raise 'invalid Clojure parameter name' if parameters.include?('injected-parameters')
 
         key_value = {}

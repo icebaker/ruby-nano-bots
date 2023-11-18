@@ -72,7 +72,7 @@ module NanoBot
           mode: mode.to_s,
           input: message,
           message: Components::Adapter.apply(
-            :input, Logic::Cartridge::Interaction.input(@cartridge, mode.to_sym, message)
+            Logic::Cartridge::Interaction.input(@cartridge, mode.to_sym, message), @cartridge
           )
         }
 
@@ -117,7 +117,7 @@ module NanoBot
 
         needs_another_round = false
 
-        @provider.evaluate(input) do |feedback|
+        @provider.evaluate(input, @cartridge) do |feedback|
           updated_at = Time.now
 
           needs_another_round = true if feedback[:needs_another_round]
@@ -137,7 +137,7 @@ module NanoBot
                 output = Logic::Cartridge::Interaction.output(
                   @cartridge, mode.to_sym, feedback[:interaction], streaming, feedback[:finished]
                 )
-                output[:message] = Components::Adapter.apply(:output, output[:message])
+                output[:message] = Components::Adapter.apply(output[:message], @cartridge)
                 event[:output] = (output[:message]).to_s
               end
             end

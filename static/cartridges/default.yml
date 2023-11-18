@@ -1,4 +1,10 @@
 ---
+safety:
+  functions:
+    sandboxed: true
+  tools:
+    confirmable: true
+
 interfaces:
   repl:
     output:

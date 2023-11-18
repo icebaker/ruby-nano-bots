@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative '../../embedding'
+require_relative '../../../logic/cartridge/safety'
 
 require 'concurrent'
 
@@ -9,11 +10,12 @@ module NanoBot
     module Providers
       class OpenAI < Base
         module Tools
-          def self.apply(cartridge, tools, feedback)
-            prepared_tools = NanoBot::Logic::OpenAI::Tools.prepare(cartridge, tools)
+          def self.apply(cartridge, function_cartridge, tools, feedback)
+            prepared_tools = NanoBot::Logic::OpenAI::Tools.prepare(function_cartridge, tools)
 
+            # TODO: Confirm before starting futures.
             futures = prepared_tools.map do |tool|
-              Concurrent::Promises.future { process!(tool, feedback) }
+              Concurrent::Promises.future { process!(tool, feedback, function_cartridge, cartridge) }
             end
 
             results = Concurrent::Promises.zip(*futures).value!
@@ -27,7 +29,7 @@ module NanoBot
             end
           end
 
-          def self.process!(tool, feedback)
+          def self.process!(tool, feedback, _function_cartridge, cartridge)
             feedback.call(
               { should_be_stored: false,
                 interaction: { who: 'AI', message: nil, meta: {
@@ -35,7 +37,11 @@ module NanoBot
                 } } }
             )
 
-            call = { parameters: %w[parameters], values: [tool[:parameters]], safety: false }
+            call = {
+              parameters: %w[parameters],
+              values: [tool[:parameters]],
+              safety: { sandboxed: Logic::Cartridge::Safety.sandboxed?(cartridge) }
+            }
 
             if %i[fennel lua clojure].count { |key| !tool[:source][key].nil? } > 1
               raise StandardError, 'conflicting tools'

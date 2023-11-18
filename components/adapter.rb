@@ -1,16 +1,20 @@
 # frozen_string_literal: true
 
 require_relative 'embedding'
+require_relative '../logic/cartridge/safety'
 
 module NanoBot
   module Components
     class Adapter
-      def self.apply(_direction, params)
+      def self.apply(params, cartridge)
         content = params[:content]
 
         raise StandardError, 'conflicting adapters' if %i[fennel lua clojure].count { |key| !params[key].nil? } > 1
 
-        call = { parameters: %w[content], values: [content], safety: false }
+        call = {
+          parameters: %w[content], values: [content],
+          safety: { sandboxed: Logic::Cartridge::Safety.sandboxed?(cartridge) }
+        }
 
         if params[:fennel]
           call[:source] = params[:fennel]

@@ -45,7 +45,7 @@ module NanoBot
           provider && interface
         end
 
-        def evaluate(input, &feedback)
+        def evaluate(input, cartridge, &feedback)
           messages = input[:history].map do |event|
             if event[:message].nil? && event[:meta] && event[:meta][:tool_calls]
               { role: 'assistant', content: nil, tool_calls: event[:meta][:tool_calls] }
@@ -122,7 +122,7 @@ module NanoBot
                       needs_another_round: true,
                       interaction: { who: 'AI', message: nil, meta: { tool_calls: tools } } }
                   )
-                  Tools.apply(input[:tools], tools, feedback).each do |interaction|
+                  Tools.apply(cartridge, input[:tools], tools, feedback).each do |interaction|
                     feedback.call({ should_be_stored: true, needs_another_round: true, interaction: })
                   end
                 end
@@ -149,7 +149,7 @@ module NanoBot
                   needs_another_round: true,
                   interaction: { who: 'AI', message: nil, meta: { tool_calls: tools } } }
               )
-              Tools.apply(input[:tools], tools, feedback).each do |interaction|
+              Tools.apply(cartridge, input[:tools], tools, feedback).each do |interaction|
                 feedback.call({ should_be_stored: true, needs_another_round: true, interaction: })
               end
             end
