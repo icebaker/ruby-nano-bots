@@ -17,6 +17,7 @@ require_relative '../components/crypto'
 module NanoBot
   module Controllers
     STREAM_TIMEOUT_IN_SECONDS = 5
+    INFINITE_LOOP_PREVENTION = 10
 
     class Session
       attr_accessor :stream
@@ -88,8 +89,13 @@ module NanoBot
 
         needs_another_round = true
 
-        # TODO: Improve infinite loop prevention.
-        needs_another_round = process_interaction(input, mode:) while needs_another_round
+        rounds = 0
+
+        while needs_another_round
+          needs_another_round = process_interaction(input, mode:)
+          rounds += 1
+          raise StandardError, 'infinite loop prevention' if rounds > INFINITE_LOOP_PREVENTION
+        end
       end
 
       def process_interaction(input, mode:)
@@ -137,22 +143,20 @@ module NanoBot
             end
 
             @state[:history] << event if feedback[:should_be_stored]
-            if event[:output] && ((!feedback[:finished] && streaming) || (!streaming && feedback[:finished]))
-              # TODO: Color?
-              if color
-                self.print(Rainbow(event[:output]).send(color))
-              else
-                self.print(event[:output])
-              end
 
-              flush if feedback[:finished]
+            if event[:output] && ((!feedback[:finished] && streaming) || (!streaming && feedback[:finished]))
+              self.print(color ? Rainbow(event[:output]).send(color) : event[:output])
             end
 
-            # `.print` already adds a prefix and suffix, so we add them after printing to avoid duplications.
+            # The `print` function already outputs a prefix and a suffix, so
+            # we should add them afterwards to avoid printing them twice.
             event[:output] = "#{prefix}#{event[:output]}#{suffix}"
           end
 
-          ready = true if feedback[:finished]
+          if feedback[:finished]
+            flush
+            ready = true
+          end
         end
 
         until ready

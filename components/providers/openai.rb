@@ -40,7 +40,6 @@ module NanoBot
         def stream(input)
           provider = @settings.key?(:stream) ? @settings[:stream] : true
 
-          # TODO: There's a bug here...
           interface = input[:interface].key?(:stream) ? input[:interface][:stream] : true
 
           provider && interface

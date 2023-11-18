@@ -10,8 +10,10 @@ module NanoBot
       module Tools
         def self.prepare(cartridge, tools)
           applies = []
+
+          tools = Marshal.load(Marshal.dump(tools))
+
           tools.each do |tool|
-            # TODO: Does this mutate the hash?
             tool = Helpers::Hash.symbolize_keys(tool)
 
             cartridge.each do |candidate|
