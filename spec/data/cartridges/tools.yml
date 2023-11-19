@@ -39,3 +39,8 @@ tools:
     clojure: |
       (require '[clojure.java.shell :refer [sh]])
       (println (apply sh (get parameters "command")))
+
+  - name: clock
+    description: Returns the current date and time.
+    fennel: |
+      (os.date)

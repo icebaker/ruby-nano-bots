@@ -42,7 +42,7 @@ module NanoBot
             if event[:message].nil? && event[:meta] && event[:meta][:tool_calls]
               { role: 'assistant', content: nil, tool_calls: event[:meta][:tool_calls] }
             elsif event[:who] == 'tool'
-              { role: event[:who], content: event[:message],
+              { role: event[:who], content: event[:message].to_s,
                 tool_call_id: event[:meta][:id], name: event[:meta][:name] }
             else
               { role: event[:who] == 'user' ? 'user' : 'assistant', content: event[:message] }

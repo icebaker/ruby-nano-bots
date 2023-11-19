@@ -65,9 +65,9 @@ module NanoBot
           if %i[fennel lua clojure].any? { |key| !adapter[key].nil? }
             message = adapt(feedback, adapter, cartridge)
           else
-            message = "(#{feedback[:name]} #{feedback[:parameters].to_json})"
+            message = "#{feedback[:name]} #{feedback[:parameters].to_json}"
 
-            message += " =>\n#{feedback[:output]}" if feedback[:action].to_sym == :responding
+            message += "\n#{feedback[:output]}" if feedback[:action].to_sym == :responding
           end
 
           message = "#{adapter[:prefix]}#{message}#{adapter[:suffix]}"

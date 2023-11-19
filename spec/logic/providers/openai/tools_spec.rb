@@ -59,6 +59,15 @@ RSpec.describe NanoBot::Logic::OpenAI::Tools do
               }
             } }
         )
+
+        expect(described_class.adapt(cartridge[:tools][3])).to eq(
+          { type: 'function',
+            function: {
+              name: 'clock',
+              description: 'Returns the current date and time.',
+              parameters: { type: 'object', properties: {} }
+            } }
+        )
       end
     end
 

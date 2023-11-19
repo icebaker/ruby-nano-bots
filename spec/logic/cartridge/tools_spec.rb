@@ -10,11 +10,11 @@ RSpec.describe NanoBot::Logic::Cartridge::Tools do
       let(:cartridge) { {} }
 
       it 'uses default values when appropriate' do
-        expect(described_class.feedback?(cartridge, :repl, :executing)).to be(true)
-        expect(described_class.feedback?(cartridge, :eval, :executing)).to be(true)
+        expect(described_class.feedback?(cartridge, :repl, :executing)).to be(false)
+        expect(described_class.feedback?(cartridge, :eval, :executing)).to be(false)
 
-        expect(described_class.feedback?(cartridge, :repl, :responding)).to be(false)
-        expect(described_class.feedback?(cartridge, :eval, :responding)).to be(false)
+        expect(described_class.feedback?(cartridge, :repl, :responding)).to be(true)
+        expect(described_class.feedback?(cartridge, :eval, :responding)).to be(true)
       end
     end
 

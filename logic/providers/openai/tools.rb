@@ -41,13 +41,16 @@ module NanoBot
         end
 
         def self.adapt(cartridge)
-          {
+          output = {
             type: 'function',
             function: {
-              name: cartridge[:name], description: cartridge[:description],
-              parameters: cartridge[:parameters]
+              name: cartridge[:name], description: cartridge[:description]
             }
           }
+
+          output[:function][:parameters] = (cartridge[:parameters] || { type: 'object', properties: {} })
+
+          output
         end
       end
     end

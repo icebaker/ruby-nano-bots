@@ -19,10 +19,15 @@ interfaces:
       stream: true
       suffix: "\n"
   tools:
+    confirming:
+      suffix: ' [yN] '
+      default: 'n'
+      yeses: ['y', 'yes']
     executing:
-      feedback: true
-    responding:
       feedback: false
+    responding:
+      suffix: "\n\n"
+      feedback: true
 
 provider:
   settings:
