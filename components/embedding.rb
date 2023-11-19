@@ -33,7 +33,7 @@ module NanoBot
         path = "#{File.expand_path('../static/fennel', __dir__)}/?.lua"
         state = SweetMoon::State.new(package_path: path).fennel
 
-        # TODO: global is deprecated...
+        # TODO: `global` is deprecated.
         state.fennel.eval(
           "(global embedded (fn [#{parameters.join(' ')}] #{source}))", 1,
           safety[:sandboxed] ? { allowedGlobals: %w[math string table] } : nil

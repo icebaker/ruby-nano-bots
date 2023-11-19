@@ -10,12 +10,34 @@ module NanoBot
     module Providers
       class OpenAI < Base
         module Tools
+          def self.confirm(tool, feedback)
+            feedback.call(
+              { should_be_stored: false,
+                interaction: { who: 'AI', message: nil, meta: {
+                  tool: { action: 'confirm', id: tool[:id], name: tool[:name], parameters: tool[:parameters] }
+                } } }
+            )
+          end
+
           def self.apply(cartridge, function_cartridge, tools, feedback)
             prepared_tools = NanoBot::Logic::OpenAI::Tools.prepare(function_cartridge, tools)
 
-            # TODO: Confirm before starting futures.
+            if Logic::Cartridge::Safety.confirmable?(cartridge)
+              prepared_tools.each { |tool| tool[:allowed] = confirm(tool, feedback) }
+            else
+              prepared_tools.each { |tool| tool[:allowed] = true }
+            end
+
             futures = prepared_tools.map do |tool|
-              Concurrent::Promises.future { process!(tool, feedback, function_cartridge, cartridge) }
+              Concurrent::Promises.future do
+                if tool[:allowed]
+                  process!(tool, feedback, function_cartridge, cartridge)
+                else
+                  tool[:output] =
+                    "We asked the user you're chatting with for permission, but the user did not allow you to run this tool or function."
+                  tool
+                end
+              end
             end
 
             results = Concurrent::Promises.zip(*futures).value!

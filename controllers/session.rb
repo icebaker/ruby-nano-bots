@@ -6,6 +6,7 @@ require 'fileutils'
 require 'rainbow'
 
 require_relative '../logic/helpers/hash'
+require_relative '../logic/cartridge/safety'
 require_relative '../logic/cartridge/streaming'
 require_relative '../logic/cartridge/interaction'
 require_relative '../logic/cartridge/fetch'
@@ -102,10 +103,9 @@ module NanoBot
         prefix = Logic::Cartridge::Affixes.get(@cartridge, mode.to_sym, :output, :prefix)
         suffix = Logic::Cartridge::Affixes.get(@cartridge, mode.to_sym, :output, :suffix)
 
-        color = Logic::Cartridge::Fetch.cascate(@cartridge, [
-                                                  [:interfaces, mode.to_sym, :output, :color],
-                                                  %i[interfaces output color]
-                                                ])
+        color = Logic::Cartridge::Fetch.cascate(
+          @cartridge, [[:interfaces, mode.to_sym, :output, :color], %i[interfaces output color]]
+        )
 
         color = color.to_sym if color
 
@@ -118,44 +118,53 @@ module NanoBot
         needs_another_round = false
 
         @provider.evaluate(input, @cartridge) do |feedback|
-          updated_at = Time.now
-
           needs_another_round = true if feedback[:needs_another_round]
 
-          if feedback[:interaction] && feedback.dig(:interaction, :meta, :tool, :action)
-            Interfaces::Tool.dispatch_feedback(self, @cartridge, mode, feedback[:interaction][:meta][:tool])
-          end
+          updated_at = Time.now
 
-          if feedback[:interaction]
-            event = Marshal.load(Marshal.dump(feedback[:interaction]))
-            event[:mode] = mode.to_s
-            event[:output] = nil
+          if feedback[:interaction] &&
+             feedback.dig(:interaction, :meta, :tool, :action) &&
+             feedback[:interaction][:meta][:tool][:action] == 'confirm'
+            Interfaces::Tool.confirm(self, @cartridge, mode, feedback[:interaction][:meta][:tool])
+          else
 
-            if feedback[:interaction][:who] == 'AI' && feedback[:interaction][:message]
-              event[:output] = feedback[:interaction][:message]
-              unless streaming
-                output = Logic::Cartridge::Interaction.output(
-                  @cartridge, mode.to_sym, feedback[:interaction], streaming, feedback[:finished]
-                )
-                output[:message] = Components::Adapter.apply(output[:message], @cartridge)
-                event[:output] = (output[:message]).to_s
+            if feedback[:interaction] && feedback.dig(:interaction, :meta, :tool, :action)
+              Interfaces::Tool.dispatch_feedback(
+                self, @cartridge, mode, feedback[:interaction][:meta][:tool]
+              )
+            end
+
+            if feedback[:interaction]
+              event = Marshal.load(Marshal.dump(feedback[:interaction]))
+              event[:mode] = mode.to_s
+              event[:output] = nil
+
+              if feedback[:interaction][:who] == 'AI' && feedback[:interaction][:message]
+                event[:output] = feedback[:interaction][:message]
+                unless streaming
+                  output = Logic::Cartridge::Interaction.output(
+                    @cartridge, mode.to_sym, feedback[:interaction], streaming, feedback[:finished]
+                  )
+                  output[:message] = Components::Adapter.apply(output[:message], @cartridge)
+                  event[:output] = (output[:message]).to_s
+                end
               end
+
+              @state[:history] << event if feedback[:should_be_stored]
+
+              if event[:output] && ((!feedback[:finished] && streaming) || (!streaming && feedback[:finished]))
+                self.print(color ? Rainbow(event[:output]).send(color) : event[:output])
+              end
+
+              # The `print` function already outputs a prefix and a suffix, so
+              # we should add them afterwards to avoid printing them twice.
+              event[:output] = "#{prefix}#{event[:output]}#{suffix}"
             end
 
-            @state[:history] << event if feedback[:should_be_stored]
-
-            if event[:output] && ((!feedback[:finished] && streaming) || (!streaming && feedback[:finished]))
-              self.print(color ? Rainbow(event[:output]).send(color) : event[:output])
+            if feedback[:finished]
+              flush
+              ready = true
             end
-
-            # The `print` function already outputs a prefix and a suffix, so
-            # we should add them afterwards to avoid printing them twice.
-            event[:output] = "#{prefix}#{event[:output]}#{suffix}"
-          end
-
-          if feedback[:finished]
-            flush
-            ready = true
           end
         end
 

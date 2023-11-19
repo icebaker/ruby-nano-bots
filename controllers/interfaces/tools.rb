@@ -10,6 +10,17 @@ module NanoBot
   module Controllers
     module Interfaces
       module Tool
+        def self.confirm(session, cartridge, mode, feedback)
+          yeses = Logic::Cartridge::Safety.yeses(cartridge)
+          default_answer = Logic::Cartridge::Safety.default_answer(cartridge)
+          dispatch_feedback(session, cartridge, mode, feedback)
+          session.flush
+          answer = $stdin.gets.chomp.to_s.downcase.strip
+          answer = default_answer if answer == ''
+          session.print("\n")
+          yeses.include?(answer)
+        end
+
         def self.adapt(feedback, adapter, cartridge)
           call = {
             parameters: %w[id name parameters parameters-as-json output],
@@ -40,6 +51,8 @@ module NanoBot
 
         def self.dispatch_feedback(session, cartridge, mode, feedback)
           enabled = Logic::Cartridge::Tools.feedback?(cartridge, mode.to_sym, feedback[:action].to_sym)
+
+          enabled = true if feedback[:action].to_sym == :confirm
 
           return unless enabled
 
