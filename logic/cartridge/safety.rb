@@ -7,14 +7,14 @@ module NanoBot
     module Cartridge
       module Safety
         def self.default_answer(cartridge)
-          default = Fetch.cascate(cartridge, [%i[interfaces tools confirm default]])
+          default = Fetch.cascate(cartridge, [%i[interfaces tools confirming default]])
           return [] if default.nil?
 
           default
         end
 
         def self.yeses(cartridge)
-          yeses_values = Fetch.cascate(cartridge, [%i[interfaces tools confirm yeses]])
+          yeses_values = Fetch.cascate(cartridge, [%i[interfaces tools confirming yeses]])
           return [] if yeses_values.nil?
 
           yeses_values

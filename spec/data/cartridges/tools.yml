@@ -1,28 +1,41 @@
 ---
 tools:
+  - name: what-time-is-it
+    description: Returns the current date and time for a given timezone.
+    parameters:
+      type: object
+      properties:
+        timezone:
+          type: string
+          description: A string representing the timezone that should be used to provide a datetime, following the IANA (Internet Assigned Numbers Authority) Time Zone Database. Examples are "Asia/Tokyo" and "Europe/Paris".
+      required:
+        - timezone
+    fennel: |
+      (os.date)
+
   - name: get-current-weather
-    type: function
     description: Get the current weather in a given location.
     parameters:
-      - name: location
-      - name: unit
+      type: object
+      properties:
+        location:
+          type: string
+        unit:
+          type: string
     fennel: |
       (let [{:location location :unit unit} parameters]
         (.. "Here is the weather in " location ", in " unit ": 35.8°C."))
 
-  - name: what-time-is-it
-    description: Returns the current date and time.
-    fennel: |
-      (os.date)
-
   - name: sh
     description: It has access to computer users' data and can be used to run shell commands, similar to those in a Linux terminal, to extract information. Please be mindful and careful to avoid running dangerous commands on users' computers.
     parameters:
-      - name: command
-        type: array
-        items:
-          type: string
-        description: An array of strings that represents a shell command along with its arguments or options. For instance, `["df", "-h"]` executes the `df -h` command, where each array element specifies either the command itself or an associated argument/option.
+      type: object
+      properties:
+        command:
+          type: array
+          description: An array of strings that represents a shell command along with its arguments or options. For instance, `["df", "-h"]` executes the `df -h` command, where each array element specifies either the command itself or an associated argument/option.
+          items:
+            type: string
     clojure: |
       (require '[clojure.java.shell :refer [sh]])
       (println (apply sh (get parameters "command")))

@@ -19,9 +19,9 @@ interfaces:
       stream: true
       suffix: "\n"
   tools:
-    call:
+    executing:
       feedback: true
-    response:
+    responding:
       feedback: false
 
 provider:

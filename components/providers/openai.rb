@@ -37,15 +37,7 @@ module NanoBot
           @client = ::OpenAI::Client.new(uri_base:, access_token: @credentials[:'access-token'])
         end
 
-        def stream(input)
-          provider = @settings.key?(:stream) ? @settings[:stream] : true
-
-          interface = input[:interface].key?(:stream) ? input[:interface][:stream] : true
-
-          provider && interface
-        end
-
-        def evaluate(input, cartridge, &feedback)
+        def evaluate(input, streaming, cartridge, &feedback)
           messages = input[:history].map do |event|
             if event[:message].nil? && event[:meta] && event[:meta][:tool_calls]
               { role: 'assistant', content: nil, tool_calls: event[:meta][:tool_calls] }
@@ -76,7 +68,7 @@ module NanoBot
 
           payload[:tools] = input[:tools].map { |raw| NanoBot::Logic::OpenAI::Tools.adapt(raw) } if input[:tools]
 
-          if stream(input)
+          if streaming
             content = ''
             tools = []
 
@@ -135,9 +127,21 @@ module NanoBot
               end
             end
 
-            @client.chat(parameters: payload)
+            begin
+              @client.chat(parameters: payload)
+            rescue StandardError => e
+              raise e.class, e.response[:body] if e.response && e.response[:body]
+
+              raise e
+            end
           else
-            result = @client.chat(parameters: payload)
+            begin
+              result = @client.chat(parameters: payload)
+            rescue StandardError => e
+              raise e.class, e.response[:body] if e.response && e.response[:body]
+
+              raise e
+            end
 
             raise StandardError, result['error'] if result['error']
 

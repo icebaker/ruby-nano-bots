@@ -117,15 +117,15 @@ module NanoBot
 
         needs_another_round = false
 
-        @provider.evaluate(input, @cartridge) do |feedback|
+        @provider.evaluate(input, streaming, @cartridge) do |feedback|
           needs_another_round = true if feedback[:needs_another_round]
 
           updated_at = Time.now
 
           if feedback[:interaction] &&
              feedback.dig(:interaction, :meta, :tool, :action) &&
-             feedback[:interaction][:meta][:tool][:action] == 'confirm'
-            Interfaces::Tool.confirm(self, @cartridge, mode, feedback[:interaction][:meta][:tool])
+             feedback[:interaction][:meta][:tool][:action] == 'confirming'
+            Interfaces::Tool.confirming(self, @cartridge, mode, feedback[:interaction][:meta][:tool])
           else
 
             if feedback[:interaction] && feedback.dig(:interaction, :meta, :tool, :action)

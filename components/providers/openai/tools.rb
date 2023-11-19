@@ -10,11 +10,11 @@ module NanoBot
     module Providers
       class OpenAI < Base
         module Tools
-          def self.confirm(tool, feedback)
+          def self.confirming(tool, feedback)
             feedback.call(
               { should_be_stored: false,
                 interaction: { who: 'AI', message: nil, meta: {
-                  tool: { action: 'confirm', id: tool[:id], name: tool[:name], parameters: tool[:parameters] }
+                  tool: { action: 'confirming', id: tool[:id], name: tool[:name], parameters: tool[:parameters] }
                 } } }
             )
           end
@@ -23,7 +23,7 @@ module NanoBot
             prepared_tools = NanoBot::Logic::OpenAI::Tools.prepare(function_cartridge, tools)
 
             if Logic::Cartridge::Safety.confirmable?(cartridge)
-              prepared_tools.each { |tool| tool[:allowed] = confirm(tool, feedback) }
+              prepared_tools.each { |tool| tool[:allowed] = confirming(tool, feedback) }
             else
               prepared_tools.each { |tool| tool[:allowed] = true }
             end
@@ -55,7 +55,7 @@ module NanoBot
             feedback.call(
               { should_be_stored: false,
                 interaction: { who: 'AI', message: nil, meta: {
-                  tool: { action: 'call', id: tool[:id], name: tool[:name], parameters: tool[:parameters] }
+                  tool: { action: 'executing', id: tool[:id], name: tool[:name], parameters: tool[:parameters] }
                 } } }
             )
 
@@ -86,7 +86,7 @@ module NanoBot
               { should_be_stored: false,
                 interaction: { who: 'AI', message: nil, meta: {
                   tool: {
-                    action: 'response', id: tool[:id], name: tool[:name],
+                    action: 'responding', id: tool[:id], name: tool[:name],
                     parameters: tool[:parameters], output: tool[:output]
                   }
                 } } }

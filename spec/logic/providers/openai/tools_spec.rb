@@ -13,6 +13,23 @@ RSpec.describe NanoBot::Logic::OpenAI::Tools do
         expect(described_class.adapt(cartridge[:tools][0])).to eq(
           { type: 'function',
             function: {
+              name: 'what-time-is-it',
+              description: 'Returns the current date and time for a given timezone.',
+              parameters: {
+                type: 'object',
+                properties: {
+                  timezone: {
+                    type: 'string',
+                    description: 'A string representing the timezone that should be used to provide a datetime, following the IANA (Internet Assigned Numbers Authority) Time Zone Database. Examples are "Asia/Tokyo" and "Europe/Paris".'
+                  }
+                }, required: ['timezone']
+              }
+            } }
+        )
+
+        expect(described_class.adapt(cartridge[:tools][1])).to eq(
+          { type: 'function',
+            function: {
               name: 'get-current-weather',
               description: 'Get the current weather in a given location.',
               parameters: {
@@ -22,15 +39,6 @@ RSpec.describe NanoBot::Logic::OpenAI::Tools do
                   unit: { type: 'string' }
                 }
               }
-            } }
-        )
-
-        expect(described_class.adapt(cartridge[:tools][1])).to eq(
-          { type: 'function',
-            function: {
-              name: 'what-time-is-it',
-              description: 'Returns the current date and time.',
-              parameters: { properties: {}, type: 'object' }
             } }
         )
 
