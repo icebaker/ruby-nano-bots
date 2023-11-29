@@ -13,6 +13,8 @@ https://user-images.githubusercontent.com/113217272/238141567-c58a240c-7b67-4b3b
   - [Command Line](#command-line)
   - [Library](#library)
 - [Cartridges](#cartridges)
+  - [Tools (Functions)](#tools-functions)
+    - [Experimental Clojure Support](#experimental-clojure-support)
   - [Marketplace](#marketplace)
 - [Security and Privacy](#security-and-privacy)
   - [Cryptography](#cryptography)
@@ -270,6 +272,62 @@ provider:
 Check the Nano Bots specification to learn more about [how to build cartridges](https://spec.nbots.io/#/README?id=cartridges).
 
 Try the [Nano Bots Clinic (Live Editor)](https://clinic.nbots.io) to learn about creating Cartridges.
+
+### Tools (Functions)
+
+Nano Bots can also be powered by _Tools_ (Functions):
+
+```yaml
+---
+tools:
+  - name: random-number
+    description: Generates a random number between 1 and 100.
+    fennel: |
+      (math.random 1 100)
+```
+
+```
+🤖> please generate a random number
+
+random-number {} [yN] y
+
+random-number {}
+59
+
+The randomly generated number is 59.
+
+🤖> |
+```
+
+Check the [Nano Bots specification](https://spec.nbots.io/#/README?id=tools-functions-2) to learn more about them.
+
+#### Experimental Clojure Support
+
+We are exploring the use of [Clojure](https://clojure.org) through [Babashka](https://babashka.org), powered by [GraalVM](https://www.graalvm.org).
+
+The experimental support for Clojure would be similar to Lua and Fennel, using the `clojure:` key:
+
+```yaml
+---
+clojure: |
+  (-> (java.time.ZonedDateTime/now)
+      (.format (java.time.format.DateTimeFormatter/ofPattern "yyyy-MM-dd HH:mm"))
+      (clojure.string/trimr))
+```
+
+Unlike Lua and Fennel, Clojure support is not _embedded_ in this implementation. It relies on having the Babashka binary (`bb`) available in your environment where the Nano Bot is running.
+
+Here's [how to install Babashka](https://github.com/babashka/babashka#quickstart):
+
+```sh
+curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash
+```
+
+This is a quick check to ensure that it is available and working:
+```sh
+bb -e '{:hello "world"}'
+# => {:hello "world"}
+```
 
 ### Marketplace
 
