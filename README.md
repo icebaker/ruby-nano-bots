@@ -82,12 +82,11 @@ cp docker-compose.example.yml docker-compose.yml
 Set your provider credentials and choose your desired directory for the cartridges files:
 
 ```yaml
-version: '3.7'
-
+---
 services:
   nano-bots:
-    image: ruby:3.2.2-slim-bullseye
-    command: sh -c "gem install nano-bots -v 1.0.0 && bash"
+    image: ruby:3.2.2-slim-bookworm
+    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 1.0.0 && bash"
     environment:
       OPENAI_API_ADDRESS: https://api.openai.com
       OPENAI_API_KEY: your-access-token
@@ -302,6 +301,7 @@ The randomly generated number is 59.
 To successfully use Tools (Functions), you need to specify a provider and a model that support them. As of the writing of this README, the provider that supports them is [OpenAI](https://platform.openai.com/docs/models), with models `gpt-3.5-turbo-1106` and `gpt-4-1106-preview`:
 
 ```yaml
+---
 provider:
   id: openai
   credentials:
