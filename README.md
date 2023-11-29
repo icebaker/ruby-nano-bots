@@ -299,6 +299,19 @@ The randomly generated number is 59.
 🤖> |
 ```
 
+To successfully use Tools (Functions), you need to specify a provider and a model that support them. As of the writing of this README, the provider that supports them is OpenAI, with models `gpt-3.5-turbo-1106` and `gpt-4-1106-preview`:
+
+```yaml
+provider:
+  id: openai
+  credentials:
+    address: ENV/OPENAI_API_ADDRESS
+    access-token: ENV/OPENAI_API_KEY
+  settings:
+    user: ENV/NANO_BOTS_END_USER
+    model: gpt-4-1106-preview
+```
+
 Check the [Nano Bots specification](https://spec.nbots.io/#/README?id=tools-functions-2) to learn more about them.
 
 #### Experimental Clojure Support
@@ -327,6 +340,15 @@ This is a quick check to ensure that it is available and working:
 ```sh
 bb -e '{:hello "world"}'
 # => {:hello "world"}
+```
+
+We don't have sandbox support for Clojure; this means that you need to disable it to be able to run Clojure code, which you do at your own risk:
+
+```yaml
+---
+safety:
+  functions:
+    sandboxed: false
 ```
 
 ### Marketplace
