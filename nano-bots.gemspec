@@ -34,11 +34,11 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'babosa', '~> 2.0'
   spec.add_dependency 'concurrent-ruby', '~> 1.2', '>= 1.2.2'
   spec.add_dependency 'dotenv', '~> 2.8', '>= 2.8.1'
-  spec.add_dependency 'faraday', '~> 2.7', '>= 2.7.11'
+  spec.add_dependency 'faraday', '~> 2.7', '>= 2.7.12'
   spec.add_dependency 'pry', '~> 0.14.2'
   spec.add_dependency 'rainbow', '~> 3.1', '>= 3.1.1'
   spec.add_dependency 'rbnacl', '~> 7.1', '>= 7.1.1'
-  spec.add_dependency 'ruby-openai', '~> 6.2'
+  spec.add_dependency 'ruby-openai', '~> 6.3'
   spec.add_dependency 'sweet-moon', '~> 0.0.7'
 
   spec.metadata['rubygems_mfa_required'] = 'true'
