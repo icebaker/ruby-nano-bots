@@ -299,7 +299,7 @@ The randomly generated number is 59.
 🤖> |
 ```
 
-To successfully use Tools (Functions), you need to specify a provider and a model that support them. As of the writing of this README, the provider that supports them is OpenAI, with models `gpt-3.5-turbo-1106` and `gpt-4-1106-preview`:
+To successfully use Tools (Functions), you need to specify a provider and a model that support them. As of the writing of this README, the provider that supports them is [OpenAI](https://platform.openai.com/docs/models), with models `gpt-3.5-turbo-1106` and `gpt-4-1106-preview`:
 
 ```yaml
 provider:
