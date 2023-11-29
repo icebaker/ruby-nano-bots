@@ -1,0 +1,11 @@
+---
+- id: call_XYZ
+  type: function
+  function:
+    name: get-current-weather
+    arguments: '{"location":"Tokyo, Japan"}'
+- id: call_ZYX
+  type: function
+  function:
+    name: what-time-is-it
+    arguments: "{}"

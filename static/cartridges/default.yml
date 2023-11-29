@@ -1,4 +1,10 @@
 ---
+safety:
+  functions:
+    sandboxed: true
+  tools:
+    confirmable: true
+
 interfaces:
   repl:
     output:
@@ -12,6 +18,16 @@ interfaces:
     output:
       stream: true
       suffix: "\n"
+  tools:
+    confirming:
+      suffix: ' [yN] '
+      default: 'n'
+      yeses: ['y', 'yes']
+    executing:
+      feedback: false
+    responding:
+      suffix: "\n\n"
+      feedback: true
 
 provider:
   settings:

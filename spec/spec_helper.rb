@@ -16,8 +16,8 @@ RSpec.configure do |config|
   config.shared_context_metadata_behavior = :apply_to_host_groups
 end
 
-def load_cartridge(path)
-  cartridge = YAML.safe_load(File.read("spec/data/cartridges/#{path}"), permitted_classes: [Symbol])
+def load_symbolized(path)
+  cartridge = YAML.safe_load_file("spec/data/#{path}", permitted_classes: [Symbol])
 
   NanoBot::Logic::Helpers::Hash.symbolize_keys(cartridge)
 end

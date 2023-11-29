@@ -3,7 +3,7 @@
 require 'babosa'
 
 require_relative '../logic/helpers/hash'
-require_relative './crypto'
+require_relative 'crypto'
 
 module NanoBot
   module Components

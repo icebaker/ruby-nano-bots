@@ -81,7 +81,7 @@ module NanoBot
           when 'cartridge'
             puts YAML.dump(bot.cartridge)
           else
-            raise "TODO: [#{params[:command]}]"
+            raise "Command not found: [#{params[:command]}]"
           end
         end
       end

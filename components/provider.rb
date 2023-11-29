@@ -2,7 +2,7 @@
 
 require 'openai'
 
-require_relative './providers/openai'
+require_relative 'providers/openai'
 
 module NanoBot
   module Components

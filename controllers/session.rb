@@ -3,10 +3,14 @@
 require 'babosa'
 
 require 'fileutils'
+require 'rainbow'
 
 require_relative '../logic/helpers/hash'
+require_relative '../logic/cartridge/safety'
 require_relative '../logic/cartridge/streaming'
 require_relative '../logic/cartridge/interaction'
+require_relative '../logic/cartridge/fetch'
+require_relative 'interfaces/tools'
 require_relative '../components/storage'
 require_relative '../components/adapter'
 require_relative '../components/crypto'
@@ -14,6 +18,7 @@ require_relative '../components/crypto'
 module NanoBot
   module Controllers
     STREAM_TIMEOUT_IN_SECONDS = 5
+    INFINITE_LOOP_PREVENTION = 10
 
     class Session
       attr_accessor :stream
@@ -41,9 +46,9 @@ module NanoBot
       end
 
       def load_state
-        @state = Logic::Helpers::Hash.symbolize_keys(JSON.parse(
-                                                       Components::Crypto.decrypt(File.read(@state_path))
-                                                     ))
+        @state = Logic::Helpers::Hash.symbolize_keys(
+          JSON.parse(Components::Crypto.decrypt(File.read(@state_path)))
+        )
       end
 
       def store_state!
@@ -68,7 +73,7 @@ module NanoBot
           mode: mode.to_s,
           input: message,
           message: Components::Adapter.apply(
-            :input, Logic::Cartridge::Interaction.input(@cartridge, mode.to_sym, message)
+            Logic::Cartridge::Interaction.input(@cartridge, mode.to_sym, message), @cartridge
           )
         }
 
@@ -78,41 +83,88 @@ module NanoBot
       end
 
       def process(input, mode:)
+        interface = Logic::Helpers::Hash.fetch(@cartridge, [:interfaces, mode.to_sym]) || {}
+
+        input[:interface] = interface
+        input[:tools] = @cartridge[:tools]
+
+        needs_another_round = true
+
+        rounds = 0
+
+        while needs_another_round
+          needs_another_round = process_interaction(input, mode:)
+          rounds += 1
+          raise StandardError, 'infinite loop prevention' if rounds > INFINITE_LOOP_PREVENTION
+        end
+      end
+
+      def process_interaction(input, mode:)
         prefix = Logic::Cartridge::Affixes.get(@cartridge, mode.to_sym, :output, :prefix)
         suffix = Logic::Cartridge::Affixes.get(@cartridge, mode.to_sym, :output, :suffix)
 
-        interface = Logic::Helpers::Hash.fetch(@cartridge, [:interfaces, mode.to_sym]) || {}
+        color = Logic::Cartridge::Fetch.cascate(
+          @cartridge, [[:interfaces, mode.to_sym, :output, :color], %i[interfaces output color]]
+        )
+
+        color = color.to_sym if color
 
         streaming = Logic::Cartridge::Streaming.enabled?(@cartridge, mode.to_sym)
-
-        input[:interface] = interface
 
         updated_at = Time.now
 
         ready = false
-        @provider.evaluate(input) do |output, finished|
+
+        needs_another_round = false
+
+        @provider.evaluate(input, streaming, @cartridge) do |feedback|
+          needs_another_round = true if feedback[:needs_another_round]
+
           updated_at = Time.now
 
-          if finished
-            event = Marshal.load(Marshal.dump(output))
+          if feedback[:interaction] &&
+             feedback.dig(:interaction, :meta, :tool, :action) &&
+             feedback[:interaction][:meta][:tool][:action] == 'confirming'
+            Interfaces::Tool.confirming(self, @cartridge, mode, feedback[:interaction][:meta][:tool])
+          else
 
-            output = Logic::Cartridge::Interaction.output(
-              @cartridge, mode.to_sym, output, streaming, finished
-            )
+            if feedback[:interaction] && feedback.dig(:interaction, :meta, :tool, :action)
+              Interfaces::Tool.dispatch_feedback(
+                self, @cartridge, mode, feedback[:interaction][:meta][:tool]
+              )
+            end
 
-            output[:message] = Components::Adapter.apply(:output, output[:message])
+            if feedback[:interaction]
+              event = Marshal.load(Marshal.dump(feedback[:interaction]))
+              event[:mode] = mode.to_s
+              event[:output] = nil
 
-            event[:mode] = mode.to_s
-            event[:output] = "#{prefix}#{output[:message]}#{suffix}"
+              if feedback[:interaction][:who] == 'AI' && feedback[:interaction][:message]
+                event[:output] = feedback[:interaction][:message]
+                unless streaming
+                  output = Logic::Cartridge::Interaction.output(
+                    @cartridge, mode.to_sym, feedback[:interaction], streaming, feedback[:finished]
+                  )
+                  output[:message] = Components::Adapter.apply(output[:message], @cartridge)
+                  event[:output] = (output[:message]).to_s
+                end
+              end
 
-            @state[:history] << event
+              @state[:history] << event if feedback[:should_be_stored]
 
-            self.print(output[:message]) unless streaming
+              if event[:output] && ((!feedback[:finished] && streaming) || (!streaming && feedback[:finished]))
+                self.print(color ? Rainbow(event[:output]).send(color) : event[:output])
+              end
 
-            ready = true
-            flush
-          elsif streaming
-            self.print(output[:message])
+              # The `print` function already outputs a prefix and a suffix, so
+              # we should add them afterwards to avoid printing them twice.
+              event[:output] = "#{prefix}#{event[:output]}#{suffix}"
+            end
+
+            if feedback[:finished]
+              flush
+              ready = true
+            end
           end
         end
 
@@ -122,6 +174,8 @@ module NanoBot
         end
 
         store_state! unless @stateless
+
+        needs_another_round
       end
 
       def flush
