@@ -27,18 +27,27 @@ module NanoBot
         @stream = stream
         @provider = provider
         @cartridge = cartridge
+        @environment = environment
 
         @stateless = state.nil? || state.strip == '-' || state.strip.empty?
 
         if @stateless
+          @state_expression = nil
           @state = { history: [] }
         else
+          @state_expression = state.strip
           @state_path = Components::Storage.build_path_and_ensure_state_file!(
-            state.strip, @cartridge, environment:
+            @state_expression, @cartridge, environment: @environment
           )
 
           @state = load_state
         end
+      end
+
+      def state_base_path
+        @state_base_path ||= Components::Storage.build_base_path_and_ensure_state_directory!(
+            @state_expression, @cartridge, environment: @environment
+          )
       end
 
       def state

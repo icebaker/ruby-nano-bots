@@ -37,6 +37,10 @@ module NanoBot
           @client = ::OpenAI::Client.new(uri_base:, access_token: @credentials[:'access-token'])
         end
 
+        def prevent_token_limits(messages)
+          Marshal.load(Marshal.dump(messages))
+        end
+
         def evaluate(input, streaming, cartridge, &feedback)
           messages = input[:history].map do |event|
             if event[:message].nil? && event[:meta] && event[:meta][:tool_calls]
@@ -58,7 +62,8 @@ module NanoBot
             )
           end
 
-          payload = { user: OpenAI.end_user(@settings, @environment), messages: }
+          payload = { user: OpenAI.end_user(@settings, @environment),
+                      messages: prevent_token_limits(messages) }
 
           CHAT_SETTINGS.each do |key|
             payload[key] = @settings[key] if @settings.key?(key)

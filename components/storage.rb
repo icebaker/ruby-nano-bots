@@ -33,6 +33,31 @@ module NanoBot
         Crypto.encrypt(user, soft: true)
       end
 
+      def self.build_base_path_and_ensure_state_directory!(key, cartridge, environment: {})
+        path = [
+          Logic::Helpers::Hash.fetch(cartridge, %i[state directory]),
+          ENV.fetch('NANO_BOTS_STATE_DIRECTORY', nil)
+        ].find do |candidate|
+          !candidate.nil? && !candidate.empty?
+        end
+
+        path = "#{user_home!.sub(%r{/$}, '')}/.local/state/nano-bots" if path.nil?
+
+        path = "#{path.sub(%r{/$}, '')}/ruby-nano-bots"
+
+        path = "#{path}/#{cartridge[:meta][:author].to_slug.normalize}"
+        path = "#{path}/#{cartridge[:meta][:name].to_slug.normalize}"
+        path = "#{path}/#{cartridge[:meta][:version].to_s.gsub('.', '-').to_slug.normalize}"
+        path = "#{path}/#{end_user(cartridge, environment)}"
+
+        if key.nil?
+          path = "#{path}/temp-#{Crypto.encrypt(SecureRandom.hex, soft: true)}"
+        else
+          path = "#{path}/#{Crypto.encrypt(key, soft: true)}"
+        end
+        path = "#{path}/state.json"
+      end
+
       def self.build_path_and_ensure_state_file!(key, cartridge, environment: {})
         path = [
           Logic::Helpers::Hash.fetch(cartridge, %i[state directory]),

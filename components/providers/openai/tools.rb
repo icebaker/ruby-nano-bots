@@ -2,6 +2,7 @@
 
 require_relative '../../embedding'
 require_relative '../../../logic/cartridge/safety'
+require_relative '../../storage'
 
 require 'concurrent'
 

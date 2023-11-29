@@ -50,6 +50,7 @@ module NanoBot
       def eval(input, as: 'eval', &block)
         @stream.callback = block if block && @stream.is_a?(Components::Stream)
 
+        puts({state: @session.state_base_path})
         Interfaces::Eval.evaluate(input, @cartridge, @session, as)
 
         return unless @stream.is_a?(Components::Stream)
