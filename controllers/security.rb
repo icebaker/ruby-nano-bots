@@ -18,11 +18,10 @@ module NanoBot
         password = 'UNSAFE' unless password && password != ''
 
         {
-          encryption: (
+          encryption:
             Components::Crypto.encrypt('SAFE') != 'SAFE' &&
-            Components::Crypto.encrypt('SAFE') != Components::Crypto.encrypt('SAFE') &&
-            Components::Crypto.decrypt(Components::Crypto.encrypt('SAFE')) == 'SAFE'
-          ),
+              Components::Crypto.encrypt('SAFE') != Components::Crypto.encrypt('SAFE') &&
+              Components::Crypto.decrypt(Components::Crypto.encrypt('SAFE')) == 'SAFE',
           password: password != 'UNSAFE'
         }
       end
