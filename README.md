@@ -250,7 +250,7 @@ meta:
   symbol: 🤖
   name: Nano Bot Name
   author: Your Name
-  version: 1.0.1
+  version: 1.0.0
   license: CC0-1.0
   description: A helpful assistant.
 
