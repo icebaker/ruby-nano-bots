@@ -72,7 +72,10 @@ module NanoBot
 
           message = "#{adapter[:prefix]}#{message}#{adapter[:suffix]}"
 
-          session.print(color.nil? ? message : Rainbow(message).send(color))
+          session.print(
+            color.nil? ? message : Rainbow(message).send(color),
+            { tool: { action: feedback[:action].to_s } }
+          )
         end
 
         def self.adapter(cartridge, mode, feedback)

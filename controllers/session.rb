@@ -11,6 +11,7 @@ require_relative '../logic/cartridge/streaming'
 require_relative '../logic/cartridge/interaction'
 require_relative '../logic/cartridge/fetch'
 require_relative 'interfaces/tools'
+require_relative '../components/stream'
 require_relative '../components/storage'
 require_relative '../components/adapter'
 require_relative '../components/crypto'
@@ -56,11 +57,19 @@ module NanoBot
       end
 
       def boot(mode:)
-        return unless Logic::Helpers::Hash.fetch(@cartridge, %i[behaviors boot instruction])
+        instruction = Logic::Helpers::Hash.fetch(@cartridge, %i[behaviors boot instruction])
+        return unless instruction
 
         behavior = Logic::Helpers::Hash.fetch(@cartridge, %i[behaviors boot]) || {}
 
-        input = { behavior:, history: [] }
+        @state[:history] << {
+          who: 'user',
+          mode: mode.to_s,
+          input: instruction,
+          message: instruction
+        }
+
+        input = { behavior:, history: @state[:history] }
 
         process(input, mode:)
       end
@@ -182,8 +191,12 @@ module NanoBot
         @stream.flush
       end
 
-      def print(content)
-        @stream.write(content)
+      def print(content, meta = nil)
+        if @stream.is_a?(NanoBot::Components::Stream)
+          @stream.write(content, meta)
+        else
+          @stream.write(content)
+        end
       end
     end
   end

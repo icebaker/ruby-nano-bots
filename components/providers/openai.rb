@@ -49,7 +49,7 @@ module NanoBot
             end
           end
 
-          %i[instruction backdrop directive].each do |key|
+          %i[backdrop directive].each do |key|
             next unless input[:behavior][key]
 
             messages.prepend(

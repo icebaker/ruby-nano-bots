@@ -13,9 +13,9 @@ module NanoBot
             @accumulated = "#{@accumulated.force_encoding('UTF-8')}#{args.first.force_encoding('UTF-8')}"
           end
 
-          @callback.call(@accumulated, args.first, false)
+          @callback.call(@accumulated, args.first, false, args[1])
         end
-        super
+        super(args.first)
       end
 
       def callback=(block)
