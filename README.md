@@ -218,7 +218,7 @@ bot.eval('Hello', as: 'eval')
 bot.eval('Hello', as: 'repl')
 
 # When stream is enabled and available:
-bot.eval('Hi!') do |content, fragment, finished|
+bot.eval('Hi!') do |content, fragment, finished, meta|
   print fragment unless fragment.nil?
 end
 
@@ -235,7 +235,7 @@ bot.boot
 bot.boot(as: 'eval')
 bot.boot(as: 'repl')
 
-bot.boot do |content, fragment, finished|
+bot.boot do |content, fragment, finished, meta|
   print fragment unless fragment.nil?
 end
 ```
