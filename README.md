@@ -30,13 +30,13 @@ https://user-images.githubusercontent.com/113217272/238141567-c58a240c-7b67-4b3b
 For a system usage:
 
 ```sh
-gem install nano-bots -v 1.1.0
+gem install nano-bots -v 1.1.1
 ```
 
 To use it in a project, add it to your `Gemfile`:
 
 ```ruby
-gem 'nano-bots', '~> 1.1.0'
+gem 'nano-bots', '~> 1.1.1'
 ```
 
 ```sh
@@ -86,7 +86,7 @@ Set your provider credentials and choose your desired directory for the cartridg
 services:
   nano-bots:
     image: ruby:3.2.2-slim-bookworm
-    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 1.1.0 && bash"
+    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 1.1.1 && bash"
     environment:
       OPENAI_API_ADDRESS: https://api.openai.com
       OPENAI_API_KEY: your-access-token
@@ -488,5 +488,5 @@ gem build nano-bots.gemspec
 
 gem signin
 
-gem push nano-bots-1.1.0.gem
+gem push nano-bots-1.1.1.gem
 ```
