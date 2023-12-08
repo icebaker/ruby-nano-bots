@@ -13,7 +13,11 @@ module NanoBot
             @accumulated = "#{@accumulated.force_encoding('UTF-8')}#{args.first.force_encoding('UTF-8')}"
           end
 
-          @callback.call(@accumulated, args.first, false, args[1])
+          if @callback.arity == 3
+            @callback.call(@accumulated, args.first, false)
+          else
+            @callback.call(@accumulated, args.first, false, args[1])
+          end
         end
         super(args.first)
       end
@@ -30,7 +34,11 @@ module NanoBot
         rewind
 
         if @callback
-          @callback.call(@accumulated, nil, true)
+          if @callback.arity == 3
+            @callback.call(@accumulated, nil, true)
+          else
+            @callback.call(@accumulated, nil, true, nil)
+          end
           @callback = nil
           @accumulated = nil
         end
