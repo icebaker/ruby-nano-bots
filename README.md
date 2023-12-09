@@ -111,6 +111,8 @@ nb assistant.yml - eval "hello"
 nb assistant.yml - repl
 ```
 
+You can exit the REPL by typing `exit`.
+
 ## Usage
 
 ### Command Line
@@ -158,6 +160,8 @@ well. How can I assist you?
 
 🤖> |
 ```
+
+You can exit the REPL by typing `exit`.
 
 All of the commands above are stateless. If you want to preserve the history of your interactions, replace the `-` with a state key:
 
