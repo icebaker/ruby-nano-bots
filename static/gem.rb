@@ -10,6 +10,6 @@ module NanoBot
     github: 'https://github.com/icebaker/ruby-nano-bots',
     gem_server: 'https://rubygems.org',
     license: 'MIT',
-    ruby: '3.1.4'
+    ruby: '3.1.0'
   }.freeze
 end

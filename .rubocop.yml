@@ -1,5 +1,5 @@
 AllCops:
-  TargetRubyVersion: 3.1.4
+  TargetRubyVersion: 3.1.0
   NewCops: enable
 
 Style/Documentation:
