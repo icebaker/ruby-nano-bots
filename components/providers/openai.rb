@@ -17,13 +17,14 @@ module NanoBot
         DEFAULT_ADDRESS = 'https://api.openai.com'
 
         CHAT_SETTINGS = %i[
-          model stream temperature top_p n stop max_tokens
-          presence_penalty frequency_penalty logit_bias seed response_format
+          model stream frequency_penalty logit_bias logprobs top_logprobs
+          max_tokens n presence_penalty response_format seed stop temperature
+          top_p tool_choice
         ].freeze
 
         attr_reader :settings
 
-        def initialize(settings, credentials, environment: {})
+        def initialize(_options, settings, credentials, environment: {})
           @settings = settings
           @credentials = credentials
           @environment = environment

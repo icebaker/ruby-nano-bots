@@ -6,7 +6,7 @@ module NanoBot
   module Components
     module Providers
       class Base
-        def initialize(_settings, _credentials, _environment: {})
+        def initialize(_options, _settings, _credentials, _environment: {})
           raise NoMethodError, "The 'initialize' method is not implemented for the current provider."
         end
 

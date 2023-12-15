@@ -81,6 +81,32 @@ NANO_BOTS_END_USER=your-user
 
 Click [here](https://github.com/gbaptista/gemini-ai#credentials) to learn how to obtain your credentials.
 
+#### Option 1: API Key (Generative Language API)
+
+```sh
+export GOOGLE_API_KEY=your-api-key
+
+export NANO_BOTS_ENCRYPTION_PASSWORD=UNSAFE
+export NANO_BOTS_END_USER=your-user
+
+# export NANO_BOTS_STATE_DIRECTORY=/home/user/.local/state/nano-bots
+# export NANO_BOTS_CARTRIDGES_DIRECTORY=/home/user/.local/share/nano-bots/cartridges
+```
+
+Alternatively, if your current directory has a `.env` file with the environment variables, they will be automatically loaded:
+
+```sh
+GOOGLE_API_KEY=your-api-key
+
+NANO_BOTS_ENCRYPTION_PASSWORD=UNSAFE
+NANO_BOTS_END_USER=your-user
+
+# NANO_BOTS_STATE_DIRECTORY=/home/user/.local/state/nano-bots
+# NANO_BOTS_CARTRIDGES_DIRECTORY=/home/user/.local/share/nano-bots/cartridges
+```
+
+#### Option 2: Service Account (Vertex AI API)
+
 ```sh
 export GOOGLE_CREDENTIALS_FILE_PATH=google-credentials.json
 export GOOGLE_PROJECT_ID=your-project-id
@@ -138,6 +164,25 @@ services:
 ```
 
 ### Google Gemini
+
+#### Option 1: API Key (Generative Language API)
+
+```yaml
+---
+services:
+  nano-bots:
+    image: ruby:3.2.2-slim-bookworm
+    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 1.2.0 && bash"
+    environment:
+      GOOGLE_API_KEY: your-api-key
+      NANO_BOTS_ENCRYPTION_PASSWORD: UNSAFE
+      NANO_BOTS_END_USER: your-user
+    volumes:
+      - ./your-cartridges:/root/.local/share/nano-bots/cartridges
+      - ./your-state-path:/root/.local/state/nano-bots
+```
+
+#### Option 2: Service Account (Vertex AI API)
 
 ```yaml
 ---
@@ -346,6 +391,8 @@ provider:
 
 Read the [full specification](https://spec.nbots.io/#/README?id=google-gemini) for Google Gemini.
 
+#### Option 1: API Key (Generative Language API)
+
 ```yaml
 ---
 meta:
@@ -363,8 +410,34 @@ behaviors:
 provider:
   id: google
   credentials:
-    project-id: ENV/GOOGLE_PROJECT_ID
+    service: generative-language-api
+    api-key: ENV/GOOGLE_API_KEY
+  options:
+    model: gemini-pro
+```
+
+#### Option 2: Service Account (Vertex AI API)
+
+```yaml
+---
+meta:
+  symbol: 🤖
+  name: Nano Bot Name
+  author: Your Name
+  version: 1.0.0
+  license: CC0-1.0
+  description: A helpful assistant.
+
+behaviors:
+  interaction:
+    directive: You are a helpful assistant.
+
+provider:
+  id: google
+  credentials:
+    service: vertex-ai-api
     file-path: ENV/GOOGLE_CREDENTIALS_FILE_PATH
+    project-id: ENV/GOOGLE_PROJECT_ID
     region: ENV/GOOGLE_REGION
   options:
     model: gemini-pro

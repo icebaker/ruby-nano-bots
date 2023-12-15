@@ -13,26 +13,38 @@ module NanoBot
   module Components
     module Providers
       class Google < Base
+        SAFETY_SETTINGS = %i[category threshold].freeze
+
         SETTINGS = {
           generationConfig: %i[
             temperature topP topK candidateCount maxOutputTokens stopSequences
           ].freeze
         }.freeze
 
-        SAFETY_SETTINGS = %i[category threshold].freeze
-
         attr_reader :settings
 
         def initialize(options, settings, credentials, _environment)
           @settings = settings
 
+          gemini_credentials = if credentials[:'api-key']
+                                 {
+                                   service: credentials[:service],
+                                   api_key: credentials[:'api-key'],
+                                   project_id: credentials[:'project-id'],
+                                   region: credentials[:region]
+                                 }
+                               else
+                                 {
+                                   service: credentials[:service],
+                                   file_path: credentials[:'file-path'],
+                                   project_id: credentials[:'project-id'],
+                                   region: credentials[:region]
+                                 }
+                               end
+
           @client = Gemini.new(
-            credentials: {
-              file_path: credentials[:'file-path'],
-              project_id: credentials[:'project-id'],
-              region: credentials[:region]
-            },
-            settings: { model: options[:model], stream: options[:stream] }
+            credentials: gemini_credentials,
+            options: { model: options[:model], stream: options[:stream] }
           )
         end
 
@@ -61,9 +73,15 @@ module NanoBot
           %i[backdrop directive].each do |key|
             next unless input[:behavior][key]
 
+            messages.prepend(
+              { role: 'model',
+                parts: { text: 'Understood.' },
+                _meta: { at: Time.now } }
+            )
+
             # TODO: Does Gemini have system messages?
             messages.prepend(
-              { role: key == :directive ? 'user' : 'user',
+              { role: 'user',
                 parts: { text: input[:behavior][key] },
                 _meta: { at: Time.now } }
             )

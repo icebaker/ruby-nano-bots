@@ -34,7 +34,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'babosa', '~> 2.0'
   spec.add_dependency 'concurrent-ruby', '~> 1.2', '>= 1.2.2'
   spec.add_dependency 'dotenv', '~> 2.8', '>= 2.8.1'
-  spec.add_dependency 'gemini-ai', '~> 1.0'
+  spec.add_dependency 'gemini-ai', '~> 2.0'
   spec.add_dependency 'pry', '~> 0.14.2'
   spec.add_dependency 'rainbow', '~> 3.1', '>= 3.1.1'
   spec.add_dependency 'rbnacl', '~> 7.1', '>= 7.1.1'

@@ -6,8 +6,17 @@ services:
     environment:
       OPENAI_API_ADDRESS: https://api.openai.com
       OPENAI_API_KEY: your-access-token
+
+      GOOGLE_API_KEY: your-api-key
+
+      GOOGLE_CREDENTIALS_FILE_PATH: /root/.config/google-credentials.json
+      GOOGLE_PROJECT_ID: your-project-id
+      GOOGLE_REGION: us-east4
+
       NANO_BOTS_ENCRYPTION_PASSWORD: UNSAFE
       NANO_BOTS_END_USER: your-user
+
     volumes:
+      - ./google-credentials.json:/root/.config/google-credentials.json
       - ./your-cartridges:/root/.local/share/nano-bots/cartridges
       - ./your-state-path:/root/.local/state/nano-bots

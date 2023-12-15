@@ -9,7 +9,7 @@ module NanoBot
       def self.new(provider, environment: {})
         case provider[:id]
         when 'openai'
-          Providers::OpenAI.new(provider[:settings], provider[:credentials], environment:)
+          Providers::OpenAI.new(nil, provider[:settings], provider[:credentials], environment:)
         when 'google'
           Providers::Google.new(provider[:options], provider[:settings], provider[:credentials], environment:)
         else
