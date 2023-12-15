@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    nano-bots (1.2.0)
+    nano-bots (2.0.0)
       babosa (~> 2.0)
       concurrent-ruby (~> 1.2, >= 1.2.2)
       dotenv (~> 2.8, >= 2.8.1)
