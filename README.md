@@ -468,7 +468,7 @@ The randomly generated number is 59.
 
 🤖> |
 ```
-To successfully use Tools (Functions), you need to specify a provider and a model that supports them. As of the writing of this README, the provider that supports them is [OpenAI](https://platform.openai.com/docs/models), with models `gpt-3.5-turbo-1106` and `gpt-4-1106-preview`, and [Google](https://cloud.google.com/vertex-ai/docs/generative-ai/multimodal/function-calling#supported_models), with the model `gemini-pro`.
+To successfully use Tools (Functions), you need to specify a provider and a model that supports them. As of the writing of this README, the provider that supports them is [OpenAI](https://platform.openai.com/docs/models), with models `gpt-3.5-turbo-1106` and `gpt-4-1106-preview`, and [Google](https://cloud.google.com/vertex-ai/docs/generative-ai/multimodal/function-calling#supported_models), with the `vertex-ai-api` service and the model `gemini-pro`.
 
 Check the [Nano Bots specification](https://spec.nbots.io/#/README?id=tools-functions-2) to learn more about Tools (Functions).
 
@@ -491,7 +491,7 @@ Unlike Lua and Fennel, Clojure support is not _embedded_ in this implementation.
 Here's [how to install Babashka](https://github.com/babashka/babashka#quickstart):
 
 ```sh
-curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash
+curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | sudo bash
 ```
 
 This is a quick check to ensure that it is available and working:
