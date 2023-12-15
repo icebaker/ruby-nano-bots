@@ -18,7 +18,7 @@ module NanoBot
 
         CHAT_SETTINGS = %i[
           model stream temperature top_p n stop max_tokens
-          presence_penalty frequency_penalty logit_bias
+          presence_penalty frequency_penalty logit_bias seed response_format
         ].freeze
 
         attr_reader :settings

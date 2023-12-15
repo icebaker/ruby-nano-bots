@@ -7,7 +7,14 @@ module NanoBot
     module Cartridge
       module Streaming
         def self.enabled?(cartridge, interface)
-          return false if Helpers::Hash.fetch(cartridge, %i[provider settings stream]) == false
+          provider_stream = case Helpers::Hash.fetch(cartridge, %i[provider id])
+                            when 'openai'
+                              Helpers::Hash.fetch(cartridge, %i[provider settings stream])
+                            when 'google'
+                              Helpers::Hash.fetch(cartridge, %i[provider options stream])
+                            end
+
+          return false if provider_stream == false
 
           specific_interface = Helpers::Hash.fetch(cartridge, [:interfaces, interface, :output, :stream])
 

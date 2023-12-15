@@ -11,7 +11,7 @@ module NanoBot
         when 'openai'
           Providers::OpenAI.new(provider[:settings], provider[:credentials], environment:)
         when 'google'
-          Providers::Google.new(provider[:model], provider[:settings], provider[:credentials], environment:)
+          Providers::Google.new(provider[:options], provider[:settings], provider[:credentials], environment:)
         else
           raise "Unsupported provider \"#{provider[:id]}\""
         end
