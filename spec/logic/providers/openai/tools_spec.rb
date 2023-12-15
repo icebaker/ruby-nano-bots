@@ -78,10 +78,15 @@ RSpec.describe NanoBot::Logic::OpenAI::Tools do
         expect(described_class.prepare(cartridge[:tools], tools)).to eq(
           [{ id: 'call_XYZ',
              name: 'get-current-weather',
+             label: 'get-current-weather',
              type: 'function',
              parameters: { 'location' => 'Tokyo, Japan' },
              source: { fennel: "(let [{:location location :unit unit} parameters]\n  (.. \"Here is the weather in \" location \", in \" unit \": 35.8°C.\"))\n" } },
-           { id: 'call_ZYX', name: 'what-time-is-it', type: 'function', parameters: {},
+           { id: 'call_ZYX',
+             name: 'what-time-is-it',
+             label: 'what-time-is-it',
+             type: 'function',
+             parameters: {},
              source: { fennel: "(os.date)\n" } }]
         )
       end

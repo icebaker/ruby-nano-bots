@@ -1,8 +1,7 @@
 # frozen_string_literal: true
 
-require 'openai'
-
 require_relative 'providers/openai'
+require_relative 'providers/google'
 
 module NanoBot
   module Components
@@ -11,6 +10,8 @@ module NanoBot
         case provider[:id]
         when 'openai'
           Providers::OpenAI.new(provider[:settings], provider[:credentials], environment:)
+        when 'google'
+          Providers::Google.new(provider[:model], provider[:settings], provider[:credentials], environment:)
         else
           raise "Unsupported provider \"#{provider[:id]}\""
         end
