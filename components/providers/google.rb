@@ -29,7 +29,7 @@ module NanoBot
               project_id: credentials[:'project-id'],
               region: credentials[:region]
             },
-            settings: { model: }
+            settings: { model:, stream: false }
           )
         end
 
