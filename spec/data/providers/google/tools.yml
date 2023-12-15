@@ -1,0 +1,9 @@
+---
+- functionCall:
+    name: get_current_weather
+    args:
+      location: Tokyo, Japan
+- functionCall:
+    name: what_time_is_it
+    args:
+      timezone: local

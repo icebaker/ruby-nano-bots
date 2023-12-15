@@ -10,5 +10,6 @@ interfaces:
       stream: true
 
 provider:
+  id: openai
   settings:
     stream: true

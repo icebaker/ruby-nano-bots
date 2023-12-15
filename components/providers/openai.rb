@@ -6,9 +6,9 @@ require_relative 'base'
 require_relative '../crypto'
 
 require_relative '../../logic/providers/openai/tools'
-require_relative '../../controllers/interfaces/tools'
+require_relative '../../logic/providers/openai/tokens'
 
-require_relative 'openai/tools'
+require_relative 'tools'
 
 module NanoBot
   module Components
@@ -18,7 +18,7 @@ module NanoBot
 
         CHAT_SETTINGS = %i[
           model stream temperature top_p n stop max_tokens
-          presence_penalty frequency_penalty logit_bias
+          presence_penalty frequency_penalty logit_bias seed response_format
         ].freeze
 
         attr_reader :settings
@@ -40,12 +40,18 @@ module NanoBot
         def evaluate(input, streaming, cartridge, &feedback)
           messages = input[:history].map do |event|
             if event[:message].nil? && event[:meta] && event[:meta][:tool_calls]
-              { role: 'assistant', content: nil, tool_calls: event[:meta][:tool_calls] }
+              { role: 'assistant', content: nil,
+                tool_calls: event[:meta][:tool_calls],
+                _meta: { at: event[:at] } }
             elsif event[:who] == 'tool'
               { role: event[:who], content: event[:message].to_s,
-                tool_call_id: event[:meta][:id], name: event[:meta][:name] }
+                tool_call_id: event[:meta][:id],
+                name: event[:meta][:name],
+                _meta: { at: event[:at] } }
             else
-              { role: event[:who] == 'user' ? 'user' : 'assistant', content: event[:message] }
+              { role: event[:who] == 'user' ? 'user' : 'assistant',
+                content: event[:message],
+                _meta: { at: event[:at] } }
             end
           end
 
@@ -54,7 +60,8 @@ module NanoBot
 
             messages.prepend(
               { role: key == :directive ? 'system' : 'user',
-                content: input[:behavior][key] }
+                content: input[:behavior][key],
+                _meta: { at: Time.now } }
             )
           end
 
@@ -66,7 +73,7 @@ module NanoBot
 
           payload.delete(:logit_bias) if payload.key?(:logit_bias) && payload[:logit_bias].nil?
 
-          payload[:tools] = input[:tools].map { |raw| NanoBot::Logic::OpenAI::Tools.adapt(raw) } if input[:tools]
+          payload[:tools] = input[:tools].map { |raw| Logic::OpenAI::Tools.adapt(raw) } if input[:tools]
 
           if streaming
             content = ''
@@ -114,13 +121,15 @@ module NanoBot
                       needs_another_round: true,
                       interaction: { who: 'AI', message: nil, meta: { tool_calls: tools } } }
                   )
-                  Tools.apply(cartridge, input[:tools], tools, feedback).each do |interaction|
+                  Tools.apply(
+                    cartridge, input[:tools], tools, feedback, Logic::OpenAI::Tools
+                  ).each do |interaction|
                     feedback.call({ should_be_stored: true, needs_another_round: true, interaction: })
                   end
                 end
 
                 feedback.call(
-                  { should_be_stored: !(content.nil? || content == ''),
+                  { should_be_stored: !(content.nil? || content.to_s.strip == ''),
                     interaction: content.nil? || content == '' ? nil : { who: 'AI', message: content },
                     finished: true }
                 )
@@ -128,7 +137,7 @@ module NanoBot
             end
 
             begin
-              @client.chat(parameters: payload)
+              @client.chat(parameters: Logic::OpenAI::Tokens.apply_policies!(cartridge, payload))
             rescue StandardError => e
               raise e.class, e.response[:body] if e.response && e.response[:body]
 
@@ -136,7 +145,7 @@ module NanoBot
             end
           else
             begin
-              result = @client.chat(parameters: payload)
+              result = @client.chat(parameters: Logic::OpenAI::Tokens.apply_policies!(cartridge, payload))
             rescue StandardError => e
               raise e.class, e.response[:body] if e.response && e.response[:body]
 
@@ -153,7 +162,9 @@ module NanoBot
                   needs_another_round: true,
                   interaction: { who: 'AI', message: nil, meta: { tool_calls: tools } } }
               )
-              Tools.apply(cartridge, input[:tools], tools, feedback).each do |interaction|
+              Tools.apply(
+                cartridge, input[:tools], tools, feedback, Logic::OpenAI::Tools
+              ).each do |interaction|
                 feedback.call({ should_be_stored: true, needs_another_round: true, interaction: })
               end
             end

@@ -63,6 +63,7 @@ module NanoBot
         behavior = Logic::Helpers::Hash.fetch(@cartridge, %i[behaviors boot]) || {}
 
         @state[:history] << {
+          at: Time.now,
           who: 'user',
           mode: mode.to_s,
           input: instruction,
@@ -78,6 +79,7 @@ module NanoBot
         behavior = Logic::Helpers::Hash.fetch(@cartridge, %i[behaviors interaction]) || {}
 
         @state[:history] << {
+          at: Time.now,
           who: 'user',
           mode: mode.to_s,
           input: message,
@@ -159,7 +161,10 @@ module NanoBot
                 end
               end
 
-              @state[:history] << event if feedback[:should_be_stored]
+              if feedback[:should_be_stored]
+                event[:at] = Time.now
+                @state[:history] << event
+              end
 
               if event[:output] && ((!feedback[:finished] && streaming) || (!streaming && feedback[:finished]))
                 self.print(color ? Rainbow(event[:output]).send(color) : event[:output])

@@ -7,11 +7,22 @@ require_relative '../../../logic/cartridge/streaming'
 RSpec.describe NanoBot::Logic::Cartridge::Streaming do
   context 'interfaces override' do
     context 'defaults' do
-      let(:cartridge) { {} }
+      context 'openai' do
+        let(:cartridge) { { provider: { id: 'openai' } } }
 
-      it 'uses default values when appropriate' do
-        expect(described_class.enabled?(cartridge, :repl)).to be(true)
-        expect(described_class.enabled?(cartridge, :eval)).to be(true)
+        it 'uses default values when appropriate' do
+          expect(described_class.enabled?(cartridge, :repl)).to be(true)
+          expect(described_class.enabled?(cartridge, :eval)).to be(true)
+        end
+      end
+
+      context 'google' do
+        let(:cartridge) { { provider: { id: 'google' } } }
+
+        it 'uses default values when appropriate' do
+          expect(described_class.enabled?(cartridge, :repl)).to be(true)
+          expect(described_class.enabled?(cartridge, :eval)).to be(true)
+        end
       end
     end
 
