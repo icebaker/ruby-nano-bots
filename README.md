@@ -174,7 +174,7 @@ GOOGLE_PROJECT_ID=your-project-id
 Clone the repository and copy the Docker Compose template:
 
 ```
-git clone git@github.com:icebaker/ruby-nano-bots.git
+git clone https://github.com/icebaker/ruby-nano-bots.git
 cd ruby-nano-bots
 cp docker-compose.example.yml docker-compose.yml
 ```
