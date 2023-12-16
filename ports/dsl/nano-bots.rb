@@ -40,4 +40,8 @@ module NanoBot
   def self.version
     NanoBot::GEM[:version]
   end
+
+  def self.specification
+    NanoBot::GEM[:specification]
+  end
 end
