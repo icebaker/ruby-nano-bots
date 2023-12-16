@@ -12,6 +12,9 @@ module NanoBot
           when 'version'
             puts NanoBot::GEM[:version]
             exit
+          when 'specification'
+            puts NanoBot::GEM[:specification]
+            exit
           when 'security'
             result = NanoBot.security.check
 
@@ -57,6 +60,7 @@ module NanoBot
             puts '  nb cartridge.yml STATE-KEY state'
             puts ''
             puts '  nb security'
+            puts '  nb specification'
             puts '  nb version'
             puts '  nb help'
             puts ''
