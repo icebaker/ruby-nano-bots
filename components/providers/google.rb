@@ -26,25 +26,9 @@ module NanoBot
         def initialize(options, settings, credentials, _environment)
           @settings = settings
 
-          gemini_credentials = if credentials[:'api-key']
-                                 {
-                                   service: credentials[:service],
-                                   api_key: credentials[:'api-key'],
-                                   project_id: credentials[:'project-id'],
-                                   region: credentials[:region]
-                                 }
-                               else
-                                 {
-                                   service: credentials[:service],
-                                   file_path: credentials[:'file-path'],
-                                   project_id: credentials[:'project-id'],
-                                   region: credentials[:region]
-                                 }
-                               end
-
           @client = Gemini.new(
-            credentials: gemini_credentials,
-            options: { model: options[:model], stream: options[:stream] }
+            credentials: credentials.transform_keys { |key| key.to_s.gsub('-', '_').to_sym },
+            options: options.transform_keys { |key| key.to_s.gsub('-', '_').to_sym }
           )
         end
 
