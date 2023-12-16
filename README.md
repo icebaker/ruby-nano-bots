@@ -105,11 +105,10 @@ NANO_BOTS_END_USER=your-user
 # NANO_BOTS_CARTRIDGES_DIRECTORY=/home/user/.local/share/nano-bots/cartridges
 ```
 
-#### Option 2: Service Account (Vertex AI API)
+#### Option 2: Service Account Credentials File (Vertex AI API)
 
 ```sh
 export GOOGLE_CREDENTIALS_FILE_PATH=google-credentials.json
-export GOOGLE_PROJECT_ID=your-project-id
 export GOOGLE_REGION=us-east4
 
 export NANO_BOTS_ENCRYPTION_PASSWORD=UNSAFE
@@ -123,7 +122,6 @@ Alternatively, if your current directory has a `.env` file with the environment 
 
 ```sh
 GOOGLE_CREDENTIALS_FILE_PATH=google-credentials.json
-GOOGLE_PROJECT_ID=your-project-id
 GOOGLE_REGION=us-east4
 
 NANO_BOTS_ENCRYPTION_PASSWORD=UNSAFE
@@ -131,6 +129,44 @@ NANO_BOTS_END_USER=your-user
 
 # NANO_BOTS_STATE_DIRECTORY=/home/user/.local/state/nano-bots
 # NANO_BOTS_CARTRIDGES_DIRECTORY=/home/user/.local/share/nano-bots/cartridges
+```
+
+#### Option 3: Application Default Credentials (Vertex AI API)
+
+```sh
+export GOOGLE_REGION=us-east4
+
+export NANO_BOTS_ENCRYPTION_PASSWORD=UNSAFE
+export NANO_BOTS_END_USER=your-user
+
+# export NANO_BOTS_STATE_DIRECTORY=/home/user/.local/state/nano-bots
+# export NANO_BOTS_CARTRIDGES_DIRECTORY=/home/user/.local/share/nano-bots/cartridges
+```
+
+Alternatively, if your current directory has a `.env` file with the environment variables, they will be automatically loaded:
+
+```sh
+GOOGLE_REGION=us-east4
+
+NANO_BOTS_ENCRYPTION_PASSWORD=UNSAFE
+NANO_BOTS_END_USER=your-user
+
+# NANO_BOTS_STATE_DIRECTORY=/home/user/.local/state/nano-bots
+# NANO_BOTS_CARTRIDGES_DIRECTORY=/home/user/.local/share/nano-bots/cartridges
+```
+
+#### Custom Project ID
+
+If you need to manually set a Google Project ID:
+
+```sh
+export GOOGLE_PROJECT_ID=your-project-id
+```
+
+Alternatively, if your current directory has a `.env` file with the environment variables, they will be automatically loaded:
+
+```sh
+GOOGLE_PROJECT_ID=your-project-id
 ```
 
 ## Docker
@@ -182,7 +218,7 @@ services:
       - ./your-state-path:/root/.local/state/nano-bots
 ```
 
-#### Option 2: Service Account (Vertex AI API)
+#### Option 2: Service Account Credentials File (Vertex AI API)
 
 ```yaml
 ---
@@ -192,7 +228,6 @@ services:
     command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 2.0.0 && bash"
     environment:
       GOOGLE_CREDENTIALS_FILE_PATH: /root/.config/google-credentials.json
-      GOOGLE_PROJECT_ID: your-project-id
       GOOGLE_REGION: us-east4
       NANO_BOTS_ENCRYPTION_PASSWORD: UNSAFE
       NANO_BOTS_END_USER: your-user
@@ -200,6 +235,31 @@ services:
       - ./google-credentials.json:/root/.config/google-credentials.json
       - ./your-cartridges:/root/.local/share/nano-bots/cartridges
       - ./your-state-path:/root/.local/state/nano-bots
+```
+
+#### Option 3: Application Default Credentials (Vertex AI API)
+
+```yaml
+---
+services:
+  nano-bots:
+    image: ruby:3.2.2-slim-bookworm
+    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 2.0.0 && bash"
+    environment:
+      GOOGLE_REGION: us-east4
+      NANO_BOTS_ENCRYPTION_PASSWORD: UNSAFE
+      NANO_BOTS_END_USER: your-user
+    volumes:
+      - ./your-cartridges:/root/.local/share/nano-bots/cartridges
+      - ./your-state-path:/root/.local/state/nano-bots
+```
+
+#### Custom Project ID
+If you need to manually set a Google Project ID:
+
+```yaml
+environment:
+  GOOGLE_PROJECT_ID=your-project-id
 ```
 
 ### Container
@@ -416,7 +476,7 @@ provider:
     model: gemini-pro
 ```
 
-#### Option 2: Service Account (Vertex AI API)
+#### Option 2: Service Account Credentials File (Vertex AI API)
 
 ```yaml
 ---
@@ -437,10 +497,46 @@ provider:
   credentials:
     service: vertex-ai-api
     file-path: ENV/GOOGLE_CREDENTIALS_FILE_PATH
-    project-id: ENV/GOOGLE_PROJECT_ID
     region: ENV/GOOGLE_REGION
   options:
     model: gemini-pro
+```
+
+#### Option 3: Application Default Credentials (Vertex AI API)
+
+```yaml
+---
+meta:
+  symbol: 🤖
+  name: Nano Bot Name
+  author: Your Name
+  version: 1.0.0
+  license: CC0-1.0
+  description: A helpful assistant.
+
+behaviors:
+  interaction:
+    directive: You are a helpful assistant.
+
+provider:
+  id: google
+  credentials:
+    service: vertex-ai-api
+    region: ENV/GOOGLE_REGION
+  options:
+    model: gemini-pro
+```
+
+#### Custom Project ID
+
+If you need to manually set a Google Project ID:
+
+```yaml
+---
+provider:
+  id: google
+  credentials:
+    project-id: ENV/GOOGLE_PROJECT_ID
 ```
 
 ### Tools (Functions)
