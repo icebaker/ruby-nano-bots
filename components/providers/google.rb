@@ -70,6 +70,7 @@ module NanoBot
             end
           end
 
+          # TODO: Does Gemini have system messages?
           %i[backdrop directive].each do |key|
             next unless input[:behavior][key]
 
@@ -79,7 +80,6 @@ module NanoBot
                 _meta: { at: Time.now } }
             )
 
-            # TODO: Does Gemini have system messages?
             messages.prepend(
               { role: 'user',
                 parts: { text: input[:behavior][key] },
@@ -140,24 +140,9 @@ module NanoBot
               end
 
               if event.dig('candidates', 0, 'finishReason')
-                if tools&.size&.positive?
-                  feedback.call(
-                    { should_be_stored: true,
-                      needs_another_round: true,
-                      interaction: { who: 'AI', message: nil, meta: { tool_calls: tools } } }
-                  )
-                  Tools.apply(
-                    cartridge, input[:tools], tools, feedback, Logic::Google::Tools
-                  ).each do |interaction|
-                    feedback.call({ should_be_stored: true, needs_another_round: true, interaction: })
-                  end
-                end
-
-                feedback.call(
-                  { should_be_stored: !(content.nil? || content == ''),
-                    interaction: content.nil? || content == '' ? nil : { who: 'AI', message: content },
-                    finished: true }
-                )
+                # TODO: This does not have the same behavior as OpenAI, so you should
+                #       not use it as a reference for the end of the streaming.
+                #       Is this a bug from the Google Gemini REST API or expected behavior?
               end
             end
 
@@ -165,6 +150,25 @@ module NanoBot
               @client.stream_generate_content(
                 Logic::Google::Tokens.apply_policies!(cartridge, payload),
                 stream: true, &stream_call_back
+              )
+
+              if tools&.size&.positive?
+                feedback.call(
+                  { should_be_stored: true,
+                    needs_another_round: true,
+                    interaction: { who: 'AI', message: nil, meta: { tool_calls: tools } } }
+                )
+                Tools.apply(
+                  cartridge, input[:tools], tools, feedback, Logic::Google::Tools
+                ).each do |interaction|
+                  feedback.call({ should_be_stored: true, needs_another_round: true, interaction: })
+                end
+              end
+
+              feedback.call(
+                { should_be_stored: !(content.nil? || content == ''),
+                  interaction: content.nil? || content == '' ? nil : { who: 'AI', message: content },
+                  finished: true }
               )
             rescue StandardError => e
               raise e.class, e.response[:body] if e.response && e.response[:body]
