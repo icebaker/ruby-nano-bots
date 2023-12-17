@@ -130,46 +130,34 @@ module NanoBot
               end
             end
 
-            begin
-              @client.stream_generate_content(
-                Logic::Google::Tokens.apply_policies!(cartridge, payload),
-                stream: true, &stream_call_back
-              )
+            @client.stream_generate_content(
+              Logic::Google::Tokens.apply_policies!(cartridge, payload),
+              stream: true, &stream_call_back
+            )
 
-              if tools&.size&.positive?
-                feedback.call(
-                  { should_be_stored: true,
-                    needs_another_round: true,
-                    interaction: { who: 'AI', message: nil, meta: { tool_calls: tools } } }
-                )
-                Tools.apply(
-                  cartridge, input[:tools], tools, feedback, Logic::Google::Tools
-                ).each do |interaction|
-                  feedback.call({ should_be_stored: true, needs_another_round: true, interaction: })
-                end
-              end
-
+            if tools&.size&.positive?
               feedback.call(
-                { should_be_stored: !(content.nil? || content == ''),
-                  interaction: content.nil? || content == '' ? nil : { who: 'AI', message: content },
-                  finished: true }
+                { should_be_stored: true,
+                  needs_another_round: true,
+                  interaction: { who: 'AI', message: nil, meta: { tool_calls: tools } } }
               )
-            rescue StandardError => e
-              raise e.class, e.response[:body] if e.response && e.response[:body]
-
-              raise e
+              Tools.apply(
+                cartridge, input[:tools], tools, feedback, Logic::Google::Tools
+              ).each do |interaction|
+                feedback.call({ should_be_stored: true, needs_another_round: true, interaction: })
+              end
             end
+
+            feedback.call(
+              { should_be_stored: !(content.nil? || content == ''),
+                interaction: content.nil? || content == '' ? nil : { who: 'AI', message: content },
+                finished: true }
+            )
           else
-            begin
-              result = @client.stream_generate_content(
-                Logic::Google::Tokens.apply_policies!(cartridge, payload),
-                stream: false
-              )
-            rescue StandardError => e
-              raise e.class, e.response[:body] if e.response && e.response[:body]
-
-              raise e
-            end
+            result = @client.stream_generate_content(
+              Logic::Google::Tokens.apply_policies!(cartridge, payload),
+              stream: false
+            )
 
             tools = result.dig(0, 'candidates', 0, 'content', 'parts').filter do |part|
               part.key?('functionCall')
