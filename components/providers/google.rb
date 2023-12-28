@@ -36,7 +36,7 @@ module NanoBot
             )
           end
 
-          gemini_options[:server_sent_events] = gemini_options.delete(:stream) if gemini_options.key?(:stream)
+          gemini_options[:server_sent_events] = gemini_options.delete(:stream)
 
           @client = Gemini.new(
             credentials: credentials.transform_keys { |key| key.to_s.gsub('-', '_').to_sym },
