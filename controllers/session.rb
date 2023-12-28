@@ -138,7 +138,6 @@ module NanoBot
              feedback[:interaction][:meta][:tool][:action] == 'confirming'
             Interfaces::Tool.confirming(self, @cartridge, mode, feedback[:interaction][:meta][:tool])
           else
-
             if feedback[:interaction] && feedback.dig(:interaction, :meta, :tool, :action)
               Interfaces::Tool.dispatch_feedback(
                 self, @cartridge, mode, feedback[:interaction][:meta][:tool]
