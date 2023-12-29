@@ -2,7 +2,7 @@
 meta:
   symbol: 🔵
   name: Google Gemini Pro
-  license: MIT
+  license: CC0-1.0
 
 provider:
   id: google

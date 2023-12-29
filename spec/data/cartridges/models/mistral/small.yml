@@ -2,7 +2,7 @@
 meta:
   symbol: 🟠
   name: Mistral Small
-  license: MIT
+  license: CC0-1.0
 
 provider:
   id: mistral

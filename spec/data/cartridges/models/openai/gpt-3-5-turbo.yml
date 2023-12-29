@@ -2,7 +2,7 @@
 meta:
   symbol: 🟢
   name: OpenAI GPT 3.5 Turbo
-  license: MIT
+  license: CC0-1.0
 
 provider:
   id: openai
