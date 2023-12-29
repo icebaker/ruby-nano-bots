@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    nano-bots (2.4.0)
+    nano-bots (2.4.1)
       babosa (~> 2.0)
       cohere-ai (~> 1.0, >= 1.0.1)
       concurrent-ruby (~> 1.2, >= 1.2.2)

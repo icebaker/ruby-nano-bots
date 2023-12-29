@@ -2,7 +2,7 @@
 services:
   nano-bots:
     image: ruby:3.2.2-slim-bookworm
-    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 2.4.0 && bash"
+    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 2.4.1 && bash"
     environment:
       OPENAI_API_ADDRESS: https://api.openai.com
       OPENAI_API_KEY: your-access-token

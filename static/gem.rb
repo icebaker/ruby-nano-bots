@@ -3,7 +3,7 @@
 module NanoBot
   GEM = {
     name: 'nano-bots',
-    version: '2.4.0',
+    version: '2.4.1',
     specification: '2.2.0',
     author: 'icebaker',
     summary: 'Ruby Implementation of Nano Bots: small, AI-powered bots for OpenAI ChatGPT, Mistral AI, and Google Gemini.',
