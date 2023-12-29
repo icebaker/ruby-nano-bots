@@ -1,29 +1,32 @@
 # Nano Bots 💎 🤖
 
-A Ruby implementation of the [Nano Bots](https://github.com/icebaker/nano-bots) specification with support for [OpenAI ChatGPT](https://openai.com/chatgpt), [Mistral AI](https://mistral.ai), and [Google Gemini](https://deepmind.google/technologies/gemini).
+A Ruby implementation of the [Nano Bots](https://github.com/icebaker/nano-bots) specification with support for [OpenAI ChatGPT](https://openai.com/chatgpt), [Mistral AI](https://mistral.ai), [Cohere Command](https://cohere.com), and [Google Gemini](https://deepmind.google/technologies/gemini).
 
 ![Ruby Nano Bots](https://raw.githubusercontent.com/icebaker/assets/main/nano-bots/ruby-nano-bots-canvas.png)
 
 https://user-images.githubusercontent.com/113217272/238141567-c58a240c-7b67-4b3b-864a-0f49bbf6e22f.mp4
 
 - [Setup](#setup)
-    - [OpenAI ChatGPT](#openai-chatgpt)
-    - [Mistral AI](#mistral-ai)
+    - [Cohere Command](#cohere-command)
     - [Google Gemini](#google-gemini)
+    - [Mistral AI](#mistral-ai)
+    - [OpenAI ChatGPT](#openai-chatgpt)
 - [Usage](#usage)
     - [Command Line](#command-line)
     - [Library](#library)
 - [Cartridges](#cartridges)
-    - [OpenAI ChatGPT](#openai-chatgpt-1)
-    - [Mistral AI](#mistral-ai-1)
+    - [Cohere Command](#cohere-command-1)
     - [Google Gemini](#google-gemini-1)
+    - [Mistral AI](#mistral-ai-1)
+    - [OpenAI ChatGPT](#openai-chatgpt-1)
     - [Tools (Functions)](#tools-functions)
         - [Experimental Clojure Support](#experimental-clojure-support)
     - [Marketplace](#marketplace)
 - [Docker](#docker)
-    - [OpenAI ChatGPT](#openai-chatgpt-2)
-    - [Mistral AI](#mistral-ai-2)
+    - [Cohere Command](#cohere-command-2)
     - [Google Gemini](#google-gemini-2)
+    - [Mistral AI](#mistral-ai-2)
+    - [OpenAI ChatGPT](#openai-chatgpt-2)
 - [Security and Privacy](#security-and-privacy)
     - [Cryptography](#cryptography)
     - [End-user IDs](#end-user-ids)
@@ -71,20 +74,20 @@ NANO_BOTS_END_USER=your-user
 # NANO_BOTS_CARTRIDGES_DIRECTORY=/home/user/.local/share/nano-bots/cartridges
 ```
 
-### OpenAI ChatGPT
+### Cohere Command
 
-You can obtain your credentials on the [OpenAI Platform](https://platform.openai.com).
+You can obtain your credentials on the [Cohere Platform](https://dashboard.cohere.com).
 
 ```sh
-export OPENAI_API_ADDRESS=https://api.openai.com
-export OPENAI_API_KEY=your-access-token
+export COHERE_API_ADDRESS=https://api.cohere.ai
+export COHERE_API_KEY=your-api-key
 ```
 
 Alternatively, if your current directory has a `.env` file with the environment variables, they will be automatically loaded:
 
 ```sh
-OPENAI_API_ADDRESS=https://api.openai.com
-OPENAI_API_KEY=your-access-token
+COHERE_API_ADDRESS=https://api.cohere.ai
+COHERE_API_KEY=your-api-key
 ```
 
 ### Mistral AI
@@ -101,6 +104,22 @@ Alternatively, if your current directory has a `.env` file with the environment 
 ```sh
 MISTRAL_API_ADDRESS=https://api.mistral.ai
 MISTRAL_API_KEY=your-api-key
+```
+
+### OpenAI ChatGPT
+
+You can obtain your credentials on the [OpenAI Platform](https://platform.openai.com).
+
+```sh
+export OPENAI_API_ADDRESS=https://api.openai.com
+export OPENAI_API_KEY=your-access-token
+```
+
+Alternatively, if your current directory has a `.env` file with the environment variables, they will be automatically loaded:
+
+```sh
+OPENAI_API_ADDRESS=https://api.openai.com
+OPENAI_API_KEY=your-access-token
 ```
 
 ### Google Gemini
@@ -334,9 +353,9 @@ Try the [Nano Bots Clinic (Live Editor)](https://clinic.nbots.io) to learn about
 
 Here's what a Nano Bot Cartridge looks like:
 
-### OpenAI ChatGPT
+### Cohere Command
 
-Read the [full specification](https://spec.nbots.io/#/README?id=open-ai-chatgpt) for OpenAI ChatGPT.
+Read the [full specification](https://spec.nbots.io/#/README?id=cohere-command) for Cohere Command.
 
 ```yaml
 ---
@@ -353,13 +372,11 @@ behaviors:
     directive: You are a helpful assistant.
 
 provider:
-  id: openai
+  id: cohere
   credentials:
-    address: ENV/OPENAI_API_ADDRESS
-    access-token: ENV/OPENAI_API_KEY
+    api-key: ENV/COHERE_API_KEY
   settings:
-    user: ENV/NANO_BOTS_END_USER
-    model: gpt-4-1106-preview
+    model: command
 ```
 
 ### Mistral AI
@@ -386,6 +403,34 @@ provider:
     api-key: ENV/MISTRAL_API_KEY
   settings:
     model: mistral-medium
+```
+
+### OpenAI ChatGPT
+
+Read the [full specification](https://spec.nbots.io/#/README?id=openai-chatgpt) for OpenAI ChatGPT.
+
+```yaml
+---
+meta:
+  symbol: 🤖
+  name: Nano Bot Name
+  author: Your Name
+  version: 1.0.0
+  license: CC0-1.0
+  description: A helpful assistant.
+
+behaviors:
+  interaction:
+    directive: You are a helpful assistant.
+
+provider:
+  id: openai
+  credentials:
+    address: ENV/OPENAI_API_ADDRESS
+    access-token: ENV/OPENAI_API_KEY
+  settings:
+    user: ENV/NANO_BOTS_END_USER
+    model: gpt-4-1106-preview
 ```
 
 ### Google Gemini
@@ -562,7 +607,7 @@ cp docker-compose.example.yml docker-compose.yml
 
 Set your provider credentials and choose your desired directory for the cartridges files:
 
-### OpenAI ChatGPT
+### Cohere Command
 
 ```yaml
 ---
@@ -571,8 +616,8 @@ services:
     image: ruby:3.2.2-slim-bookworm
     command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 2.3.0 && bash"
     environment:
-      OPENAI_API_ADDRESS: https://api.openai.com
-      OPENAI_API_KEY: your-access-token
+      COHERE_API_ADDRESS: https://api.cohere.ai
+      COHERE_API_KEY: your-api-key
       NANO_BOTS_ENCRYPTION_PASSWORD: UNSAFE
       NANO_BOTS_END_USER: your-user
     volumes:
@@ -591,6 +636,24 @@ services:
     environment:
       MISTRAL_API_ADDRESS: https://api.mistral.ai
       MISTRAL_API_KEY: your-api-key
+      NANO_BOTS_ENCRYPTION_PASSWORD: UNSAFE
+      NANO_BOTS_END_USER: your-user
+    volumes:
+      - ./your-cartridges:/root/.local/share/nano-bots/cartridges
+      - ./your-state-path:/root/.local/state/nano-bots
+```
+
+### OpenAI ChatGPT
+
+```yaml
+---
+services:
+  nano-bots:
+    image: ruby:3.2.2-slim-bookworm
+    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 2.3.0 && bash"
+    environment:
+      OPENAI_API_ADDRESS: https://api.openai.com
+      OPENAI_API_KEY: your-access-token
       NANO_BOTS_ENCRYPTION_PASSWORD: UNSAFE
       NANO_BOTS_END_USER: your-user
     volumes:
@@ -789,17 +852,17 @@ If you lose your password, you lose your data. It is not possible to recover it 
 
 Currently supported providers:
 
-- [x] [Open AI ChatGPT](https://platform.openai.com/docs/api-reference)
-- [x] [Mistral AI](https://docs.mistral.ai/api/)
-- [x] [Google Gemini](https://cloud.google.com/vertex-ai/docs/generative-ai/model-reference/gemini)
-- [ ] [Anthropic Claude](https://www.anthropic.com)
-- [ ] [Cohere Command](https://cohere.com)
-- [ ] [Meta Llama](https://ai.meta.com/llama/)
 - [ ] [01.AI Yi](https://01.ai)
-- [ ] [WizardLM](https://wizardlm.github.io)
+- [ ] [Anthropic Claude](https://www.anthropic.com)
+- [x] [Cohere Command](https://docs.cohere.com/reference/about)
+- [x] [Google Gemini](https://cloud.google.com/vertex-ai/docs/generative-ai/model-reference/gemini)
 - [ ] [LMSYS Org FastChat Vicuna](https://github.com/lm-sys/FastChat)
+- [ ] [Meta Llama](https://ai.meta.com/llama/)
+- [x] [Mistral AI](https://docs.mistral.ai/api/)
+- [x] [Open AI ChatGPT](https://platform.openai.com/docs/api-reference)
+- [ ] [WizardLM](https://wizardlm.github.io)
 
-Although only OpenAI ChatGPT and Google Gemini have been officially tested, some alternative providers offer APIs that are compatible with, for example, OpenAI, such as [FastChat](https://github.com/lm-sys/FastChat#openai-compatible-restful-apis--sdk). Therefore, it is highly probable that they will work just fine.
+Some providers offer APIs that are compatible with, for example, OpenAI, such as [FastChat](https://github.com/lm-sys/FastChat#openai-compatible-restful-apis--sdk). Therefore, it is highly probable that they will work just fine.
 
 ## Development
 
@@ -807,6 +870,8 @@ Although only OpenAI ChatGPT and Google Gemini have been officially tested, some
 bundle
 rubocop -A
 rspec
+
+bundle exec ruby spec/tasks/run-all-models.rb
 ```
 
 ### Publish to RubyGems

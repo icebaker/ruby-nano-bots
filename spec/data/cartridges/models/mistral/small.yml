@@ -1,0 +1,12 @@
+---
+meta:
+  symbol: 🟠
+  name: Mistral Small
+  license: CC0-1.0
+
+provider:
+  id: mistral
+  credentials:
+    api-key: ENV/MISTRAL_API_KEY
+  settings:
+    model: mistral-small
