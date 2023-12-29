@@ -26,7 +26,7 @@ RSpec.describe NanoBot::Logic::Cartridge::Interaction do
       )
     end
 
-    it 'prepares the non-streamming output' do
+    it 'prepares the non-streaming output' do
       expect(described_class.output(cartridge, :repl, { message: 'hello' }, false, true)).to eq(
         { message: { content: 'hello', fennel: nil, lua: nil, clojure: nil } }
       )

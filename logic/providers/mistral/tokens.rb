@@ -2,10 +2,10 @@
 
 module NanoBot
   module Logic
-    module Google
+    module Mistral
       module Tokens
         def self.apply_policies!(_cartridge, payload)
-          payload[:contents] = payload[:contents].map { |message| message.except(:_meta) }
+          payload[:messages] = payload[:messages].map { |message| message.except(:_meta) }
           payload
         end
       end

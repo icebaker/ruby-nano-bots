@@ -8,7 +8,7 @@ module NanoBot
       module Streaming
         def self.enabled?(cartridge, interface)
           provider_stream = case Helpers::Hash.fetch(cartridge, %i[provider id])
-                            when 'openai'
+                            when 'openai', 'mistral'
                               Helpers::Hash.fetch(cartridge, %i[provider settings stream])
                             when 'google'
                               Helpers::Hash.fetch(cartridge, %i[provider options stream])

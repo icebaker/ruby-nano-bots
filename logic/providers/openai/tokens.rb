@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'openai'
-
 module NanoBot
   module Logic
     module OpenAI
