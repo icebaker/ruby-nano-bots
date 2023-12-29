@@ -807,6 +807,8 @@ Although only OpenAI ChatGPT and Google Gemini have been officially tested, some
 bundle
 rubocop -A
 rspec
+
+bundle exec ruby spec/tasks/run-all-models.rb
 ```
 
 ### Publish to RubyGems

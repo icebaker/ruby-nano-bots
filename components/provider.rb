@@ -3,6 +3,7 @@
 require_relative 'providers/google'
 require_relative 'providers/mistral'
 require_relative 'providers/openai'
+require_relative 'providers/cohere'
 
 module NanoBot
   module Components
@@ -15,6 +16,8 @@ module NanoBot
           Providers::Google.new(provider[:options], provider[:settings], provider[:credentials], environment:)
         when 'mistral'
           Providers::Mistral.new(provider[:options], provider[:settings], provider[:credentials], environment:)
+        when 'cohere'
+          Providers::Cohere.new(provider[:options], provider[:settings], provider[:credentials], environment:)
         else
           raise "Unsupported provider \"#{provider[:id]}\""
         end

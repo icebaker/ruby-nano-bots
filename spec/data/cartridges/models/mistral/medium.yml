@@ -1,0 +1,12 @@
+---
+meta:
+  symbol: 🟠
+  name: Mistral Medium
+  license: MIT
+
+provider:
+  id: mistral
+  credentials:
+    api-key: ENV/MISTRAL_API_KEY
+  settings:
+    model: mistral-medium

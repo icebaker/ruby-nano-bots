@@ -1,0 +1,13 @@
+---
+meta:
+  symbol: 🔵
+  name: Google Gemini Pro
+  license: MIT
+
+provider:
+  id: google
+  credentials:
+    service: vertex-ai-api
+    region: us-east4
+  options:
+    model: gemini-pro
