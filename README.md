@@ -9,7 +9,7 @@ https://user-images.githubusercontent.com/113217272/238141567-c58a240c-7b67-4b3b
 ## TL;DR and Quick Start
 
 ```sh
-gem install nano-bots -v 2.5.0
+gem install nano-bots -v 2.5.1
 ```
 
 ```bash
@@ -50,7 +50,7 @@ nb gpt.yml - eval "hi"
 ```
 
 ```ruby
-gem 'nano-bots', '~> 2.5.0'
+gem 'nano-bots', '~> 2.5.1'
 ```
 
 ```ruby
@@ -241,13 +241,13 @@ end
 To install the CLI on your system:
 
 ```sh
-gem install nano-bots -v 2.5.0
+gem install nano-bots -v 2.5.1
 ```
 
 To use it in a Ruby project as a library, add to your `Gemfile`:
 
 ```ruby
-gem 'nano-bots', '~> 2.5.0'
+gem 'nano-bots', '~> 2.5.1'
 ```
 
 ```sh
@@ -963,7 +963,7 @@ Set your provider credentials and choose your desired directory for the cartridg
 services:
   nano-bots:
     image: ruby:3.2.2-slim-bookworm
-    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 2.5.0 && bash"
+    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 2.5.1 && bash"
     environment:
       COHERE_API_KEY: your-api-key
       NANO_BOTS_ENCRYPTION_PASSWORD: UNSAFE
@@ -980,7 +980,7 @@ services:
 services:
   nano-bots:
     image: ruby:3.2.2-slim-bookworm
-    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 2.5.0 && bash"
+    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 2.5.1 && bash"
     environment:
       MARITACA_API_KEY: your-api-key
       NANO_BOTS_ENCRYPTION_PASSWORD: UNSAFE
@@ -997,7 +997,7 @@ services:
 services:
   nano-bots:
     image: ruby:3.2.2-slim-bookworm
-    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 2.5.0 && bash"
+    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 2.5.1 && bash"
     environment:
       MISTRAL_API_KEY: your-api-key
       NANO_BOTS_ENCRYPTION_PASSWORD: UNSAFE
@@ -1009,21 +1009,23 @@ services:
 
 ### Ollama Container
 
-Remember that your `localhost` is inaccessible from inside Docker. You need to either establish [inter-container networking](https://docs.docker.com/compose/networking/) or use the [host's address](https://docs.docker.com/desktop/networking/#i-want-to-connect-from-a-container-to-a-service-on-the-host), depending on where the Ollama server is running.
+Remember that your `localhost` is by default inaccessible from inside Docker. You need to either establish [inter-container networking](https://docs.docker.com/compose/networking/), use the [host's address](https://docs.docker.com/desktop/networking/#i-want-to-connect-from-a-container-to-a-service-on-the-host), or use the [host network](https://docs.docker.com/network/network-tutorial-host/), depending on where the Ollama server is running and your preferences.
 
 ```yaml
 ---
 services:
   nano-bots:
     image: ruby:3.2.2-slim-bookworm
-    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 2.5.0 && bash"
+    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 2.5.1 && bash"
     environment:
-      OLLAMA_API_ADDRESS: http://host.docker.internal:11434
+      OLLAMA_API_ADDRESS: http://localhost:11434
       NANO_BOTS_ENCRYPTION_PASSWORD: UNSAFE
       NANO_BOTS_END_USER: your-user
     volumes:
       - ./your-cartridges:/root/.local/share/nano-bots/cartridges
       - ./your-state-path:/root/.local/state/nano-bots
+    # If you are running the Ollama server on your localhost:
+    network_mode: host # WARNING: Be careful, this may be a security risk.
 ```
 
 ### OpenAI ChatGPT Container
@@ -1033,7 +1035,7 @@ services:
 services:
   nano-bots:
     image: ruby:3.2.2-slim-bookworm
-    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 2.5.0 && bash"
+    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 2.5.1 && bash"
     environment:
       OPENAI_API_KEY: your-access-token
       NANO_BOTS_ENCRYPTION_PASSWORD: UNSAFE
@@ -1052,7 +1054,7 @@ services:
 services:
   nano-bots:
     image: ruby:3.2.2-slim-bookworm
-    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 2.5.0 && bash"
+    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 2.5.1 && bash"
     environment:
       GOOGLE_API_KEY: your-api-key
       NANO_BOTS_ENCRYPTION_PASSWORD: UNSAFE
@@ -1069,7 +1071,7 @@ services:
 services:
   nano-bots:
     image: ruby:3.2.2-slim-bookworm
-    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 2.5.0 && bash"
+    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 2.5.1 && bash"
     environment:
       GOOGLE_CREDENTIALS_FILE_PATH: /root/.config/google-credentials.json
       GOOGLE_REGION: us-east4
@@ -1088,7 +1090,7 @@ services:
 services:
   nano-bots:
     image: ruby:3.2.2-slim-bookworm
-    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 2.5.0 && bash"
+    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 2.5.1 && bash"
     environment:
       GOOGLE_REGION: us-east4
       NANO_BOTS_ENCRYPTION_PASSWORD: UNSAFE
@@ -1144,5 +1146,5 @@ gem build nano-bots.gemspec
 
 gem signin
 
-gem push nano-bots-2.5.0.gem
+gem push nano-bots-2.5.1.gem
 ```
