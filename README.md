@@ -467,7 +467,7 @@ provider:
   credentials:
     address: ENV/OLLAMA_API_ADDRESS
   settings:
-    model: dolphin-phi
+    model: llama2
 ```
 
 Read the [full specification](https://spec.nbots.io/#/README?id=ollama) for Ollama.
