@@ -2,10 +2,9 @@
 services:
   nano-bots:
     image: ruby:3.2.2-slim-bookworm
-    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 2.4.1 && bash"
+    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 2.5.0 && bash"
     environment:
-      OPENAI_API_ADDRESS: https://api.openai.com
-      OPENAI_API_KEY: your-access-token
+      COHERE_API_KEY: your-api-key
 
       GOOGLE_API_KEY: your-api-key
 
@@ -13,9 +12,16 @@ services:
       GOOGLE_PROJECT_ID: your-project-id
       GOOGLE_REGION: us-east4
 
+      MARITACA_API_KEY: 'your-api-key'
+
+      MISTRAL_API_KEY: your-api-key
+
+      OLLAMA_API_ADDRESS: http://host.docker.internal:11434
+
+      OPENAI_API_KEY: your-access-token
+
       NANO_BOTS_ENCRYPTION_PASSWORD: UNSAFE
       NANO_BOTS_END_USER: your-user
-
     volumes:
       - ./google-credentials.json:/root/.config/google-credentials.json
       - ./your-cartridges:/root/.local/share/nano-bots/cartridges

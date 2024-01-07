@@ -9,7 +9,7 @@ https://user-images.githubusercontent.com/113217272/238141567-c58a240c-7b67-4b3b
 ## TL;DR and Quick Start
 
 ```sh
-gem install nano-bots -v 2.4.1
+gem install nano-bots -v 2.5.0
 ```
 
 ```bash
@@ -50,7 +50,7 @@ nb gpt.yml - eval "hi"
 ```
 
 ```ruby
-gem 'nano-bots', '~> 2.4.1'
+gem 'nano-bots', '~> 2.5.0'
 ```
 
 ```ruby
@@ -241,13 +241,13 @@ end
 To install the CLI on your system:
 
 ```sh
-gem install nano-bots -v 2.4.1
+gem install nano-bots -v 2.5.0
 ```
 
 To use it in a Ruby project as a library, add to your `Gemfile`:
 
 ```ruby
-gem 'nano-bots', '~> 2.4.1'
+gem 'nano-bots', '~> 2.5.0'
 ```
 
 ```sh
@@ -963,7 +963,7 @@ Set your provider credentials and choose your desired directory for the cartridg
 services:
   nano-bots:
     image: ruby:3.2.2-slim-bookworm
-    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 2.4.1 && bash"
+    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 2.5.0 && bash"
     environment:
       COHERE_API_KEY: your-api-key
       NANO_BOTS_ENCRYPTION_PASSWORD: UNSAFE
@@ -980,7 +980,7 @@ services:
 services:
   nano-bots:
     image: ruby:3.2.2-slim-bookworm
-    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 2.4.1 && bash"
+    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 2.5.0 && bash"
     environment:
       MARITACA_API_KEY: your-api-key
       NANO_BOTS_ENCRYPTION_PASSWORD: UNSAFE
@@ -997,7 +997,7 @@ services:
 services:
   nano-bots:
     image: ruby:3.2.2-slim-bookworm
-    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 2.4.1 && bash"
+    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 2.5.0 && bash"
     environment:
       MISTRAL_API_KEY: your-api-key
       NANO_BOTS_ENCRYPTION_PASSWORD: UNSAFE
@@ -1016,7 +1016,7 @@ Remember that your `localhost` is inaccessible from inside Docker. You need to e
 services:
   nano-bots:
     image: ruby:3.2.2-slim-bookworm
-    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 2.4.1 && bash"
+    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 2.5.0 && bash"
     environment:
       OLLAMA_API_ADDRESS: http://host.docker.internal:11434
       NANO_BOTS_ENCRYPTION_PASSWORD: UNSAFE
@@ -1033,7 +1033,7 @@ services:
 services:
   nano-bots:
     image: ruby:3.2.2-slim-bookworm
-    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 2.4.1 && bash"
+    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 2.5.0 && bash"
     environment:
       OPENAI_API_KEY: your-access-token
       NANO_BOTS_ENCRYPTION_PASSWORD: UNSAFE
@@ -1052,7 +1052,7 @@ services:
 services:
   nano-bots:
     image: ruby:3.2.2-slim-bookworm
-    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 2.4.1 && bash"
+    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 2.5.0 && bash"
     environment:
       GOOGLE_API_KEY: your-api-key
       NANO_BOTS_ENCRYPTION_PASSWORD: UNSAFE
@@ -1069,7 +1069,7 @@ services:
 services:
   nano-bots:
     image: ruby:3.2.2-slim-bookworm
-    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 2.4.1 && bash"
+    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 2.5.0 && bash"
     environment:
       GOOGLE_CREDENTIALS_FILE_PATH: /root/.config/google-credentials.json
       GOOGLE_REGION: us-east4
@@ -1088,7 +1088,7 @@ services:
 services:
   nano-bots:
     image: ruby:3.2.2-slim-bookworm
-    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 2.4.1 && bash"
+    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 2.5.0 && bash"
     environment:
       GOOGLE_REGION: us-east4
       NANO_BOTS_ENCRYPTION_PASSWORD: UNSAFE
@@ -1144,5 +1144,5 @@ gem build nano-bots.gemspec
 
 gem signin
 
-gem push nano-bots-2.4.1.gem
+gem push nano-bots-2.5.0.gem
 ```
