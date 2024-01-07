@@ -1,0 +1,10 @@
+---
+meta:
+  symbol: 🦙
+  name: Llama 2 through Ollama
+  license: CC0-1.0
+
+provider:
+  id: ollama
+  settings:
+    model: llama2

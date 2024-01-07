@@ -1,218 +1,109 @@
 # Nano Bots 💎 🤖
 
-A Ruby implementation of the [Nano Bots](https://github.com/icebaker/nano-bots) specification with support for [OpenAI ChatGPT](https://openai.com/chatgpt), [Mistral AI](https://mistral.ai), [Cohere Command](https://cohere.com), and [Google Gemini](https://deepmind.google/technologies/gemini).
+An implementation of the [Nano Bots](https://spec.nbots.io) specification with support for [Cohere Command](https://cohere.com), [Google Gemini](https://deepmind.google/technologies/gemini), [Maritaca AI MariTalk](https://www.maritaca.ai), [Mistral AI](https://mistral.ai), [Ollama](https://ollama.ai), [OpenAI ChatGPT](https://openai.com/chatgpt), and others.
 
 ![Ruby Nano Bots](https://raw.githubusercontent.com/icebaker/assets/main/nano-bots/ruby-nano-bots-canvas.png)
 
 https://user-images.githubusercontent.com/113217272/238141567-c58a240c-7b67-4b3b-864a-0f49bbf6e22f.mp4
 
-- [Setup](#setup)
-    - [Cohere Command](#cohere-command)
-    - [Google Gemini](#google-gemini)
-    - [Mistral AI](#mistral-ai)
-    - [OpenAI ChatGPT](#openai-chatgpt)
-- [Usage](#usage)
-    - [Command Line](#command-line)
-    - [Library](#library)
-- [Cartridges](#cartridges)
-    - [Cohere Command](#cohere-command-1)
-    - [Google Gemini](#google-gemini-1)
-    - [Mistral AI](#mistral-ai-1)
-    - [OpenAI ChatGPT](#openai-chatgpt-1)
-    - [Tools (Functions)](#tools-functions)
-        - [Experimental Clojure Support](#experimental-clojure-support)
-    - [Marketplace](#marketplace)
-- [Docker](#docker)
-    - [Cohere Command](#cohere-command-2)
-    - [Google Gemini](#google-gemini-2)
-    - [Mistral AI](#mistral-ai-2)
-    - [OpenAI ChatGPT](#openai-chatgpt-2)
-- [Security and Privacy](#security-and-privacy)
-    - [Cryptography](#cryptography)
-    - [End-user IDs](#end-user-ids)
-    - [Decrypting](#decrypting)
-- [Providers](#providers)
-- [Debugging](#debugging)
-- [Development](#development)
-    - [Publish to RubyGems](#publish-to-rubygems)
-
-## Setup
-
-For a system usage:
+## TL;DR and Quick Start
 
 ```sh
 gem install nano-bots -v 2.4.1
 ```
 
-To use it in a project, add it to your `Gemfile`:
+```bash
+nb - - eval "hello"
+# => Hello! How may I assist you today?
+```
+
+```bash
+nb - - repl
+```
+
+```text
+🤖> Hi, how are you doing?
+
+As an AI language model, I do not experience emotions but I am functioning
+well. How can I assist you?
+
+🤖> |
+```
+
+```yaml
+---
+meta:
+  symbol: 🤖
+  name: ChatGPT
+
+provider:
+  id: openai
+  credentials:
+    access-token: ENV/OPENAI_API_KEY
+  settings:
+    model: gpt-4-1106-preview
+```
+
+```bash
+nb gpt.yml - eval "hi"
+# => Hello! How can I assist you today?
+```
 
 ```ruby
 gem 'nano-bots', '~> 2.4.1'
 ```
 
-```sh
-bundle install
+```ruby
+require 'nano-bots'
+
+bot = NanoBot.new(cartridge: 'gpt.yml')
+
+bot.eval('Hi!') do |content, fragment, finished, meta|
+  print fragment unless fragment.nil?
+end
+
+# => Hello! How can I assist you today?
 ```
 
-For credentials and configurations, relevant environment variables can be set in your `.bashrc`, `.zshrc`, or equivalent files, as well as in your Docker Container or System Environment. Example:
-
-```sh
-export NANO_BOTS_ENCRYPTION_PASSWORD=UNSAFE
-export NANO_BOTS_END_USER=your-user
-
-# export NANO_BOTS_STATE_DIRECTORY=/home/user/.local/state/nano-bots
-# export NANO_BOTS_CARTRIDGES_DIRECTORY=/home/user/.local/share/nano-bots/cartridges
-```
-
-Alternatively, if your current directory has a `.env` file with the environment variables, they will be automatically loaded:
-
-```sh
-NANO_BOTS_ENCRYPTION_PASSWORD=UNSAFE
-NANO_BOTS_END_USER=your-user
-
-# NANO_BOTS_STATE_DIRECTORY=/home/user/.local/state/nano-bots
-# NANO_BOTS_CARTRIDGES_DIRECTORY=/home/user/.local/share/nano-bots/cartridges
-```
-
-### Cohere Command
-
-You can obtain your credentials on the [Cohere Platform](https://dashboard.cohere.com).
-
-```sh
-export COHERE_API_ADDRESS=https://api.cohere.ai
-export COHERE_API_KEY=your-api-key
-```
-
-Alternatively, if your current directory has a `.env` file with the environment variables, they will be automatically loaded:
-
-```sh
-COHERE_API_ADDRESS=https://api.cohere.ai
-COHERE_API_KEY=your-api-key
-```
-
-### Mistral AI
-
-You can obtain your credentials on the [Mistral Platform](https://console.mistral.ai).
-
-```sh
-export MISTRAL_API_ADDRESS=https://api.mistral.ai
-export MISTRAL_API_KEY=your-api-key
-```
-
-Alternatively, if your current directory has a `.env` file with the environment variables, they will be automatically loaded:
-
-```sh
-MISTRAL_API_ADDRESS=https://api.mistral.ai
-MISTRAL_API_KEY=your-api-key
-```
-
-### OpenAI ChatGPT
-
-You can obtain your credentials on the [OpenAI Platform](https://platform.openai.com).
-
-```sh
-export OPENAI_API_ADDRESS=https://api.openai.com
-export OPENAI_API_KEY=your-access-token
-```
-
-Alternatively, if your current directory has a `.env` file with the environment variables, they will be automatically loaded:
-
-```sh
-OPENAI_API_ADDRESS=https://api.openai.com
-OPENAI_API_KEY=your-access-token
-```
-
-### Google Gemini
-
-Click [here](https://github.com/gbaptista/gemini-ai#credentials) to learn how to obtain your credentials.
-
-#### Option 1: API Key (Generative Language API)
-
-```sh
-export GOOGLE_API_KEY=your-api-key
-
-export NANO_BOTS_ENCRYPTION_PASSWORD=UNSAFE
-export NANO_BOTS_END_USER=your-user
-
-# export NANO_BOTS_STATE_DIRECTORY=/home/user/.local/state/nano-bots
-# export NANO_BOTS_CARTRIDGES_DIRECTORY=/home/user/.local/share/nano-bots/cartridges
-```
-
-Alternatively, if your current directory has a `.env` file with the environment variables, they will be automatically loaded:
-
-```sh
-GOOGLE_API_KEY=your-api-key
-
-NANO_BOTS_ENCRYPTION_PASSWORD=UNSAFE
-NANO_BOTS_END_USER=your-user
-
-# NANO_BOTS_STATE_DIRECTORY=/home/user/.local/state/nano-bots
-# NANO_BOTS_CARTRIDGES_DIRECTORY=/home/user/.local/share/nano-bots/cartridges
-```
-
-#### Option 2: Service Account Credentials File (Vertex AI API)
-
-```sh
-export GOOGLE_CREDENTIALS_FILE_PATH=google-credentials.json
-export GOOGLE_REGION=us-east4
-
-export NANO_BOTS_ENCRYPTION_PASSWORD=UNSAFE
-export NANO_BOTS_END_USER=your-user
-
-# export NANO_BOTS_STATE_DIRECTORY=/home/user/.local/state/nano-bots
-# export NANO_BOTS_CARTRIDGES_DIRECTORY=/home/user/.local/share/nano-bots/cartridges
-```
-
-Alternatively, if your current directory has a `.env` file with the environment variables, they will be automatically loaded:
-
-```sh
-GOOGLE_CREDENTIALS_FILE_PATH=google-credentials.json
-GOOGLE_REGION=us-east4
-
-NANO_BOTS_ENCRYPTION_PASSWORD=UNSAFE
-NANO_BOTS_END_USER=your-user
-
-# NANO_BOTS_STATE_DIRECTORY=/home/user/.local/state/nano-bots
-# NANO_BOTS_CARTRIDGES_DIRECTORY=/home/user/.local/share/nano-bots/cartridges
-```
-
-#### Option 3: Application Default Credentials (Vertex AI API)
-
-```sh
-export GOOGLE_REGION=us-east4
-
-export NANO_BOTS_ENCRYPTION_PASSWORD=UNSAFE
-export NANO_BOTS_END_USER=your-user
-
-# export NANO_BOTS_STATE_DIRECTORY=/home/user/.local/state/nano-bots
-# export NANO_BOTS_CARTRIDGES_DIRECTORY=/home/user/.local/share/nano-bots/cartridges
-```
-
-Alternatively, if your current directory has a `.env` file with the environment variables, they will be automatically loaded:
-
-```sh
-GOOGLE_REGION=us-east4
-
-NANO_BOTS_ENCRYPTION_PASSWORD=UNSAFE
-NANO_BOTS_END_USER=your-user
-
-# NANO_BOTS_STATE_DIRECTORY=/home/user/.local/state/nano-bots
-# NANO_BOTS_CARTRIDGES_DIRECTORY=/home/user/.local/share/nano-bots/cartridges
-```
-
-#### Custom Project ID
-
-If you need to manually set a Google Project ID:
-
-```sh
-export GOOGLE_PROJECT_ID=your-project-id
-```
-
-Alternatively, if your current directory has a `.env` file with the environment variables, they will be automatically loaded:
-
-```sh
-GOOGLE_PROJECT_ID=your-project-id
-```
+- [TL;DR and Quick Start](#tldr-and-quick-start)
+- [Usage](#usage)
+    - [Command Line](#command-line)
+    - [Debugging](#debugging)
+    - [Library](#library)
+- [Setup](#setup)
+    - [Cohere Command](#cohere-command)
+    - [Maritaca AI MariTalk](#maritaca-ai-maritalk)
+    - [Mistral AI](#mistral-ai)
+    - [Ollama](#ollama)
+    - [OpenAI ChatGPT](#openai-chatgpt)
+    - [Google Gemini](#google-gemini)
+        - [Option 1: API Key (Generative Language API)](#option-1-api-key-generative-language-api)
+        - [Option 2: Service Account Credentials File (Vertex AI API)](#option-2-service-account-credentials-file-vertex-ai-api)
+        - [Option 3: Application Default Credentials (Vertex AI API)](#option-3-application-default-credentials-vertex-ai-api)
+        - [Custom Project ID](#custom-project-id)
+- [Cartridges](#cartridges)
+    - [Tools (Functions)](#tools-functions)
+        - [Experimental Clojure Support](#experimental-clojure-support)
+    - [Marketplace](#marketplace)
+- [Security and Privacy](#security-and-privacy)
+    - [Cryptography](#cryptography)
+    - [End-user IDs](#end-user-ids)
+    - [Decrypting](#decrypting)
+- [Supported Providers](#supported-providers)
+- [Docker](#docker)
+    - [Cohere Command Container](#cohere-command-container)
+    - [Maritaca AI MariTalk Container](#maritaca-ai-maritalk-container)
+    - [Mistral AI Container](#mistral-ai-container)
+    - [Ollama Container](#ollama-container)
+    - [OpenAI ChatGPT Container](#openai-chatgpt-container)
+    - [Google Gemini Container](#google-gemini-container)
+        - [Option 1: API Key (Generative Language API) Config](#option-1-api-key-generative-language-api-config)
+        - [Option 2: Service Account Credentials File (Vertex AI API) Config](#option-2-service-account-credentials-file-vertex-ai-api-config)
+        - [Option 3: Application Default Credentials (Vertex AI API) Config](#option-3-application-default-credentials-vertex-ai-api-config)
+        - [Custom Project ID Config](#custom-project-id-config)
+    - [Running the Container](#running-the-container)
+- [Development](#development)
+    - [Publish to RubyGems](#publish-to-rubygems)
 
 ## Usage
 
@@ -345,17 +236,59 @@ bot.boot do |content, fragment, finished, meta|
 end
 ```
 
-## Cartridges
+## Setup
 
-Check the Nano Bots specification to learn more about [how to build cartridges](https://spec.nbots.io/#/README?id=cartridges).
+To install the CLI on your system:
 
-Try the [Nano Bots Clinic (Live Editor)](https://clinic.nbots.io) to learn about creating Cartridges.
+```sh
+gem install nano-bots -v 2.4.1
+```
 
-Here's what a Nano Bot Cartridge looks like:
+To use it in a Ruby project as a library, add to your `Gemfile`:
+
+```ruby
+gem 'nano-bots', '~> 2.4.1'
+```
+
+```sh
+bundle install
+```
+
+For credentials and configurations, relevant environment variables can be set in your `.bashrc`, `.zshrc`, or equivalent files, as well as in your Docker Container or System Environment. Example:
+
+```sh
+export NANO_BOTS_ENCRYPTION_PASSWORD=UNSAFE
+export NANO_BOTS_END_USER=your-user
+
+# export NANO_BOTS_STATE_DIRECTORY=/home/user/.local/state/nano-bots
+# export NANO_BOTS_CARTRIDGES_DIRECTORY=/home/user/.local/share/nano-bots/cartridges
+```
+
+Alternatively, if your current directory has a `.env` file with the environment variables, they will be automatically loaded:
+
+```sh
+NANO_BOTS_ENCRYPTION_PASSWORD=UNSAFE
+NANO_BOTS_END_USER=your-user
+
+# NANO_BOTS_STATE_DIRECTORY=/home/user/.local/state/nano-bots
+# NANO_BOTS_CARTRIDGES_DIRECTORY=/home/user/.local/share/nano-bots/cartridges
+```
 
 ### Cohere Command
 
-Read the [full specification](https://spec.nbots.io/#/README?id=cohere-command) for Cohere Command.
+You can obtain your credentials on the [Cohere Platform](https://dashboard.cohere.com).
+
+```sh
+export COHERE_API_KEY=your-api-key
+```
+
+Alternatively, if your current directory has a `.env` file with the environment variables, they will be automatically loaded:
+
+```sh
+COHERE_API_KEY=your-api-key
+```
+
+Create a `cartridge.yml` file:
 
 ```yaml
 ---
@@ -379,9 +312,89 @@ provider:
     model: command
 ```
 
-### Mistral AI
+Read the [full specification](https://spec.nbots.io/#/README?id=cohere-command) for Cohere Command.
+
+```bash
+nb cartridge.yml - eval "Hello"
+
+nb cartridge.yml - repl
+```
+
+```ruby
+bot = NanoBot.new(cartridge: 'cartridge.yml')
+
+puts bot.eval('Hello')
+```
+
+### Maritaca AI MariTalk
+
+You can obtain your API key at [MariTalk](https://chat.maritaca.ai).
+
+Enclose credentials in single quotes when using environment variables to prevent issues with the $ character in the API key:
+
+```sh
+export MARITACA_API_KEY='123...$a12...'
+```
+
+Alternatively, if your current directory has a `.env` file with the environment variables, they will be automatically loaded:
+
+```sh
+MARITACA_API_KEY='123...$a12...'
+```
+
+Create a `cartridge.yml` file:
+
+```yaml
+---
+meta:
+  symbol: 🤖
+  name: Nano Bot Name
+  author: Your Name
+  version: 1.0.0
+  license: CC0-1.0
+  description: A helpful assistant.
+
+behaviors:
+  interaction:
+    directive: You are a helpful assistant.
+
+provider:
+  id: maritaca
+  credentials:
+    api-key: ENV/MARITACA_API_KEY
+  settings:
+    model: maritalk
+```
 
 Read the [full specification](https://spec.nbots.io/#/README?id=mistral-ai) for Mistral AI.
+
+```bash
+nb cartridge.yml - eval "Hello"
+
+nb cartridge.yml - repl
+```
+
+```ruby
+bot = NanoBot.new(cartridge: 'cartridge.yml')
+
+puts bot.eval('Hello')
+```
+
+### Mistral AI
+
+You can obtain your credentials on the [Mistral Platform](https://console.mistral.ai).
+
+```sh
+export MISTRAL_API_KEY=your-api-key
+```
+
+Alternatively, if your current directory has a `.env` file with the environment variables, they will be automatically loaded:
+
+```sh
+MISTRAL_API_KEY=your-api-key
+```
+
+Create a `cartridge.yml` file:
 
 ```yaml
 ---
@@ -405,9 +418,87 @@ provider:
     model: mistral-medium
 ```
 
+Read the [full specification](https://spec.nbots.io/#/README?id=mistral-ai) for Mistral AI.
+
+```bash
+nb cartridge.yml - eval "Hello"
+
+nb cartridge.yml - repl
+```
+
+```ruby
+bot = NanoBot.new(cartridge: 'cartridge.yml')
+
+puts bot.eval('Hello')
+```
+
+### Ollama
+
+To install and set up, follow the instructions on the [Ollama](https://ollama.ai) website.
+
+```sh
+export OLLAMA_API_ADDRESS=http://localhost:11434
+```
+
+Alternatively, if your current directory has a `.env` file with the environment variables, they will be automatically loaded:
+
+```sh
+OLLAMA_API_ADDRESS=http://localhost:11434
+```
+
+Create a `cartridge.yml` file:
+
+```yaml
+---
+meta:
+  symbol: 🤖
+  name: Nano Bot Name
+  author: Your Name
+  version: 1.0.0
+  license: CC0-1.0
+  description: A helpful assistant.
+
+behaviors:
+  interaction:
+    directive: You are a helpful assistant.
+
+provider:
+  id: ollama
+  credentials:
+    address: ENV/OLLAMA_API_ADDRESS
+  settings:
+    model: dolphin-phi
+```
+
+Read the [full specification](https://spec.nbots.io/#/README?id=ollama) for Ollama.
+
+```bash
+nb cartridge.yml - eval "Hello"
+
+nb cartridge.yml - repl
+```
+
+```ruby
+bot = NanoBot.new(cartridge: 'cartridge.yml')
+
+puts bot.eval('Hello')
+```
+
 ### OpenAI ChatGPT
 
-Read the [full specification](https://spec.nbots.io/#/README?id=openai-chatgpt) for OpenAI ChatGPT.
+You can obtain your credentials on the [OpenAI Platform](https://platform.openai.com).
+
+```sh
+export OPENAI_API_KEY=your-access-token
+```
+
+Alternatively, if your current directory has a `.env` file with the environment variables, they will be automatically loaded:
+
+```sh
+OPENAI_API_KEY=your-access-token
+```
+
+Create a `cartridge.yml` file:
 
 ```yaml
 ---
@@ -426,18 +517,43 @@ behaviors:
 provider:
   id: openai
   credentials:
-    address: ENV/OPENAI_API_ADDRESS
     access-token: ENV/OPENAI_API_KEY
   settings:
     user: ENV/NANO_BOTS_END_USER
     model: gpt-4-1106-preview
 ```
 
+Read the [full specification](https://spec.nbots.io/#/README?id=openai-chatgpt) for OpenAI ChatGPT.
+
+```bash
+nb cartridge.yml - eval "Hello"
+
+nb cartridge.yml - repl
+```
+
+```ruby
+bot = NanoBot.new(cartridge: 'cartridge.yml')
+
+puts bot.eval('Hello')
+```
+
 ### Google Gemini
 
-Read the [full specification](https://spec.nbots.io/#/README?id=google-gemini) for Google Gemini.
+Click [here](https://github.com/gbaptista/gemini-ai#credentials) to learn how to obtain your credentials.
 
 #### Option 1: API Key (Generative Language API)
+
+```sh
+export GOOGLE_API_KEY=your-api-key
+```
+
+Alternatively, if your current directory has a `.env` file with the environment variables, they will be automatically loaded:
+
+```sh
+GOOGLE_API_KEY=your-api-key
+```
+
+Create a `cartridge.yml` file:
 
 ```yaml
 ---
@@ -462,7 +578,35 @@ provider:
     model: gemini-pro
 ```
 
+Read the [full specification](https://spec.nbots.io/#/README?id=google-gemini) for Google Gemini.
+
+```bash
+nb cartridge.yml - eval "Hello"
+
+nb cartridge.yml - repl
+```
+
+```ruby
+bot = NanoBot.new(cartridge: 'cartridge.yml')
+
+puts bot.eval('Hello')
+```
+
 #### Option 2: Service Account Credentials File (Vertex AI API)
+
+```sh
+export GOOGLE_CREDENTIALS_FILE_PATH=google-credentials.json
+export GOOGLE_REGION=us-east4
+```
+
+Alternatively, if your current directory has a `.env` file with the environment variables, they will be automatically loaded:
+
+```sh
+GOOGLE_CREDENTIALS_FILE_PATH=google-credentials.json
+GOOGLE_REGION=us-east4
+```
+
+Create a `cartridge.yml` file:
 
 ```yaml
 ---
@@ -488,7 +632,33 @@ provider:
     model: gemini-pro
 ```
 
+Read the [full specification](https://spec.nbots.io/#/README?id=google-gemini) for Google Gemini.
+
+```bash
+nb cartridge.yml - eval "Hello"
+
+nb cartridge.yml - repl
+```
+
+```ruby
+bot = NanoBot.new(cartridge: 'cartridge.yml')
+
+puts bot.eval('Hello')
+```
+
 #### Option 3: Application Default Credentials (Vertex AI API)
+
+```sh
+export GOOGLE_REGION=us-east4
+```
+
+Alternatively, if your current directory has a `.env` file with the environment variables, they will be automatically loaded:
+
+```sh
+GOOGLE_REGION=us-east4
+```
+
+Create a `cartridge.yml` file:
 
 ```yaml
 ---
@@ -513,9 +683,35 @@ provider:
     model: gemini-pro
 ```
 
+Read the [full specification](https://spec.nbots.io/#/README?id=google-gemini) for Google Gemini.
+
+```bash
+nb cartridge.yml - eval "Hello"
+
+nb cartridge.yml - repl
+```
+
+```ruby
+bot = NanoBot.new(cartridge: 'cartridge.yml')
+
+puts bot.eval('Hello')
+```
+
 #### Custom Project ID
 
 If you need to manually set a Google Project ID:
+
+```sh
+export GOOGLE_PROJECT_ID=your-project-id
+```
+
+Alternatively, if your current directory has a `.env` file with the environment variables, they will be automatically loaded:
+
+```sh
+GOOGLE_PROJECT_ID=your-project-id
+```
+
+Add to your `cartridge.yml` file:
 
 ```yaml
 ---
@@ -523,6 +719,37 @@ provider:
   id: google
   credentials:
     project-id: ENV/GOOGLE_PROJECT_ID
+```
+
+## Cartridges
+
+Check the Nano Bots specification to learn more about [how to build cartridges](https://spec.nbots.io/#/README?id=cartridges).
+
+Try the [Nano Bots Clinic (Live Editor)](https://clinic.nbots.io) to learn about creating Cartridges.
+
+Here's what a Nano Bot Cartridge looks like:
+
+```yaml
+---
+meta:
+  symbol: 🤖
+  name: Nano Bot Name
+  author: Your Name
+  version: 1.0.0
+  license: CC0-1.0
+  description: A helpful assistant.
+
+behaviors:
+  interaction:
+    directive: You are a helpful assistant.
+
+provider:
+  id: openai
+  credentials:
+    access-token: ENV/OPENAI_API_KEY
+  settings:
+    user: ENV/NANO_BOTS_END_USER
+    model: gpt-4-1106-preview
 ```
 
 ### Tools (Functions)
@@ -550,7 +777,7 @@ The randomly generated number is 59.
 
 🤖> |
 ```
-To successfully use Tools (Functions), you need to specify a provider and a model that supports them. As of the writing of this README, the provider that supports them is [OpenAI](https://platform.openai.com/docs/models), with models `gpt-3.5-turbo-1106` and `gpt-4-1106-preview`, and [Google](https://cloud.google.com/vertex-ai/docs/generative-ai/multimodal/function-calling#supported_models), with the `vertex-ai-api` service and the model `gemini-pro`. Mistral AI does not support tools.
+To successfully use Tools (Functions), you need to specify a provider and a model that supports them. As of the writing of this README, the provider that supports them is [OpenAI](https://platform.openai.com/docs/models), with models `gpt-3.5-turbo-1106` and `gpt-4-1106-preview`, and [Google](https://cloud.google.com/vertex-ai/docs/generative-ai/multimodal/function-calling#supported_models), with the `vertex-ai-api` service and the model `gemini-pro`. Other providers do not yet have support.
 
 Check the [Nano Bots specification](https://spec.nbots.io/#/README?id=tools-functions-2) to learn more about Tools (Functions).
 
@@ -594,153 +821,6 @@ safety:
 ### Marketplace
 
 You can explore the Nano Bots [Marketplace](https://nbots.io) to discover new Cartridges that can help you.
-
-## Docker
-
-Clone the repository and copy the Docker Compose template:
-
-```
-git clone https://github.com/icebaker/ruby-nano-bots.git
-cd ruby-nano-bots
-cp docker-compose.example.yml docker-compose.yml
-```
-
-Set your provider credentials and choose your desired directory for the cartridges files:
-
-### Cohere Command
-
-```yaml
----
-services:
-  nano-bots:
-    image: ruby:3.2.2-slim-bookworm
-    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 2.4.1 && bash"
-    environment:
-      COHERE_API_ADDRESS: https://api.cohere.ai
-      COHERE_API_KEY: your-api-key
-      NANO_BOTS_ENCRYPTION_PASSWORD: UNSAFE
-      NANO_BOTS_END_USER: your-user
-    volumes:
-      - ./your-cartridges:/root/.local/share/nano-bots/cartridges
-      - ./your-state-path:/root/.local/state/nano-bots
-```
-
-### Mistral AI
-
-```yaml
----
-services:
-  nano-bots:
-    image: ruby:3.2.2-slim-bookworm
-    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 2.4.1 && bash"
-    environment:
-      MISTRAL_API_ADDRESS: https://api.mistral.ai
-      MISTRAL_API_KEY: your-api-key
-      NANO_BOTS_ENCRYPTION_PASSWORD: UNSAFE
-      NANO_BOTS_END_USER: your-user
-    volumes:
-      - ./your-cartridges:/root/.local/share/nano-bots/cartridges
-      - ./your-state-path:/root/.local/state/nano-bots
-```
-
-### OpenAI ChatGPT
-
-```yaml
----
-services:
-  nano-bots:
-    image: ruby:3.2.2-slim-bookworm
-    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 2.4.1 && bash"
-    environment:
-      OPENAI_API_ADDRESS: https://api.openai.com
-      OPENAI_API_KEY: your-access-token
-      NANO_BOTS_ENCRYPTION_PASSWORD: UNSAFE
-      NANO_BOTS_END_USER: your-user
-    volumes:
-      - ./your-cartridges:/root/.local/share/nano-bots/cartridges
-      - ./your-state-path:/root/.local/state/nano-bots
-```
-
-### Google Gemini
-
-#### Option 1: API Key (Generative Language API)
-
-```yaml
----
-services:
-  nano-bots:
-    image: ruby:3.2.2-slim-bookworm
-    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 2.4.1 && bash"
-    environment:
-      GOOGLE_API_KEY: your-api-key
-      NANO_BOTS_ENCRYPTION_PASSWORD: UNSAFE
-      NANO_BOTS_END_USER: your-user
-    volumes:
-      - ./your-cartridges:/root/.local/share/nano-bots/cartridges
-      - ./your-state-path:/root/.local/state/nano-bots
-```
-
-#### Option 2: Service Account Credentials File (Vertex AI API)
-
-```yaml
----
-services:
-  nano-bots:
-    image: ruby:3.2.2-slim-bookworm
-    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 2.4.1 && bash"
-    environment:
-      GOOGLE_CREDENTIALS_FILE_PATH: /root/.config/google-credentials.json
-      GOOGLE_REGION: us-east4
-      NANO_BOTS_ENCRYPTION_PASSWORD: UNSAFE
-      NANO_BOTS_END_USER: your-user
-    volumes:
-      - ./google-credentials.json:/root/.config/google-credentials.json
-      - ./your-cartridges:/root/.local/share/nano-bots/cartridges
-      - ./your-state-path:/root/.local/state/nano-bots
-```
-
-#### Option 3: Application Default Credentials (Vertex AI API)
-
-```yaml
----
-services:
-  nano-bots:
-    image: ruby:3.2.2-slim-bookworm
-    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 2.4.1 && bash"
-    environment:
-      GOOGLE_REGION: us-east4
-      NANO_BOTS_ENCRYPTION_PASSWORD: UNSAFE
-      NANO_BOTS_END_USER: your-user
-    volumes:
-      - ./your-cartridges:/root/.local/share/nano-bots/cartridges
-      - ./your-state-path:/root/.local/state/nano-bots
-```
-
-#### Custom Project ID
-If you need to manually set a Google Project ID:
-
-```yaml
-environment:
-  GOOGLE_PROJECT_ID=your-project-id
-```
-
-### Container
-
-Enter the container:
-```sh
-docker compose run nano-bots
-```
-
-Start playing:
-```sh
-nb - - eval "hello"
-nb - - repl
-
-nb assistant.yml - eval "hello"
-nb assistant.yml - repl
-```
-
-You can exit the REPL by typing `exit`.
 
 ## Security and Privacy
 
@@ -848,21 +928,201 @@ NanoBot.security.decrypt('_O7OjYUESagb46YSeUeSfSMzoO1Yg0BZkjUwCcsh9sVppKvYMhd2qG
 
 If you lose your password, you lose your data. It is not possible to recover it at all. For real.
 
-## Providers
+## Supported Providers
 
-Currently supported providers:
-
-- [ ] [01.AI Yi](https://01.ai)
 - [ ] [Anthropic Claude](https://www.anthropic.com)
-- [x] [Cohere Command](https://docs.cohere.com/reference/about)
-- [x] [Google Gemini](https://cloud.google.com/vertex-ai/docs/generative-ai/model-reference/gemini)
-- [ ] [LMSYS Org FastChat Vicuna](https://github.com/lm-sys/FastChat)
-- [ ] [Meta Llama](https://ai.meta.com/llama/)
-- [x] [Mistral AI](https://docs.mistral.ai/api/)
-- [x] [Open AI ChatGPT](https://platform.openai.com/docs/api-reference)
-- [ ] [WizardLM](https://wizardlm.github.io)
+- [x] [Cohere Command](https://cohere.com)
+- [x] [Google Gemini](https://deepmind.google/technologies/gemini)
+- [x] [Maritaca AI MariTalk](https://www.maritaca.ai)
+- [x] [Mistral AI](https://mistral.ai)
+- [x] [Ollama](https://ollama.ai)
+    - [x] [01.AI Yi](https://01.ai)
+    - [x] [LMSYS Vicuna](https://github.com/lm-sys/FastChat)
+    - [x] [Meta Llama](https://ai.meta.com/llama/)
+    - [x] [WizardLM](https://wizardlm.github.io)
+- [x] [Open AI ChatGPT](https://openai.com/chatgpt)
 
-Some providers offer APIs that are compatible with, for example, OpenAI, such as [FastChat](https://github.com/lm-sys/FastChat#openai-compatible-restful-apis--sdk). Therefore, it is highly probable that they will work just fine.
+01.AI Yi, LMSYS Vicuna, Meta Llama, and WizardLM are open-source models that are supported through [Ollama](https://ollama.ai).
+
+## Docker
+
+Clone the repository and copy the Docker Compose template:
+
+```
+git clone https://github.com/icebaker/ruby-nano-bots.git
+cd ruby-nano-bots
+cp docker-compose.example.yml docker-compose.yml
+```
+
+Set your provider credentials and choose your desired directory for the cartridges files:
+
+### Cohere Command Container
+
+```yaml
+---
+services:
+  nano-bots:
+    image: ruby:3.2.2-slim-bookworm
+    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 2.4.1 && bash"
+    environment:
+      COHERE_API_KEY: your-api-key
+      NANO_BOTS_ENCRYPTION_PASSWORD: UNSAFE
+      NANO_BOTS_END_USER: your-user
+    volumes:
+      - ./your-cartridges:/root/.local/share/nano-bots/cartridges
+      - ./your-state-path:/root/.local/state/nano-bots
+```
+
+### Maritaca AI MariTalk Container
+
+```yaml
+---
+services:
+  nano-bots:
+    image: ruby:3.2.2-slim-bookworm
+    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 2.4.1 && bash"
+    environment:
+      MARITACA_API_KEY: your-api-key
+      NANO_BOTS_ENCRYPTION_PASSWORD: UNSAFE
+      NANO_BOTS_END_USER: your-user
+    volumes:
+      - ./your-cartridges:/root/.local/share/nano-bots/cartridges
+      - ./your-state-path:/root/.local/state/nano-bots
+```
+
+### Mistral AI Container
+
+```yaml
+---
+services:
+  nano-bots:
+    image: ruby:3.2.2-slim-bookworm
+    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 2.4.1 && bash"
+    environment:
+      MISTRAL_API_KEY: your-api-key
+      NANO_BOTS_ENCRYPTION_PASSWORD: UNSAFE
+      NANO_BOTS_END_USER: your-user
+    volumes:
+      - ./your-cartridges:/root/.local/share/nano-bots/cartridges
+      - ./your-state-path:/root/.local/state/nano-bots
+```
+
+### Ollama Container
+
+Remember that your `localhost` is inaccessible from inside Docker. You need to either establish [inter-container networking](https://docs.docker.com/compose/networking/) or use the [host's address](https://docs.docker.com/desktop/networking/#i-want-to-connect-from-a-container-to-a-service-on-the-host), depending on where the Ollama server is running.
+
+```yaml
+---
+services:
+  nano-bots:
+    image: ruby:3.2.2-slim-bookworm
+    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 2.4.1 && bash"
+    environment:
+      OLLAMA_API_ADDRESS: http://host.docker.internal:11434
+      NANO_BOTS_ENCRYPTION_PASSWORD: UNSAFE
+      NANO_BOTS_END_USER: your-user
+    volumes:
+      - ./your-cartridges:/root/.local/share/nano-bots/cartridges
+      - ./your-state-path:/root/.local/state/nano-bots
+```
+
+### OpenAI ChatGPT Container
+
+```yaml
+---
+services:
+  nano-bots:
+    image: ruby:3.2.2-slim-bookworm
+    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 2.4.1 && bash"
+    environment:
+      OPENAI_API_KEY: your-access-token
+      NANO_BOTS_ENCRYPTION_PASSWORD: UNSAFE
+      NANO_BOTS_END_USER: your-user
+    volumes:
+      - ./your-cartridges:/root/.local/share/nano-bots/cartridges
+      - ./your-state-path:/root/.local/state/nano-bots
+```
+
+### Google Gemini Container
+
+#### Option 1: API Key (Generative Language API) Config
+
+```yaml
+---
+services:
+  nano-bots:
+    image: ruby:3.2.2-slim-bookworm
+    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 2.4.1 && bash"
+    environment:
+      GOOGLE_API_KEY: your-api-key
+      NANO_BOTS_ENCRYPTION_PASSWORD: UNSAFE
+      NANO_BOTS_END_USER: your-user
+    volumes:
+      - ./your-cartridges:/root/.local/share/nano-bots/cartridges
+      - ./your-state-path:/root/.local/state/nano-bots
+```
+
+#### Option 2: Service Account Credentials File (Vertex AI API) Config
+
+```yaml
+---
+services:
+  nano-bots:
+    image: ruby:3.2.2-slim-bookworm
+    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 2.4.1 && bash"
+    environment:
+      GOOGLE_CREDENTIALS_FILE_PATH: /root/.config/google-credentials.json
+      GOOGLE_REGION: us-east4
+      NANO_BOTS_ENCRYPTION_PASSWORD: UNSAFE
+      NANO_BOTS_END_USER: your-user
+    volumes:
+      - ./google-credentials.json:/root/.config/google-credentials.json
+      - ./your-cartridges:/root/.local/share/nano-bots/cartridges
+      - ./your-state-path:/root/.local/state/nano-bots
+```
+
+#### Option 3: Application Default Credentials (Vertex AI API) Config
+
+```yaml
+---
+services:
+  nano-bots:
+    image: ruby:3.2.2-slim-bookworm
+    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 2.4.1 && bash"
+    environment:
+      GOOGLE_REGION: us-east4
+      NANO_BOTS_ENCRYPTION_PASSWORD: UNSAFE
+      NANO_BOTS_END_USER: your-user
+    volumes:
+      - ./your-cartridges:/root/.local/share/nano-bots/cartridges
+      - ./your-state-path:/root/.local/state/nano-bots
+```
+
+#### Custom Project ID Config
+If you need to manually set a Google Project ID:
+
+```yaml
+environment:
+  GOOGLE_PROJECT_ID=your-project-id
+```
+
+### Running the Container
+
+Enter the container:
+```sh
+docker compose run nano-bots
+```
+
+Start playing:
+```sh
+nb - - eval "hello"
+nb - - repl
+
+nb assistant.yml - eval "hello"
+nb assistant.yml - repl
+```
+
+You can exit the REPL by typing `exit`.
 
 ## Development
 
@@ -872,6 +1132,9 @@ rubocop -A
 rspec
 
 bundle exec ruby spec/tasks/run-all-models.rb
+
+bundle exec ruby spec/tasks/run-model.rb spec/data/cartridges/models/openai/gpt-4-turbo.yml
+bundle exec ruby spec/tasks/run-model.rb spec/data/cartridges/models/openai/gpt-4-turbo.yml stream
 ```
 
 ### Publish to RubyGems
