@@ -3,11 +3,11 @@
 module NanoBot
   GEM = {
     name: 'nano-bots',
-    version: '2.4.1',
-    specification: '2.2.0',
+    version: '2.5.0',
+    specification: '2.3.0',
     author: 'icebaker',
-    summary: 'Ruby Implementation of Nano Bots: small, AI-powered bots for OpenAI ChatGPT, Mistral AI, and Google Gemini.',
-    description: 'Ruby Implementation of Nano Bots: small, AI-powered bots that can be easily shared as a single file, designed to support multiple providers such as OpenAI ChatGPT, Mistral AI, and Google Gemini, with support for calling Tools (Functions).',
+    summary: 'Ruby Implementation of Nano Bots: small, AI-powered bots for OpenAI ChatGPT, Ollama, Mistral AI, Cohere Command, Maritaca AI MariTalk, and Google Gemini.',
+    description: 'Ruby Implementation of Nano Bots: small, AI-powered bots that can be easily shared as a single file, designed to support multiple providers such as OpenAI ChatGPT, Ollama, Mistral AI, Cohere Command, Maritaca AI MariTalk, and Google Gemini, with support for calling Tools (Functions).',
     github: 'https://github.com/icebaker/ruby-nano-bots',
     gem_server: 'https://rubygems.org',
     license: 'MIT',

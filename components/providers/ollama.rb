@@ -1,29 +1,32 @@
 # frozen_string_literal: true
 
-require 'cohere-ai'
+require 'ollama-ai'
 
 require_relative 'base'
 
-require_relative '../../logic/providers/cohere/tokens'
+require_relative '../../logic/providers/ollama/tokens'
 require_relative '../../logic/helpers/hash'
 require_relative '../../logic/cartridge/default'
 
 module NanoBot
   module Components
     module Providers
-      class Cohere < Base
+      class Ollama < Base
         attr_reader :settings
 
         CHAT_SETTINGS = %i[
-          model stream prompt_truncation connectors
-          search_queries_only documents citation_quality
-          temperature
+          model template stream
+        ].freeze
+
+        CHAT_OPTIONS = %i[
+          mirostat mirostat_eta mirostat_tau num_ctx num_gqa num_gpu num_thread repeat_last_n
+          repeat_penalty temperature seed stop tfs_z num_predict top_k top_p
         ].freeze
 
         def initialize(options, settings, credentials, _environment)
           @settings = settings
 
-          cohere_options = if options
+          ollama_options = if options
                              options.transform_keys { |key| key.to_s.gsub('-', '_').to_sym }
                            else
                              {}
@@ -36,50 +39,58 @@ module NanoBot
             )
           end
 
-          cohere_options[:server_sent_events] = @settings[:stream]
+          ollama_options[:server_sent_events] = @settings[:stream]
 
-          @client = ::Cohere.new(
+          credentials ||= {}
+
+          @client = ::Ollama.new(
             credentials: credentials.transform_keys { |key| key.to_s.gsub('-', '_').to_sym },
-            options: cohere_options
+            options: ollama_options
           )
         end
 
         def evaluate(input, streaming, cartridge, &feedback)
           messages = input[:history].map do |event|
-            { role: event[:who] == 'user' ? 'USER' : 'CHATBOT',
-              message: event[:message],
+            { role: event[:who] == 'user' ? 'user' : 'assistant',
+              content: event[:message],
               _meta: { at: event[:at] } }
           end
 
-          if input[:behavior][:backdrop]
+          %i[backdrop directive].each do |key|
+            next unless input[:behavior][key]
+
             messages.prepend(
-              { role: 'USER',
-                message: input[:behavior][:backdrop],
+              { role: key == :directive ? 'system' : 'user',
+                content: input[:behavior][key],
                 _meta: { at: Time.now } }
             )
           end
 
-          payload = { chat_history: messages }
-
-          payload[:message] = payload[:chat_history].pop[:message]
-
-          payload.delete(:chat_history) if payload[:chat_history].empty?
-
-          payload[:preamble_override] = input[:behavior][:directive] if input[:behavior][:directive]
+          payload = { messages: }
 
           CHAT_SETTINGS.each do |key|
             payload[key] = @settings[key] unless payload.key?(key) || !@settings.key?(key)
           end
 
-          raise 'Cohere does not support tools.' if input[:tools]
+          if @settings.key?(:options)
+            options = {}
+
+            CHAT_OPTIONS.each do |key|
+              options[key] = @settings[:options][key] unless options.key?(key) || !@settings[:options].key?(key)
+            end
+
+            payload[:options] = options unless options.empty?
+          end
+
+          raise 'Ollama does not support tools.' if input[:tools]
 
           if streaming
             content = ''
 
             stream_call_back = proc do |event, _raw|
-              partial_content = event['text']
+              partial_content = event.dig('message', 'content')
 
-              if partial_content && event['event_type'] == 'text-generation'
+              if partial_content
                 content += partial_content
                 feedback.call(
                   { should_be_stored: false,
@@ -87,7 +98,7 @@ module NanoBot
                 )
               end
 
-              if event['is_finished']
+              if event['done']
                 feedback.call(
                   { should_be_stored: !(content.nil? || content == ''),
                     interaction: content.nil? || content == '' ? nil : { who: 'AI', message: content },
@@ -97,16 +108,16 @@ module NanoBot
             end
 
             @client.chat(
-              Logic::Cohere::Tokens.apply_policies!(cartridge, payload),
+              Logic::Ollama::Tokens.apply_policies!(cartridge, payload),
               server_sent_events: true, &stream_call_back
             )
           else
             result = @client.chat(
-              Logic::Cohere::Tokens.apply_policies!(cartridge, payload),
+              Logic::Ollama::Tokens.apply_policies!(cartridge, payload),
               server_sent_events: false
             )
 
-            content = result['text']
+            content = result.map { |event| event.dig('message', 'content') }.join
 
             feedback.call(
               { should_be_stored: !(content.nil? || content.to_s.strip == ''),
