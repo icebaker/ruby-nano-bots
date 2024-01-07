@@ -34,13 +34,22 @@ well. How can I assist you?
 ---
 meta:
   symbol: 🤖
-  name: ChatGPT
+  name: Nano Bot Name
+  author: Your Name
+  version: 1.0.0
+  license: CC0-1.0
+  description: A helpful assistant.
+
+behaviors:
+  interaction:
+    directive: You are a helpful assistant.
 
 provider:
   id: openai
   credentials:
     access-token: ENV/OPENAI_API_KEY
   settings:
+    user: ENV/NANO_BOTS_END_USER
     model: gpt-4-1106-preview
 ```
 
@@ -1137,6 +1146,12 @@ bundle exec ruby spec/tasks/run-all-models.rb
 
 bundle exec ruby spec/tasks/run-model.rb spec/data/cartridges/models/openai/gpt-4-turbo.yml
 bundle exec ruby spec/tasks/run-model.rb spec/data/cartridges/models/openai/gpt-4-turbo.yml stream
+```
+
+If you face issues upgrading gem versions:
+
+```sh
+bundle install --full-index
 ```
 
 ### Publish to RubyGems
