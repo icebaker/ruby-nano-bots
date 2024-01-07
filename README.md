@@ -1,6 +1,6 @@
 # Nano Bots 💎 🤖
 
-An implementation of the [Nano Bots](https://spec.nbots.io) specification with support for [Cohere Command](https://cohere.com), [Google Gemini](https://deepmind.google/technologies/gemini), [Maritaca AI MariTalk](https://www.maritaca.ai), [Mistral AI](https://mistral.ai), [Ollama](https://ollama.ai), [OpenAI ChatGPT](https://openai.com/chatgpt), and others.
+An implementation of the [Nano Bots](https://spec.nbots.io) specification with support for [Cohere Command](https://cohere.com), [Google Gemini](https://deepmind.google/technologies/gemini), [Maritaca AI MariTalk](https://www.maritaca.ai), [Mistral AI](https://mistral.ai), [Ollama](https://ollama.ai), [OpenAI ChatGPT](https://openai.com/chatgpt), and others, with support for calling tools (functions).
 
 ![Ruby Nano Bots](https://raw.githubusercontent.com/icebaker/assets/main/nano-bots/ruby-nano-bots-canvas.png)
 
