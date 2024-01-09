@@ -1,11 +1,10 @@
 # frozen_string_literal: true
 
-require 'yaml'
-
 require_relative '../logic/helpers/hash'
 require_relative '../components/provider'
 require_relative '../components/storage'
 require_relative '../components/stream'
+require_relative 'cartridges'
 require_relative 'interfaces/repl'
 require_relative 'interfaces/eval'
 require_relative 'session'
@@ -83,12 +82,10 @@ module NanoBot
             raise StandardError, "Cartridge file not found: \"#{path}\""
           end
 
-          @cartridge = YAML.safe_load_file(elected_path, permitted_classes: [Symbol])
+          @cartridge = Cartridges.load(elected_path)
         end
 
         @safe_cartridge = Marshal.load(Marshal.dump(@cartridge))
-
-        @cartridge = Logic::Helpers::Hash.symbolize_keys(@cartridge)
 
         inject_environment_variables!(@cartridge)
       end

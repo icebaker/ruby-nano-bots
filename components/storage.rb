@@ -8,6 +8,8 @@ require_relative 'crypto'
 module NanoBot
   module Components
     class Storage
+      EXTENSIONS = %w[yml yaml markdown mdown mkdn md].freeze
+
       def self.end_user(cartridge, environment)
         user = ENV.fetch('NANO_BOTS_END_USER', nil)
 
@@ -74,11 +76,11 @@ module NanoBot
       def self.cartridge_path(path)
         partial = File.join(File.dirname(path), File.basename(path, File.extname(path)))
 
-        candidates = [
-          path,
-          "#{partial}.yml",
-          "#{partial}.yaml"
-        ]
+        candidates = [path]
+
+        EXTENSIONS.each do |extension|
+          candidates << "#{partial}.#{extension}"
+        end
 
         unless ENV.fetch('NANO_BOTS_CARTRIDGES_DIRECTORY', nil).nil?
           directory = ENV.fetch('NANO_BOTS_CARTRIDGES_DIRECTORY').sub(%r{/$}, '')
@@ -88,8 +90,10 @@ module NanoBot
           partial = partial.sub(%r{^\.?/}, '')
 
           candidates << "#{directory}/#{partial}"
-          candidates << "#{directory}/#{partial}.yml"
-          candidates << "#{directory}/#{partial}.yaml"
+
+          EXTENSIONS.each do |extension|
+            candidates << "#{directory}/#{partial}.#{extension}"
+          end
         end
 
         directory = "#{user_home!.sub(%r{/$}, '')}/.local/share/nano-bots/cartridges"
@@ -99,8 +103,10 @@ module NanoBot
         partial = partial.sub(%r{^\.?/}, '')
 
         candidates << "#{directory}/#{partial}"
-        candidates << "#{directory}/#{partial}.yml"
-        candidates << "#{directory}/#{partial}.yaml"
+
+        EXTENSIONS.each do |extension|
+          candidates << "#{directory}/#{partial}.#{extension}"
+        end
 
         candidates = candidates.uniq
 
