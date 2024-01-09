@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../../controllers/cartridges'
+require_relative '../../../controllers/cartridges'
 
 module NanoBot
   module Cartridges

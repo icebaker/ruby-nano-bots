@@ -27,7 +27,7 @@ module NanoBot
         cartridges = []
 
         files.values.uniq.map do |file|
-          cartridge = load_cartridge(file[:path]).merge(
+          cartridge = load(file[:path]).merge(
             {
               system: {
                 id: file[:path].to_s.sub(

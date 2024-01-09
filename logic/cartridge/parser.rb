@@ -10,7 +10,7 @@ module NanoBot
     module Cartridge
       module Parser
         def self.parse(raw, format:)
-          normalized = format.to_s.downcase.gsub('.', '')
+          normalized = format.to_s.downcase.gsub('.', '').strip
 
           if %w[yml yaml].include?(normalized)
             yaml(raw)
@@ -32,7 +32,9 @@ module NanoBot
         end
 
         class Renderer < Redcarpet::Render::Base
-          def block_code(code, _language)
+          def block_code(code, language)
+            return nil unless %w[yml yaml].include?(language.to_s.downcase.strip)
+
             "\n#{code}\n"
           end
         end
