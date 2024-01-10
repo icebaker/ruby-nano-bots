@@ -12,16 +12,18 @@ module NanoBot
         Logic::Cartridge::Parser.parse(File.read(path), format: File.extname(path))
       end
 
-      def self.all
+      def self.all(components: {})
         files = {}
 
-        path = Components::Storage.cartridges_path
+        paths = Components::Storage.cartridges_path(components:)
 
-        Dir.glob("#{path}/**/*.{yml,yaml,markdown,mdown,mkdn,md}").each do |file|
-          files[Pathname.new(file).realpath] = {
-            base: path,
-            path: Pathname.new(file).realpath
-          }
+        paths.split(':').each do |path|
+          Dir.glob("#{path}/**/*.{yml,yaml,markdown,mdown,mkdn,md}").each do |file|
+            files[Pathname.new(file).realpath] = {
+              base: path,
+              path: Pathname.new(file).realpath
+            }
+          end
         end
 
         cartridges = []

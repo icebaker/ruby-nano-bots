@@ -269,8 +269,8 @@ For credentials and configurations, relevant environment variables can be set in
 export NANO_BOTS_ENCRYPTION_PASSWORD=UNSAFE
 export NANO_BOTS_END_USER=your-user
 
-# export NANO_BOTS_STATE_DIRECTORY=/home/user/.local/state/nano-bots
-# export NANO_BOTS_CARTRIDGES_DIRECTORY=/home/user/.local/share/nano-bots/cartridges
+# export NANO_BOTS_STATE_PATH=/home/user/.local/state/nano-bots
+# export NANO_BOTS_CARTRIDGES_PATH=/home/user/.local/share/nano-bots/cartridges
 ```
 
 Alternatively, if your current directory has a `.env` file with the environment variables, they will be automatically loaded:
@@ -279,8 +279,8 @@ Alternatively, if your current directory has a `.env` file with the environment 
 NANO_BOTS_ENCRYPTION_PASSWORD=UNSAFE
 NANO_BOTS_END_USER=your-user
 
-# NANO_BOTS_STATE_DIRECTORY=/home/user/.local/state/nano-bots
-# NANO_BOTS_CARTRIDGES_DIRECTORY=/home/user/.local/share/nano-bots/cartridges
+# NANO_BOTS_STATE_PATH=/home/user/.local/state/nano-bots
+# NANO_BOTS_CARTRIDGES_PATH=/home/user/.local/share/nano-bots/cartridges
 ```
 
 ### Cohere Command

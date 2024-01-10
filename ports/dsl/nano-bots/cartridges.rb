@@ -4,8 +4,8 @@ require_relative '../../../controllers/cartridges'
 
 module NanoBot
   module Cartridges
-    def self.all
-      Controllers::Cartridges.all
+    def self.all(components: {})
+      Controllers::Cartridges.all(components:)
     end
 
     def self.load(path)
