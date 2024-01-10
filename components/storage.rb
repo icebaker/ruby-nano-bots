@@ -37,6 +37,7 @@ module NanoBot
 
       def self.build_path_and_ensure_state_file!(key, cartridge, environment: {})
         path = [
+          Logic::Helpers::Hash.fetch(cartridge, %i[state path]),
           Logic::Helpers::Hash.fetch(cartridge, %i[state directory]),
           ENV.fetch('NANO_BOTS_STATE_PATH', nil),
           ENV.fetch('NANO_BOTS_STATE_DIRECTORY', nil)

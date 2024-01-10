@@ -963,7 +963,7 @@ cd ruby-nano-bots
 cp docker-compose.example.yml docker-compose.yml
 ```
 
-Set your provider credentials and choose your desired directory for the cartridges files:
+Set your provider credentials and choose your desired path for the cartridges files:
 
 ### Cohere Command Container
 
