@@ -7,7 +7,16 @@ RSpec.describe NanoBot::Logic::Helpers::Hash do
     expect(described_class.symbolize_keys({ 'a' => 'b', 'c' => { 'd' => ['e'] } })).to eq(
       { a: 'b', c: { d: ['e'] } }
     )
+  end
 
+  it 'stringify keys' do
+    pp described_class.stringify_keys({ a: 'b', c: { d: [:e] } })
+    expect(described_class.stringify_keys({ a: 'b', c: { d: [:e] } })).to eq(
+      { 'a' => 'b', 'c' => { 'd' => [:e] } }
+    )
+  end
+
+  it 'fetch a path of keys' do
     expect(described_class.fetch({ a: 'b', c: { d: ['e'] } }, %i[c d])).to eq(
       ['e']
     )

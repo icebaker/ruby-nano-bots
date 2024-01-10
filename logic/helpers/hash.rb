@@ -17,6 +17,19 @@ module NanoBot
           end
         end
 
+        def self.stringify_keys(object)
+          case object
+          when ::Hash
+            object.each_with_object({}) do |(key, value), result|
+              result[key.to_s] = stringify_keys(value)
+            end
+          when Array
+            object.map { |e| stringify_keys(e) }
+          else
+            object
+          end
+        end
+
         def self.fetch(object, path)
           node = object
 
