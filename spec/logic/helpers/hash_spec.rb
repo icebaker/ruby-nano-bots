@@ -10,7 +10,6 @@ RSpec.describe NanoBot::Logic::Helpers::Hash do
   end
 
   it 'stringify keys' do
-    pp described_class.stringify_keys({ a: 'b', c: { d: [:e] } })
     expect(described_class.stringify_keys({ a: 'b', c: { d: [:e] } })).to eq(
       { 'a' => 'b', 'c' => { 'd' => [:e] } }
     )
