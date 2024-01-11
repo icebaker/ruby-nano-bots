@@ -3,35 +3,43 @@
 require_relative '../components/storage'
 require_relative '../logic/helpers/hash'
 require_relative '../logic/cartridge/default'
+require_relative '../logic/cartridge/parser'
 
 module NanoBot
   module Controllers
     class Cartridges
-      def self.all
+      def self.load(path)
+        Logic::Cartridge::Parser.parse(File.read(path), format: File.extname(path))
+      end
+
+      def self.all(components: {})
         files = {}
 
-        path = Components::Storage.cartridges_path
+        paths = Components::Storage.cartridges_path(components:)
 
-        Dir.glob("#{path}/**/*.{yml,yaml}").each do |file|
-          files[Pathname.new(file).realpath] = {
-            base: path,
-            path: Pathname.new(file).realpath
-          }
+        paths.split(':').each do |path|
+          Dir.glob("#{path}/**/*.{yml,yaml,markdown,mdown,mkdn,md}").each do |file|
+            files[Pathname.new(file).realpath] = {
+              base: path,
+              path: Pathname.new(file).realpath
+            }
+          end
         end
 
         cartridges = []
 
         files.values.uniq.map do |file|
-          cartridge = Logic::Helpers::Hash.symbolize_keys(
-            YAML.safe_load_file(file[:path], permitted_classes: [Symbol])
-          ).merge({
-                    system: {
-                      id: file[:path].to_s.sub(/^#{Regexp.escape(file[:base])}/, '').sub(%r{^/}, '').sub(/\.[^.]+\z/,
-                                                                                                         ''),
-                      path: file[:path],
-                      base: file[:base]
-                    }
-                  })
+          cartridge = load(file[:path]).merge(
+            {
+              system: {
+                id: file[:path].to_s.sub(
+                  /^#{Regexp.escape(file[:base])}/, ''
+                ).sub(%r{^/}, '').sub(/\.[^.]+\z/, ''),
+                path: file[:path],
+                base: file[:base]
+              }
+            }
+          )
 
           next if cartridge[:meta][:name].nil?
 

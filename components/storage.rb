@@ -8,6 +8,8 @@ require_relative 'crypto'
 module NanoBot
   module Components
     class Storage
+      EXTENSIONS = %w[yml yaml markdown mdown mkdn md].freeze
+
       def self.end_user(cartridge, environment)
         user = ENV.fetch('NANO_BOTS_END_USER', nil)
 
@@ -35,7 +37,9 @@ module NanoBot
 
       def self.build_path_and_ensure_state_file!(key, cartridge, environment: {})
         path = [
+          Logic::Helpers::Hash.fetch(cartridge, %i[state path]),
           Logic::Helpers::Hash.fetch(cartridge, %i[state directory]),
+          ENV.fetch('NANO_BOTS_STATE_PATH', nil),
           ENV.fetch('NANO_BOTS_STATE_DIRECTORY', nil)
         ].find do |candidate|
           !candidate.nil? && !candidate.empty?
@@ -64,32 +68,59 @@ module NanoBot
         path
       end
 
-      def self.cartridges_path
-        [
-          ENV.fetch('NANO_BOTS_CARTRIDGES_DIRECTORY', nil),
-          "#{user_home!.sub(%r{/$}, '')}/.local/share/nano-bots/cartridges"
-        ].compact.uniq.filter { |path| File.directory?(path) }.compact.first
+      def self.cartridges_path(components: {})
+        components[:directory?] = ->(path) { File.directory?(path) } unless components.key?(:directory?)
+        components[:ENV] = ENV unless components.key?(:ENV)
+
+        default = "#{user_home!(components:).sub(%r{/$}, '')}/.local/share/nano-bots/cartridges"
+
+        from_environment = [
+          components[:ENV].fetch('NANO_BOTS_CARTRIDGES_PATH', nil),
+          components[:ENV].fetch('NANO_BOTS_CARTRIDGES_DIRECTORY', nil)
+        ].compact
+
+        elected = [
+          from_environment.empty? ? nil : from_environment.join(':'),
+          default
+        ].compact.uniq.filter do |path|
+          path.split(':').any? { |candidate| components[:directory?].call(candidate) }
+        end.compact.first
+
+        return default unless elected
+
+        elected = elected.split(':').filter do |path|
+          components[:directory?].call(path)
+        end.compact
+
+        elected.size.positive? ? elected.join(':') : default
       end
 
       def self.cartridge_path(path)
         partial = File.join(File.dirname(path), File.basename(path, File.extname(path)))
 
-        candidates = [
-          path,
-          "#{partial}.yml",
-          "#{partial}.yaml"
-        ]
+        candidates = [path]
 
-        unless ENV.fetch('NANO_BOTS_CARTRIDGES_DIRECTORY', nil).nil?
-          directory = ENV.fetch('NANO_BOTS_CARTRIDGES_DIRECTORY').sub(%r{/$}, '')
+        EXTENSIONS.each do |extension|
+          candidates << "#{partial}.#{extension}"
+        end
 
+        directories = [
+          ENV.fetch('NANO_BOTS_CARTRIDGES_PATH', nil),
+          ENV.fetch('NANO_BOTS_CARTRIDGES_DIRECTORY', nil)
+        ].compact.map do |directory|
+          directory.split(':')
+        end.flatten.map { |directory| directory.sub(%r{/$}, '') }
+
+        directories.each do |directory|
           partial = File.join(File.dirname(partial), File.basename(partial, File.extname(partial)))
 
           partial = partial.sub(%r{^\.?/}, '')
 
           candidates << "#{directory}/#{partial}"
-          candidates << "#{directory}/#{partial}.yml"
-          candidates << "#{directory}/#{partial}.yaml"
+
+          EXTENSIONS.each do |extension|
+            candidates << "#{directory}/#{partial}.#{extension}"
+          end
         end
 
         directory = "#{user_home!.sub(%r{/$}, '')}/.local/share/nano-bots/cartridges"
@@ -99,8 +130,10 @@ module NanoBot
         partial = partial.sub(%r{^\.?/}, '')
 
         candidates << "#{directory}/#{partial}"
-        candidates << "#{directory}/#{partial}.yml"
-        candidates << "#{directory}/#{partial}.yaml"
+
+        EXTENSIONS.each do |extension|
+          candidates << "#{directory}/#{partial}.#{extension}"
+        end
 
         candidates = candidates.uniq
 
@@ -109,7 +142,9 @@ module NanoBot
         end
       end
 
-      def self.user_home!
+      def self.user_home!(components: {})
+        return components[:home] if components[:home]
+
         [Dir.home, `echo ~`.strip, '~'].find do |candidate|
           !candidate.nil? && !candidate.empty?
         end

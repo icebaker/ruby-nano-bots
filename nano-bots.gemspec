@@ -37,6 +37,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'pry', '~> 0.14.2'
   spec.add_dependency 'rainbow', '~> 3.1', '>= 3.1.1'
   spec.add_dependency 'rbnacl', '~> 7.1', '>= 7.1.1'
+  spec.add_dependency 'redcarpet', '~> 3.6'
   spec.add_dependency 'sweet-moon', '~> 0.0.7'
 
   spec.add_dependency 'cohere-ai', '~> 1.0', '>= 1.0.1'

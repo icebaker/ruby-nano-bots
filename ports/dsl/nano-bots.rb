@@ -8,6 +8,7 @@ require_relative '../../controllers/instance'
 require_relative '../../controllers/security'
 require_relative '../../controllers/interfaces/cli'
 require_relative '../../components/stream'
+require_relative 'nano-bots/cartridges'
 
 module NanoBot
   def self.new(cartridge: '-', state: '-', environment: {})
@@ -24,7 +25,7 @@ module NanoBot
   end
 
   def self.cartridges
-    Controllers::Cartridges.all
+    Cartridges
   end
 
   def self.cli

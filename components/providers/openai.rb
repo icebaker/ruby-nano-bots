@@ -140,7 +140,7 @@ module NanoBot
             begin
               @client.chat(parameters: Logic::OpenAI::Tokens.apply_policies!(cartridge, payload))
             rescue StandardError => e
-              raise e.class, e.response[:body] if e.response && e.response[:body]
+              raise e.class, e.response[:body] if e.respond_to?(:response) && e.response && e.response[:body]
 
               raise e
             end
@@ -148,7 +148,7 @@ module NanoBot
             begin
               result = @client.chat(parameters: Logic::OpenAI::Tokens.apply_policies!(cartridge, payload))
             rescue StandardError => e
-              raise e.class, e.response[:body] if e.response && e.response[:body]
+              raise e.class, e.response[:body] if e.respond_to?(:response) && e.response && e.response[:body]
 
               raise e
             end

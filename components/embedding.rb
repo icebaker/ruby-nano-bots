@@ -45,7 +45,7 @@ module NanoBot
       def self.clojure(source:, parameters:, values:, safety:)
         ensure_safety!(safety)
 
-        raise 'TODO: sandboxed Clojure through Babashka not implemented' if safety[:sandboxed]
+        raise 'Sandboxed Clojure not supported.' if safety[:sandboxed]
 
         raise 'invalid Clojure parameter name' if parameters.include?('injected-parameters')
 
