@@ -30,6 +30,30 @@ RSpec.describe NanoBot::Logic::Cartridge::Parser do
       end
     end
 
+    context 'meta' do
+      let(:raw) { File.read('spec/data/cartridges/meta.md') }
+
+      it 'parses markdown cartridge' do
+        expect(described_class.parse(raw, format: 'md')).to eq(
+          {
+            meta: {
+              symbol: '🤖',
+              name: 'Nano Bot Name',
+              author: 'Your Name',
+              description: 'A helpful assistant.',
+              version: '1.0.0',
+              license: 'CC0-1.0'
+            },
+            behaviors: {
+              interaction: {
+                directive: 'You are a helpful assistant.'
+              }
+            }
+          }
+        )
+      end
+    end
+
     context 'tools' do
       let(:raw) { File.read('spec/data/cartridges/tools.md') }
 

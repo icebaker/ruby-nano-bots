@@ -9,6 +9,15 @@ RSpec.describe NanoBot::Logic::Helpers::Hash do
     )
   end
 
+  it 'deep merges' do
+    expect(described_class.deep_merge(
+             { a: { x: 1, y: 2 }, b: 3 },
+             { a: { y: 99, z: 4 }, c: 5 }
+           )).to eq(
+             { a: { x: 1, y: 99, z: 4 }, b: 3, c: 5 }
+           )
+  end
+
   it 'stringify keys' do
     expect(described_class.stringify_keys({ a: 'b', c: { d: [:e] } })).to eq(
       { 'a' => 'b', 'c' => { 'd' => [:e] } }

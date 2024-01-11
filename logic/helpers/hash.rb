@@ -4,6 +4,16 @@ module NanoBot
   module Logic
     module Helpers
       module Hash
+        def self.deep_merge(hash1, hash2)
+          hash1.merge(hash2) do |_key, old_val, new_val|
+            if old_val.is_a?(::Hash) && new_val.is_a?(::Hash)
+              deep_merge(old_val, new_val)
+            else
+              new_val
+            end
+          end
+        end
+
         def self.symbolize_keys(object)
           case object
           when ::Hash

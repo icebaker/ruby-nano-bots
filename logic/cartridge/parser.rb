@@ -44,9 +44,9 @@ module NanoBot
                 parsed.delete(:tools)
 
                 unless parsed.empty?
-                  yaml_source << YAML.dump(Logic::Helpers::Hash.stringify_keys(
-                                             parsed
-                                           )).gsub(/^---/, '') # TODO: Is this safe enough?
+                  yaml_source << YAML.dump(
+                    Logic::Helpers::Hash.stringify_keys(parsed)
+                  ).gsub(/^---/, '') # TODO: Is this safe enough?
                 end
               else
                 yaml_source << block[:source]
@@ -60,12 +60,18 @@ module NanoBot
           end
 
           unless tools.empty?
-            yaml_source << YAML.dump(Logic::Helpers::Hash.stringify_keys(
-                                       { tools: }
-                                     )).gsub(/^---/, '') # TODO: Is this safe enough?
+            yaml_source << YAML.dump(
+              Logic::Helpers::Hash.stringify_keys({ tools: })
+            ).gsub(/^---/, '') # TODO: Is this safe enough?
           end
 
-          yaml(yaml_source.join("\n"))
+          cartridge = {}
+
+          yaml_source.each do |source|
+            cartridge = Logic::Helpers::Hash.deep_merge(cartridge, yaml(source))
+          end
+
+          cartridge
         end
 
         def self.yaml(raw)
