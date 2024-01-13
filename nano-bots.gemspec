@@ -40,11 +40,11 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'redcarpet', '~> 3.6'
   spec.add_dependency 'sweet-moon', '~> 0.0.7'
 
-  spec.add_dependency 'cohere-ai', '~> 1.0', '>= 1.0.1'
-  spec.add_dependency 'gemini-ai', '~> 3.1', '>= 3.1.2'
-  spec.add_dependency 'maritaca-ai', '~> 1.0'
-  spec.add_dependency 'mistral-ai', '~> 1.1', '>= 1.1.1'
-  spec.add_dependency 'ollama-ai', '~> 1.0'
+  spec.add_dependency 'cohere-ai', '~> 1.0', '>= 1.0.2'
+  spec.add_dependency 'gemini-ai', '~> 3.1', '>= 3.1.3'
+  spec.add_dependency 'maritaca-ai', '~> 1.0', '>= 1.0.1'
+  spec.add_dependency 'mistral-ai', '~> 1.1', '>= 1.1.2'
+  spec.add_dependency 'ollama-ai', '~> 1.0', '>= 1.0.1'
   spec.add_dependency 'ruby-openai', '~> 6.3', '>= 6.3.1'
 
   spec.metadata['rubygems_mfa_required'] = 'true'
