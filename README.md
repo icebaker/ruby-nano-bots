@@ -50,7 +50,7 @@ provider:
     access-token: ENV/OPENAI_API_KEY
   settings:
     user: ENV/NANO_BOTS_END_USER
-    model: gpt-4-1106-preview
+    model: gpt-4o
 ```
 
 ```bash
@@ -76,43 +76,43 @@ end
 
 - [TL;DR and Quick Start](#tldr-and-quick-start)
 - [Usage](#usage)
-    - [Command Line](#command-line)
-    - [Debugging](#debugging)
-    - [Library](#library)
+  - [Command Line](#command-line)
+  - [Debugging](#debugging)
+  - [Library](#library)
 - [Setup](#setup)
-    - [Cohere Command](#cohere-command)
-    - [Maritaca AI MariTalk](#maritaca-ai-maritalk)
-    - [Mistral AI](#mistral-ai)
-    - [Ollama](#ollama)
-    - [OpenAI ChatGPT](#openai-chatgpt)
-    - [Google Gemini](#google-gemini)
-        - [Option 1: API Key (Generative Language API)](#option-1-api-key-generative-language-api)
-        - [Option 2: Service Account Credentials File (Vertex AI API)](#option-2-service-account-credentials-file-vertex-ai-api)
-        - [Option 3: Application Default Credentials (Vertex AI API)](#option-3-application-default-credentials-vertex-ai-api)
-        - [Custom Project ID](#custom-project-id)
+  - [Cohere Command](#cohere-command)
+  - [Maritaca AI MariTalk](#maritaca-ai-maritalk)
+  - [Mistral AI](#mistral-ai)
+  - [Ollama](#ollama)
+  - [OpenAI ChatGPT](#openai-chatgpt)
+  - [Google Gemini](#google-gemini)
+    - [Option 1: API Key (Generative Language API)](#option-1-api-key-generative-language-api)
+    - [Option 2: Service Account Credentials File (Vertex AI API)](#option-2-service-account-credentials-file-vertex-ai-api)
+    - [Option 3: Application Default Credentials (Vertex AI API)](#option-3-application-default-credentials-vertex-ai-api)
+    - [Custom Project ID](#custom-project-id)
 - [Cartridges](#cartridges)
-    - [Tools (Functions)](#tools-functions)
-        - [Experimental Clojure Support](#experimental-clojure-support)
-    - [Marketplace](#marketplace)
+  - [Tools (Functions)](#tools-functions)
+      - [Experimental Clojure Support](#experimental-clojure-support)
+  - [Marketplace](#marketplace)
 - [Security and Privacy](#security-and-privacy)
-    - [Cryptography](#cryptography)
-    - [End-user IDs](#end-user-ids)
-    - [Decrypting](#decrypting)
+  - [Cryptography](#cryptography)
+  - [End-user IDs](#end-user-ids)
+  - [Decrypting](#decrypting)
 - [Supported Providers](#supported-providers)
 - [Docker](#docker)
-    - [Cohere Command Container](#cohere-command-container)
-    - [Maritaca AI MariTalk Container](#maritaca-ai-maritalk-container)
-    - [Mistral AI Container](#mistral-ai-container)
-    - [Ollama Container](#ollama-container)
-    - [OpenAI ChatGPT Container](#openai-chatgpt-container)
-    - [Google Gemini Container](#google-gemini-container)
-        - [Option 1: API Key (Generative Language API) Config](#option-1-api-key-generative-language-api-config)
-        - [Option 2: Service Account Credentials File (Vertex AI API) Config](#option-2-service-account-credentials-file-vertex-ai-api-config)
-        - [Option 3: Application Default Credentials (Vertex AI API) Config](#option-3-application-default-credentials-vertex-ai-api-config)
-        - [Custom Project ID Config](#custom-project-id-config)
-    - [Running the Container](#running-the-container)
+  - [Cohere Command Container](#cohere-command-container)
+  - [Maritaca AI MariTalk Container](#maritaca-ai-maritalk-container)
+  - [Mistral AI Container](#mistral-ai-container)
+  - [Ollama Container](#ollama-container)
+  - [OpenAI ChatGPT Container](#openai-chatgpt-container)
+  - [Google Gemini Container](#google-gemini-container)
+    - [Option 1: API Key (Generative Language API) Config](#option-1-api-key-generative-language-api-config)
+    - [Option 2: Service Account Credentials File (Vertex AI API) Config](#option-2-service-account-credentials-file-vertex-ai-api-config)
+    - [Option 3: Application Default Credentials (Vertex AI API) Config](#option-3-application-default-credentials-vertex-ai-api-config)
+    - [Custom Project ID Config](#custom-project-id-config)
+  - [Running the Container](#running-the-container)
 - [Development](#development)
-    - [Publish to RubyGems](#publish-to-rubygems)
+  - [Publish to RubyGems](#publish-to-rubygems)
 
 ## Usage
 
@@ -372,7 +372,7 @@ provider:
   credentials:
     api-key: ENV/MARITACA_API_KEY
   settings:
-    model: maritalk
+    model: sabia-2-medium
 ```
 
 Read the [full specification](https://spec.nbots.io/#/README?id=mistral-ai) for Mistral AI.
@@ -424,7 +424,7 @@ provider:
   credentials:
     api-key: ENV/MISTRAL_API_KEY
   settings:
-    model: mistral-medium
+    model: mistral-medium-latest
 ```
 
 Read the [full specification](https://spec.nbots.io/#/README?id=mistral-ai) for Mistral AI.
@@ -476,7 +476,7 @@ provider:
   credentials:
     address: ENV/OLLAMA_API_ADDRESS
   settings:
-    model: llama2
+    model: llama3
 ```
 
 Read the [full specification](https://spec.nbots.io/#/README?id=ollama) for Ollama.
@@ -529,7 +529,7 @@ provider:
     access-token: ENV/OPENAI_API_KEY
   settings:
     user: ENV/NANO_BOTS_END_USER
-    model: gpt-4-1106-preview
+    model: gpt-4o
 ```
 
 Read the [full specification](https://spec.nbots.io/#/README?id=openai-chatgpt) for OpenAI ChatGPT.
@@ -758,7 +758,7 @@ provider:
     access-token: ENV/OPENAI_API_KEY
   settings:
     user: ENV/NANO_BOTS_END_USER
-    model: gpt-4-1106-preview
+    model: gpt-4o
 ```
 
 ### Tools (Functions)
@@ -786,7 +786,7 @@ The randomly generated number is 59.
 
 🤖> |
 ```
-To successfully use Tools (Functions), you need to specify a provider and a model that supports them. As of the writing of this README, the provider that supports them is [OpenAI](https://platform.openai.com/docs/models), with models `gpt-3.5-turbo-1106` and `gpt-4-1106-preview`, and [Google](https://cloud.google.com/vertex-ai/docs/generative-ai/multimodal/function-calling#supported_models), with the `vertex-ai-api` service and the model `gemini-pro`. Other providers do not yet have support.
+To successfully use Tools (Functions), you need to specify a provider and a model that supports them. As of the writing of this README, the provider that supports them is [OpenAI](https://platform.openai.com/docs/models), with models `gpt-3.5-turbo-1106` and `gpt-4o`, and [Google](https://cloud.google.com/vertex-ai/docs/generative-ai/multimodal/function-calling#supported_models), with the `vertex-ai-api` service and the model `gemini-pro`. Other providers do not yet have support.
 
 Check the [Nano Bots specification](https://spec.nbots.io/#/README?id=tools-functions-2) to learn more about Tools (Functions).
 
@@ -945,10 +945,10 @@ If you lose your password, you lose your data. It is not possible to recover it 
 - [x] [Maritaca AI MariTalk](https://www.maritaca.ai)
 - [x] [Mistral AI](https://mistral.ai)
 - [x] [Ollama](https://ollama.ai)
-    - [x] [01.AI Yi](https://01.ai)
-    - [x] [LMSYS Vicuna](https://github.com/lm-sys/FastChat)
-    - [x] [Meta Llama](https://ai.meta.com/llama/)
-    - [x] [WizardLM](https://wizardlm.github.io)
+  - [x] [01.AI Yi](https://01.ai)
+  - [x] [LMSYS Vicuna](https://github.com/lm-sys/FastChat)
+  - [x] [Meta Llama](https://ai.meta.com/llama/)
+  - [x] [WizardLM](https://wizardlm.github.io)
 - [x] [Open AI ChatGPT](https://openai.com/chatgpt)
 
 01.AI Yi, LMSYS Vicuna, Meta Llama, and WizardLM are open-source models that are supported through [Ollama](https://ollama.ai).
