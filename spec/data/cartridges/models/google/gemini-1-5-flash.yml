@@ -1,0 +1,25 @@
+---
+meta:
+  symbol: 🔵
+  name: Google Gemini 1.5 Flash
+  license: CC0-1.0
+
+provider:
+  id: google
+  credentials:
+    service: vertex-ai-api
+    region: us-east4
+  options:
+    model: gemini-1.5-flash-preview-0514
+  settings:
+    safetySettings:
+      - category: HARM_CATEGORY_UNSPECIFIED
+        threshold: BLOCK_ONLY_HIGH
+      - category: HARM_CATEGORY_HARASSMENT
+        threshold: BLOCK_ONLY_HIGH
+      - category: HARM_CATEGORY_HATE_SPEECH
+        threshold: BLOCK_ONLY_HIGH
+      - category: HARM_CATEGORY_SEXUALLY_EXPLICIT
+        threshold: BLOCK_ONLY_HIGH
+      - category: HARM_CATEGORY_DANGEROUS_CONTENT
+        threshold: BLOCK_ONLY_HIGH

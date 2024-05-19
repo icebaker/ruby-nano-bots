@@ -15,7 +15,7 @@ module NanoBot
         attr_reader :settings
 
         CHAT_SETTINGS = %i[
-          max_tokens model do_sample temperature top_p repetition_penalty stopping_tokens
+          max_tokens model stream do_sample temperature top_p repetition_penalty stopping_tokens
         ].freeze
 
         def initialize(options, settings, credentials, _environment)
@@ -27,13 +27,14 @@ module NanoBot
                                {}
                              end
 
-          unless maritaca_options.key?(:stream)
-            maritaca_options[:stream] = Logic::Helpers::Hash.fetch(
-              Logic::Cartridge::Default.instance.values, %i[provider options stream]
+          unless @settings.key?(:stream)
+            @settings = Marshal.load(Marshal.dump(@settings))
+            @settings[:stream] = Logic::Helpers::Hash.fetch(
+              Logic::Cartridge::Default.instance.values, %i[provider settings stream]
             )
           end
 
-          maritaca_options[:server_sent_events] = maritaca_options.delete(:stream)
+          maritaca_options[:server_sent_events] = @settings[:stream]
 
           @client = ::Maritaca.new(
             credentials: credentials.transform_keys { |key| key.to_s.gsub('-', '_').to_sym },
@@ -71,7 +72,7 @@ module NanoBot
             content = ''
 
             stream_call_back = proc do |event, _raw|
-              partial_content = event['answer']
+              partial_content = event['text']
 
               if partial_content
                 content += partial_content
