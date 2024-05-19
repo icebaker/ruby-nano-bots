@@ -11,7 +11,7 @@ RSpec.describe NanoBot::Logic::Cartridge::Parser do
         expect(described_class.parse(raw, format: 'md')).to eq(
           { meta: {
               symbol: '🤖',
-              name: 'ChatGPT 4 Turbo',
+              name: 'ChatGPT 4o',
               author: 'icebaker',
               version: '0.0.1',
               license: 'CC0-1.0',
@@ -23,7 +23,7 @@ RSpec.describe NanoBot::Logic::Cartridge::Parser do
               credentials: { 'access-token': 'ENV/OPENAI_API_KEY' },
               settings: {
                 user: 'ENV/NANO_BOTS_END_USER',
-                model: 'gpt-4-1106-preview'
+                model: 'gpt-4o'
               }
             } }
         )
@@ -77,7 +77,7 @@ RSpec.describe NanoBot::Logic::Cartridge::Parser do
               credentials: { 'access-token': 'ENV/OPENAI_API_KEY' },
               settings: {
                 user: 'ENV/NANO_BOTS_END_USER',
-                model: 'gpt-4-1106-preview'
+                model: 'gpt-4o'
               }
             },
             tools: [

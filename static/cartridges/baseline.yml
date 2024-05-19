@@ -14,4 +14,4 @@ provider:
     access-token: ENV/OPENAI_API_KEY
   settings:
     user: ENV/NANO_BOTS_END_USER
-    model: gpt-3.5-turbo-1106
+    model: gpt-3.5-turbo

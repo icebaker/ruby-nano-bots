@@ -31,7 +31,7 @@ provider:
     access-token: ENV/OPENAI_API_KEY
   settings:
     user: ENV/NANO_BOTS_END_USER
-    model: gpt-4-1106-preview
+    model: gpt-4o
 ```
 
 In my API, I have set the environment variables `OPENAI_API_KEY` and `NANO_BOTS_END_USER`, which is where the values for these will come from.
