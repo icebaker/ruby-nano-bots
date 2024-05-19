@@ -1,7 +1,7 @@
 ---
 meta:
   symbol: 🟠
-  name: Mistral Tiny
+  name: Mistral Large
   license: CC0-1.0
 
 provider:
@@ -9,4 +9,4 @@ provider:
   credentials:
     api-key: ENV/MISTRAL_API_KEY
   settings:
-    model: mistral-tiny
+    model: mistral-large-latest

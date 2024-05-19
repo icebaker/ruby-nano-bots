@@ -1,10 +1,10 @@
 ---
 meta:
   symbol: 🦙
-  name: Phi-2 through Ollama
+  name: Phi-3 through Ollama
   license: CC0-1.0
 
 provider:
   id: ollama
   settings:
-    model: phi
+    model: phi3
