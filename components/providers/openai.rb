@@ -2,6 +2,8 @@
 
 require 'openai'
 
+require 'faraday/typhoeus'
+
 require_relative 'base'
 require_relative '../crypto'
 
@@ -35,7 +37,9 @@ module NanoBot
                        "#{@credentials[:address].to_s.sub(%r{/$}, '')}/"
                      end
 
-          @client = ::OpenAI::Client.new(uri_base:, access_token: @credentials[:'access-token'])
+          @client = ::OpenAI::Client.new(uri_base:, access_token: @credentials[:'access-token']) do |faraday|
+            faraday.adapter :typhoeus
+          end
         end
 
         def evaluate(input, streaming, cartridge, &feedback)

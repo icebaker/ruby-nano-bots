@@ -66,10 +66,7 @@ module NanoBot
             end
           end
 
-          # TODO: Does Gemini have system messages?
-          %i[backdrop directive].each do |key|
-            next unless input[:behavior][key]
-
+          if input[:behavior][:backdrop]
             messages.prepend(
               { role: 'model',
                 parts: { text: 'Understood.' },
@@ -78,12 +75,19 @@ module NanoBot
 
             messages.prepend(
               { role: 'user',
-                parts: { text: input[:behavior][key] },
+                parts: { text: input[:behavior][:backdrop] },
                 _meta: { at: Time.now } }
             )
           end
 
           payload = { contents: messages, generationConfig: { candidateCount: 1 } }
+
+          if input[:behavior][:directive]
+            payload[:system_instruction] = {
+              role: 'user',
+              parts: { text: input[:behavior][:directive] }
+            }
+          end
 
           if @settings
             SETTINGS.each_key do |key|
@@ -193,9 +197,13 @@ module NanoBot
             end
 
             content = result.map do |answer|
-              answer.dig('candidates', 0, 'content', 'parts').filter do |part|
-                part.key?('text')
-              end.map { |part| part['text'] }.join
+              parts = answer.dig('candidates', 0, 'content', 'parts')
+
+              if parts
+                parts.filter { |part| part.key?('text') }.map { |part| part['text'] }.join
+              else
+                ''
+              end
             end.join
 
             feedback.call(

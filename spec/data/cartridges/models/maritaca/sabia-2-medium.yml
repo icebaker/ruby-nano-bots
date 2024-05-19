@@ -1,7 +1,7 @@
 ---
 meta:
   symbol: 🦜
-  name: Maritaca MariTalk
+  name: Maritaca Sabiá 2 Medium
   license: CC0-1.0
 
 provider:
@@ -9,4 +9,4 @@ provider:
   credentials:
     api-key: ENV/MARITACA_API_KEY
   settings:
-    model: maritalk
+    model: sabia-2-medium

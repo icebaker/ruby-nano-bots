@@ -32,20 +32,24 @@ Gem::Specification.new do |spec|
   spec.executables = ['nb']
 
   spec.add_dependency 'babosa', '~> 2.0'
-  spec.add_dependency 'concurrent-ruby', '~> 1.2', '>= 1.2.2'
-  spec.add_dependency 'dotenv', '~> 2.8', '>= 2.8.1'
+  spec.add_dependency 'concurrent-ruby', '~> 1.2', '>= 1.2.3'
+  spec.add_dependency 'dotenv', '~> 3.1', '>= 3.1.2'
   spec.add_dependency 'pry', '~> 0.14.2'
   spec.add_dependency 'rainbow', '~> 3.1', '>= 3.1.1'
   spec.add_dependency 'rbnacl', '~> 7.1', '>= 7.1.1'
   spec.add_dependency 'redcarpet', '~> 3.6'
   spec.add_dependency 'sweet-moon', '~> 0.0.7'
 
-  spec.add_dependency 'cohere-ai', '~> 1.0', '>= 1.0.2'
-  spec.add_dependency 'gemini-ai', '~> 3.1', '>= 3.1.3'
-  spec.add_dependency 'maritaca-ai', '~> 1.0', '>= 1.0.1'
-  spec.add_dependency 'mistral-ai', '~> 1.1', '>= 1.1.2'
-  spec.add_dependency 'ollama-ai', '~> 1.0', '>= 1.0.1'
-  spec.add_dependency 'ruby-openai', '~> 6.3', '>= 6.3.1'
+  spec.add_dependency 'cohere-ai', '~> 1.1'
+  spec.add_dependency 'gemini-ai', '~> 4.0'
+  spec.add_dependency 'maritaca-ai', '~> 1.2'
+  spec.add_dependency 'mistral-ai', '~> 1.2'
+  spec.add_dependency 'ollama-ai', '~> 1.2', '>= 1.2.1'
+  spec.add_dependency 'ruby-openai', '~> 7.0', '>= 7.0.1'
+
+  spec.add_dependency 'faraday', '~> 2.9'
+  spec.add_dependency 'faraday-typhoeus', '~> 1.1'
+  spec.add_dependency 'typhoeus', '~> 1.4', '>= 1.4.1'
 
   spec.metadata['rubygems_mfa_required'] = 'true'
 end
