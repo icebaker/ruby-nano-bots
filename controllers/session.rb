@@ -36,7 +36,7 @@ module NanoBot
         else
           @state_key = state.strip
 
-          @state_path = Components::Storage.build_path_for_state_file!(
+          @state_path = Components::Storage.build_path_for_state_file(
             state.strip, @cartridge, environment:
           )
 

@@ -35,7 +35,7 @@ module NanoBot
         Crypto.encrypt(user, soft: true)
       end
 
-      def self.build_path_for_state_file!(key, cartridge, environment: {})
+      def self.build_path_for_state_file(key, cartridge, environment: {})
         path = [
           Logic::Helpers::Hash.fetch(cartridge, %i[state path]),
           Logic::Helpers::Hash.fetch(cartridge, %i[state directory]),
@@ -54,6 +54,7 @@ module NanoBot
         path = "#{path}/#{cartridge[:meta][:version].to_s.gsub('.', '-').to_slug.normalize}"
         path = "#{path}/#{end_user(cartridge, environment)}"
         path = "#{path}/#{Crypto.encrypt(key, soft: true)}"
+
         "#{path}/state.json"
       end
 
