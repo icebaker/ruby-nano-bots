@@ -34,7 +34,9 @@ module NanoBot
         if @stateless
           @state = { history: [] }
         else
-          @state_path = Components::Storage.build_path_and_ensure_state_file!(
+          @state_key = state.strip
+
+          @state_path = Components::Storage.build_path_for_state_file(
             state.strip, @cartridge, environment:
           )
 
@@ -43,16 +45,24 @@ module NanoBot
       end
 
       def state
-        { state: { path: @state_path, content: @state } }
+        if @state[:history].empty?
+          nil
+        else
+          { state: { path: @state_path, content: @state } }
+        end
       end
 
       def load_state
+        return { key: @state_key, history: [] } unless File.exist?(@state_path)
+
         @state = Logic::Helpers::Hash.symbolize_keys(
           JSON.parse(Components::Crypto.decrypt(File.read(@state_path)))
         )
       end
 
       def store_state!
+        FileUtils.mkdir_p(File.dirname(@state_path)) unless File.exist?(@state_path)
+
         File.write(@state_path, Components::Crypto.encrypt(JSON.generate(@state)))
       end
 
