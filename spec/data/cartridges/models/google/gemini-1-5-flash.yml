@@ -10,7 +10,7 @@ provider:
     service: vertex-ai-api
     region: us-east4
   options:
-    model: gemini-1.5-flash-preview-0514
+    model: gemini-1.5-flash
   settings:
     safetySettings:
       - category: HARM_CATEGORY_UNSPECIFIED

@@ -1,20 +1,18 @@
 ---
 meta:
   symbol: 🔵
-  name: Google Gemini 1.5 Pro
+  name: Google Gemini 1.0 Pro (Generative Language API)
   license: CC0-1.0
 
 provider:
   id: google
   credentials:
-    service: vertex-ai-api
-    region: us-east4
+    service: generative-language-api
+    api-key: ENV/GOOGLE_API_KEY
   options:
-    model: gemini-1.5-pro
+    model: gemini-pro
   settings:
     safetySettings:
-      - category: HARM_CATEGORY_UNSPECIFIED
-        threshold: BLOCK_ONLY_HIGH
       - category: HARM_CATEGORY_HARASSMENT
         threshold: BLOCK_ONLY_HIGH
       - category: HARM_CATEGORY_HATE_SPEECH

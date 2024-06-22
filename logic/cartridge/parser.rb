@@ -94,7 +94,7 @@ module NanoBot
           LANGUAGES = LANGUAGES_MAP.keys.freeze
 
           def initialize(...)
-            super(...)
+            super
             @_nano_bots_blocks = []
           end
 
