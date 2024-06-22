@@ -28,6 +28,8 @@ module NanoBot
         def initialize(options, settings, credentials, _environment)
           @settings = settings
 
+          @service = credentials[:service]
+
           gemini_options = options.transform_keys { |key| key.to_s.gsub('-', '_').to_sym }
 
           unless gemini_options.key?(:stream)
@@ -82,11 +84,18 @@ module NanoBot
 
           payload = { contents: messages, generationConfig: { candidateCount: 1 } }
 
-          if input[:behavior][:directive]
+          if input[:behavior][:directive] && @service == 'vertex-ai-api'
             payload[:system_instruction] = {
               role: 'user',
               parts: { text: input[:behavior][:directive] }
             }
+          elsif input[:behavior][:directive]
+            # TODO: Will generative-language-api support system instructions?
+            messages.prepend(
+              { role: 'user',
+                parts: { text: input[:behavior][:directive] },
+                _meta: { at: Time.now } }
+            )
           end
 
           if @settings
@@ -124,13 +133,13 @@ module NanoBot
               # TODO: How to better handle finishReason == 'OTHER'?
               return if event.dig('candidates', 0, 'finishReason') == 'OTHER'
 
-              partial_content = event.dig('candidates', 0, 'content', 'parts').filter do |part|
+              partial_content = event.dig('candidates', 0, 'content', 'parts')&.filter do |part|
                 part.key?('text')
-              end.map { |part| part['text'] }.join
+              end&.map { |part| part['text'] }&.join || ''
 
-              partial_tools = event.dig('candidates', 0, 'content', 'parts').filter do |part|
+              partial_tools = event.dig('candidates', 0, 'content', 'parts')&.filter do |part|
                 part.key?('functionCall')
-              end
+              end || []
 
               tools.concat(partial_tools) if partial_tools.size.positive?
 
@@ -142,10 +151,9 @@ module NanoBot
                 )
               end
 
-              if event.dig('candidates', 0, 'finishReason')
-                # TODO: This does not have the same behavior as OpenAI, so you should
-                #       not use it as a reference for the end of the streaming.
-                #       Is this a bug from the Google Gemini REST API or expected behavior?
+              if event.dig('candidates', 0, 'finishReason') == 'SAFETY'
+                reasons = event.dig('candidates', 0, 'safetyRatings')
+                raise StandardError, "Generation stopped for safety reasons: #{reasons}"
               end
             end
 
