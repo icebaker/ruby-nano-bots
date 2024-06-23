@@ -4,6 +4,7 @@ require_relative 'providers/openai'
 require_relative 'providers/ollama'
 require_relative 'providers/mistral'
 require_relative 'providers/google'
+require_relative 'providers/anthropic'
 require_relative 'providers/cohere'
 require_relative 'providers/maritaca'
 
@@ -20,6 +21,8 @@ module NanoBot
           Providers::Mistral.new(provider[:options], provider[:settings], provider[:credentials], environment:)
         when 'google'
           Providers::Google.new(provider[:options], provider[:settings], provider[:credentials], environment:)
+        when 'anthropic'
+          Providers::Anthropic.new(nil, provider[:settings], provider[:credentials], environment:)
         when 'cohere'
           Providers::Cohere.new(provider[:options], provider[:settings], provider[:credentials], environment:)
         when 'maritaca'

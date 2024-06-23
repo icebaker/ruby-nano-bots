@@ -6,7 +6,7 @@ module NanoBot
     version: '3.3.0',
     specification: '3.1.0',
     author: 'icebaker',
-    summary: 'Ruby Implementation of Nano Bots: small, AI-powered bots for OpenAI ChatGPT, Ollama, Mistral AI, Cohere Command, Maritaca AI MariTalk, and Google Gemini.',
+    summary: 'Ruby Implementation of Nano Bots: small, AI-powered bots for OpenAI ChatGPT, Ollama, Mistral AI, Anthropic Claude, Cohere Command, Maritaca AI MariTalk, and Google Gemini.',
     description: 'Ruby Implementation of Nano Bots: small, AI-powered bots that can be easily shared as a single file, designed to support multiple providers such as OpenAI ChatGPT, Ollama, Mistral AI, Cohere Command, Maritaca AI MariTalk, and Google Gemini, with support for calling Tools (Functions).',
     github: 'https://github.com/icebaker/ruby-nano-bots',
     gem_server: 'https://rubygems.org',

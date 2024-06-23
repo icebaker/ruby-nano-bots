@@ -1,6 +1,6 @@
 # Nano Bots 💎 🤖
 
-An implementation of the [Nano Bots](https://spec.nbots.io) specification with support for [Cohere Command](https://cohere.com), [Google Gemini](https://deepmind.google/technologies/gemini), [Maritaca AI MariTalk](https://www.maritaca.ai), [Mistral AI](https://mistral.ai), [Ollama](https://ollama.ai), [OpenAI ChatGPT](https://openai.com/chatgpt), and others, with support for calling tools (functions).
+An implementation of the [Nano Bots](https://spec.nbots.io) specification with support for [Anthropic Claude](https://www.anthropic.com/claude), [Cohere Command](https://cohere.com), [Google Gemini](https://deepmind.google/technologies/gemini), [Maritaca AI MariTalk](https://www.maritaca.ai), [Mistral AI](https://mistral.ai), [Ollama](https://ollama.ai), [OpenAI ChatGPT](https://openai.com/chatgpt), and others, with support for calling tools (functions).
 
 ![Ruby Nano Bots](https://raw.githubusercontent.com/icebaker/assets/main/nano-bots/ruby-nano-bots-canvas.png)
 
@@ -939,7 +939,7 @@ If you lose your password, you lose your data. It is not possible to recover it 
 
 ## Supported Providers
 
-- [ ] [Anthropic Claude](https://www.anthropic.com)
+- [x] [Anthropic Claude](https://www.anthropic.com)
 - [x] [Cohere Command](https://cohere.com)
 - [x] [Google Gemini](https://deepmind.google/technologies/gemini)
 - [x] [Maritaca AI MariTalk](https://www.maritaca.ai)
