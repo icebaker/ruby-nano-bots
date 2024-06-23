@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    nano-bots (3.3.0)
+    nano-bots (3.4.0)
       anthropic (~> 0.3.0)
       babosa (~> 2.0)
       cohere-ai (~> 1.1)
