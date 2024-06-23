@@ -15,7 +15,8 @@ module NanoBot
         attr_reader :settings
 
         CHAT_SETTINGS = %i[
-          model stream max_tokens
+          model stream max_tokens temperature top_k top_p tool_choice
+          metadata stop_sequences
         ].freeze
 
         def initialize(_options, settings, credentials, _environment)
@@ -42,6 +43,12 @@ module NanoBot
           end
 
           if input[:behavior][:backdrop]
+            messages.prepend(
+              { role: 'assistant',
+                content: 'Ok.',
+                _meta: { at: Time.now } }
+            )
+
             messages.prepend(
               { role: 'user',
                 content: input[:behavior][:backdrop],
@@ -83,9 +90,9 @@ module NanoBot
             end
 
             @client.messages(
-              parameters: Logic::Anthropic::Tokens.apply_policies!(cartridge, payload).merge({
-                                                                                               stream: stream_call_back
-                                                                                             })
+              parameters: Logic::Anthropic::Tokens.apply_policies!(
+                cartridge, payload
+              ).merge({ stream: stream_call_back })
             )
           else
             result = @client.messages(
