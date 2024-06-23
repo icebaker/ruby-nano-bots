@@ -19,7 +19,9 @@ module NanoBot
 
         SETTINGS = {
           generationConfig: %i[
-            temperature topP topK candidateCount maxOutputTokens stopSequences
+            temperature maxOutputTokens candidateCount presencePenalty
+            frequencyPenalty topK topP stopSequences
+            responseMimeType responseSchema
           ].freeze
         }.freeze
 
@@ -154,6 +156,9 @@ module NanoBot
               if event.dig('candidates', 0, 'finishReason') == 'SAFETY'
                 reasons = event.dig('candidates', 0, 'safetyRatings')
                 raise StandardError, "Generation stopped for safety reasons: #{reasons}"
+              elsif event.dig('candidates', 0, 'finishReason') == 'RECITATION'
+                reasons = event.dig('candidates', 0, 'citationMetadata')
+                raise StandardError, "Generation stopped for recitation reasons: #{reasons}"
               end
             end
 

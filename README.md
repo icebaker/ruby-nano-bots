@@ -1,6 +1,6 @@
 # Nano Bots 💎 🤖
 
-An implementation of the [Nano Bots](https://spec.nbots.io) specification with support for [Cohere Command](https://cohere.com), [Google Gemini](https://deepmind.google/technologies/gemini), [Maritaca AI MariTalk](https://www.maritaca.ai), [Mistral AI](https://mistral.ai), [Ollama](https://ollama.ai), [OpenAI ChatGPT](https://openai.com/chatgpt), and others, with support for calling tools (functions).
+An implementation of the [Nano Bots](https://spec.nbots.io) specification with support for [Anthropic Claude](https://www.anthropic.com/claude), [Cohere Command](https://cohere.com), [Google Gemini](https://deepmind.google/technologies/gemini), [Maritaca AI Sabiá](https://www.maritaca.ai), [Mistral AI](https://mistral.ai), [Ollama](https://ollama.ai), [OpenAI ChatGPT](https://openai.com/chatgpt), and others, with support for calling tools (functions).
 
 ![Ruby Nano Bots](https://raw.githubusercontent.com/icebaker/assets/main/nano-bots/ruby-nano-bots-canvas.png)
 
@@ -80,6 +80,7 @@ end
   - [Debugging](#debugging)
   - [Library](#library)
 - [Setup](#setup)
+  - [Anthropic Claude](#anthropic-claude)
   - [Cohere Command](#cohere-command)
   - [Maritaca AI MariTalk](#maritaca-ai-maritalk)
   - [Mistral AI](#mistral-ai)
@@ -100,6 +101,7 @@ end
   - [Decrypting](#decrypting)
 - [Supported Providers](#supported-providers)
 - [Docker](#docker)
+  - [Anthropic Claude Container](#anthropic-claude-container)
   - [Cohere Command Container](#cohere-command-container)
   - [Maritaca AI MariTalk Container](#maritaca-ai-maritalk-container)
   - [Mistral AI Container](#mistral-ai-container)
@@ -281,6 +283,59 @@ NANO_BOTS_END_USER=your-user
 
 # NANO_BOTS_STATE_PATH=/home/user/.local/state/nano-bots
 # NANO_BOTS_CARTRIDGES_PATH=/home/user/.local/share/nano-bots/cartridges
+```
+
+### Anthropic Claude
+
+You can obtain your credentials on the [Anthropic Console](https://console.anthropic.com).
+
+```sh
+export ANTHROPIC_API_KEY=your-api-key
+```
+
+Alternatively, if your current directory has a `.env` file with the environment variables, they will be automatically loaded:
+
+```sh
+ANTHROPIC_API_KEY=your-api-key
+```
+
+Create a `cartridge.yml` file:
+
+```yaml
+---
+meta:
+  symbol: 🤖
+  name: Nano Bot Name
+  author: Your Name
+  version: 1.0.0
+  license: CC0-1.0
+  description: A helpful assistant.
+
+behaviors:
+  interaction:
+    directive: You are a helpful assistant.
+
+provider:
+  id: anthropic
+  credentials:
+    api-key: ENV/ANTHROPIC_API_KEY
+  settings:
+    model: claude-3-5-sonnet-20240620
+    max_tokens: 4096
+```
+
+Read the [full specification](https://spec.nbots.io/#/README?id=anthropic-claude) for Anthropic Claude.
+
+```bash
+nb cartridge.yml - eval "Hello"
+
+nb cartridge.yml - repl
+```
+
+```ruby
+bot = NanoBot.new(cartridge: 'cartridge.yml')
+
+puts bot.eval('Hello')
 ```
 
 ### Cohere Command
@@ -939,7 +994,7 @@ If you lose your password, you lose your data. It is not possible to recover it 
 
 ## Supported Providers
 
-- [ ] [Anthropic Claude](https://www.anthropic.com)
+- [x] [Anthropic Claude](https://www.anthropic.com)
 - [x] [Cohere Command](https://cohere.com)
 - [x] [Google Gemini](https://deepmind.google/technologies/gemini)
 - [x] [Maritaca AI MariTalk](https://www.maritaca.ai)
@@ -964,6 +1019,23 @@ cp docker-compose.example.yml docker-compose.yml
 ```
 
 Set your provider credentials and choose your desired path for the cartridges files:
+
+### Anthropic Claude Container
+
+```yaml
+---
+services:
+  nano-bots:
+    image: ruby:3.3.3-slim-bookworm
+    command: sh -c "apt-get update && apt-get install -y --no-install-recommends build-essential libffi-dev libsodium-dev lua5.4-dev curl && curl -s https://raw.githubusercontent.com/babashka/babashka/master/install | bash && gem install nano-bots -v 3.3.0 && bash"
+    environment:
+      ANTHROPIC_API_KEY: your-api-key
+      NANO_BOTS_ENCRYPTION_PASSWORD: UNSAFE
+      NANO_BOTS_END_USER: your-user
+    volumes:
+      - ./your-cartridges:/root/.local/share/nano-bots/cartridges
+      - ./your-state-path:/root/.local/state/nano-bots
+```
 
 ### Cohere Command Container
 

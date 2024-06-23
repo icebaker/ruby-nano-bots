@@ -15,9 +15,10 @@ module NanoBot
         attr_reader :settings
 
         CHAT_SETTINGS = %i[
-          model stream prompt_truncation connectors
-          search_queries_only documents citation_quality
-          temperature
+          model stream prompt_truncation connectors search_queries_only
+          documents citation_quality temperature max_tokens max_input_tokens
+          k p seed stop_sequences frequency_penalty presence_penalty
+          force_single_step
         ].freeze
 
         def initialize(options, settings, credentials, _environment)

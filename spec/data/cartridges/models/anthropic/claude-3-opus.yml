@@ -1,0 +1,13 @@
+---
+meta:
+  symbol: 🟤
+  name: Anthropic Claude 3 Opus
+  license: CC0-1.0
+
+provider:
+  id: anthropic
+  credentials:
+    api-key: ENV/ANTHROPIC_API_KEY
+  settings:
+    model: claude-3-opus-20240229
+    max_tokens: 4096

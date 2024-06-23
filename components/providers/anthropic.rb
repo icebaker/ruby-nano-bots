@@ -1,32 +1,26 @@
 # frozen_string_literal: true
 
-require 'mistral-ai'
+require 'anthropic'
 
 require_relative 'base'
 
-require_relative '../../logic/providers/mistral/tokens'
+require_relative '../../logic/providers/anthropic/tokens'
 require_relative '../../logic/helpers/hash'
 require_relative '../../logic/cartridge/default'
 
 module NanoBot
   module Components
     module Providers
-      class Mistral < Base
+      class Anthropic < Base
         attr_reader :settings
 
         CHAT_SETTINGS = %i[
-          model temperature top_p max_tokens stream safe_prompt random_seed
-          safe_mode
+          model stream max_tokens temperature top_k top_p tool_choice
+          metadata stop_sequences
         ].freeze
 
-        def initialize(options, settings, credentials, _environment)
+        def initialize(_options, settings, credentials, _environment)
           @settings = settings
-
-          mistral_options = if options
-                              options.transform_keys { |key| key.to_s.gsub('-', '_').to_sym }
-                            else
-                              {}
-                            end
 
           unless @settings.key?(:stream)
             @settings = Marshal.load(Marshal.dump(@settings))
@@ -35,11 +29,9 @@ module NanoBot
             )
           end
 
-          mistral_options[:server_sent_events] = @settings[:stream]
-
-          @client = ::Mistral.new(
-            credentials: credentials.transform_keys { |key| key.to_s.gsub('-', '_').to_sym },
-            options: mistral_options
+          @client = ::Anthropic::Client.new(
+            access_token: credentials[:'api-key'],
+            anthropic_version: credentials[:'anthropic-version']
           )
         end
 
@@ -50,31 +42,37 @@ module NanoBot
               _meta: { at: event[:at] } }
           end
 
-          %i[backdrop directive].each do |key|
-            next unless input[:behavior][key]
+          if input[:behavior][:backdrop]
+            messages.prepend(
+              { role: 'assistant',
+                content: 'Ok.',
+                _meta: { at: Time.now } }
+            )
 
             messages.prepend(
-              { role: key == :directive ? 'system' : 'user',
-                content: input[:behavior][key],
+              { role: 'user',
+                content: input[:behavior][:backdrop],
                 _meta: { at: Time.now } }
             )
           end
 
           payload = { messages: }
 
+          payload[:system] = input[:behavior][:directive] if input[:behavior][:directive]
+
           CHAT_SETTINGS.each do |key|
             payload[key] = @settings[key] unless payload.key?(key) || !@settings.key?(key)
           end
 
-          raise 'Mistral does not support tools.' if input[:tools]
+          raise 'Anthropic does not support tools.' if input[:tools]
 
           if streaming
             content = ''
 
-            stream_call_back = proc do |event, _parsed, _raw|
-              partial_content = event.dig('choices', 0, 'delta', 'content')
+            stream_call_back = proc do |event|
+              partial_content = event.dig('delta', 'text')
 
-              if partial_content
+              if partial_content && event['type'] == 'content_block_delta'
                 content += partial_content
                 feedback.call(
                   { should_be_stored: false,
@@ -82,7 +80,7 @@ module NanoBot
                 )
               end
 
-              if event.dig('choices', 0, 'finish_reason')
+              if event['type'] == 'content_block_stop'
                 feedback.call(
                   { should_be_stored: !(content.nil? || content == ''),
                     interaction: content.nil? || content == '' ? nil : { who: 'AI', message: content },
@@ -91,17 +89,17 @@ module NanoBot
               end
             end
 
-            @client.chat_completions(
-              Logic::Mistral::Tokens.apply_policies!(cartridge, payload),
-              server_sent_events: true, &stream_call_back
+            @client.messages(
+              parameters: Logic::Anthropic::Tokens.apply_policies!(
+                cartridge, payload
+              ).merge({ stream: stream_call_back })
             )
           else
-            result = @client.chat_completions(
-              Logic::Mistral::Tokens.apply_policies!(cartridge, payload),
-              server_sent_events: false
+            result = @client.messages(
+              parameters: Logic::Anthropic::Tokens.apply_policies!(cartridge, payload)
             )
 
-            content = result.dig('choices', 0, 'message', 'content')
+            content = result['content'].map { |content| content['text'] }.join
 
             feedback.call(
               { should_be_stored: !(content.nil? || content.to_s.strip == ''),
