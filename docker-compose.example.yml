@@ -11,6 +11,7 @@ services:
       # GOOGLE_API_KEY: your-api-key
 
       # GOOGLE_CREDENTIALS_FILE_PATH: /root/.config/google-credentials.json
+      # GOOGLE_CREDENTIALS_FILE_CONTENTS: "contents"
       # GOOGLE_PROJECT_ID: your-project-id
       GOOGLE_REGION: us-east4
 
