@@ -24,7 +24,11 @@ module NanoBot
 
         state.eval(code)
         embedded = state.get(:embedded)
-        embedded.call(values)
+        begin
+          embedded.call(values)
+        rescue StandardError => e
+          e.message
+        end
       end
 
       def self.fennel(source:, parameters:, values:, safety:)
@@ -39,7 +43,11 @@ module NanoBot
           safety[:sandboxed] ? { allowedGlobals: %w[math string table] } : nil
         )
         embedded = state.get(:embedded)
-        embedded.call(values)
+        begin
+          embedded.call(values)
+        rescue StandardError => e
+          e.message
+        end
       end
 
       def self.clojure(source:, parameters:, values:, safety:)
