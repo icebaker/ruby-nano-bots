@@ -15,12 +15,15 @@ module NanoBot
         attr_reader :settings
 
         CHAT_SETTINGS = %i[
-          model template stream
+          model template stream format raw
         ].freeze
 
         CHAT_OPTIONS = %i[
-          mirostat mirostat_eta mirostat_tau num_ctx num_gqa num_gpu num_thread repeat_last_n
-          repeat_penalty temperature seed stop tfs_z num_predict top_k top_p
+          num_keep seed num_predict top_k top_p tfs_z typical_p repeat_last_n
+          temperature repeat_penalty presence_penalty frequency_penalty
+          mirostat mirostat_tau mirostat_eta penalize_newline numa num_ctx
+          num_batch num_gpu main_gpu low_vram f16_kv vocab_only use_mmap
+          use_mlock num_thread stop
         ].freeze
 
         def initialize(options, settings, credentials, _environment)

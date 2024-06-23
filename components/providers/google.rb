@@ -19,7 +19,9 @@ module NanoBot
 
         SETTINGS = {
           generationConfig: %i[
-            temperature topP topK candidateCount maxOutputTokens stopSequences
+            temperature maxOutputTokens candidateCount presencePenalty
+            frequencyPenalty topK topP stopSequences
+            responseMimeType responseSchema
           ].freeze
         }.freeze
 

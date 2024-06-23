@@ -41,7 +41,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'sweet-moon', '~> 1.0'
 
   spec.add_dependency 'cohere-ai', '~> 1.1'
-  spec.add_dependency 'gemini-ai', '~> 4.0'
+  spec.add_dependency 'gemini-ai', '~> 4.1'
   spec.add_dependency 'maritaca-ai', '~> 1.2'
   spec.add_dependency 'mistral-ai', '~> 1.2'
   spec.add_dependency 'ollama-ai', '~> 1.2', '>= 1.2.1'

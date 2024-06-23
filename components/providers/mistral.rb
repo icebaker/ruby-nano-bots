@@ -15,7 +15,8 @@ module NanoBot
         attr_reader :settings
 
         CHAT_SETTINGS = %i[
-          model temperature top_p max_tokens stream safe_mode random_seed
+          model temperature top_p max_tokens stream safe_prompt random_seed
+          safe_mode
         ].freeze
 
         def initialize(options, settings, credentials, _environment)
